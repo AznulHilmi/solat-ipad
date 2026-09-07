@@ -8,13 +8,14 @@
   <title>Solat Saya</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, rgba(18,18,18,0.85) 0%, rgba(30,30,30,0.95) 100%);
+      /* Reduced opacity for crystal clear background images */
+      --bg-gradient: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.65) 100%);
       --accent-green: #2ecc71;
       --accent-amber: #f39c12;
       --accent-red: #e74c3c;
       --text-main: #FFFFFF;
-      --text-sub: #bdc3c7;
-      --panel-bg: rgba(42, 42, 42, 0.7);
+      --text-sub: #e0e0e0;
+      --panel-bg: rgba(20, 20, 20, 0.85);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,19 +33,20 @@
       background-position: center;
       background-repeat: no-repeat;
       transition: background-image 1.5s ease-in-out;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     /* Address Bar at Top */
     .address-bar {
       width: 100%;
       padding: 12px 20px;
-      background-color: rgba(0,0,0,0.6);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      background-color: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
       position: fixed;
       top: 0;
       z-index: 100;
@@ -53,7 +55,7 @@
     .address-bar p {
       color: var(--text-main);
       font-size: 0.95rem;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
@@ -66,21 +68,23 @@
 
     /* Audio Toggle Button */
     .audio-btn {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
       color: #fff;
-      padding: 8px 12px;
+      padding: 8px 14px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       outline: none;
       transition: all 0.3s ease;
+      text-shadow: none;
     }
     .audio-btn.enabled {
       background: var(--accent-green);
       color: #000;
       border-color: var(--accent-green);
+      box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
     }
 
     /* Main Container */
@@ -99,22 +103,22 @@
     /* Countdown Panel */
     .countdown-panel {
       width: 100%;
-      background-color: rgba(18, 18, 18, 0.8);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(15, 15, 15, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
       animation: pulse 10s infinite;
     }
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+      0%, 100% { box-shadow: 0 0 12px rgba(46, 204, 113, 0.3); }
       50% { box-shadow: 0 0 25px rgba(46, 204, 113, 0.6); }
     }
-    .countdown-label { font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
-    .countdown-timer { font-size: 2.5rem; font-weight: 800; color: var(--accent-green); margin: 5px 0; font-variant-numeric: tabular-nums; }
+    .countdown-label { font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+    .countdown-timer { font-size: 2.6rem; font-weight: 800; color: var(--accent-green); margin: 5px 0; font-variant-numeric: tabular-nums; }
     .countdown-timer.imminent { color: var(--accent-red); animation: blink 1s step-end infinite; }
     
     /* Rapid Flashing Effect When Prayer Arrives */
@@ -131,20 +135,20 @@
 
     /* Solat List Panel */
     .card {
-      background: rgba(30, 30, 30, 0.7);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(20, 20, 20, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 16px;
       padding: 20px;
       width: 100%;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
     }
     
     .select-container { margin-bottom: 20px; text-align: center; }
     select {
-      background: var(--panel-bg);
+      background: rgba(35, 35, 35, 0.9);
       color: #FFF;
-      border: 1px solid #444;
+      border: 1px solid #555;
       padding: 10px 12px;
       font-size: 1rem;
       border-radius: 8px;
@@ -164,10 +168,11 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
     }
     
     .prayer-row.active {
-      background-color: rgba(46, 204, 113, 0.2);
+      background-color: rgba(46, 204, 113, 0.25);
       border-left: 5px solid var(--accent-green);
       transform: scale(1.03);
     }
@@ -175,13 +180,13 @@
       content: '';
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
       animation: shine 3s infinite;
     }
     @keyframes shine { 100% { transform: translateX(100%); } }
 
-    .prayer-row.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.1); }
-    .prayer-row.active.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.25); }
+    .prayer-row.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.15); }
+    .prayer-row.active.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.3); }
     
     .prayer-name { font-weight: 600; }
     .prayer-time { color: var(--text-main); font-weight: 700; }
@@ -227,7 +232,7 @@
     </div>
   </div>
 
-  <!-- Audio Element (Using reliable CDN for Makkah Azan) -->
+  <!-- Audio Element (Hosted Makkah Azan) -->
   <audio id="azan-player" preload="auto" src="https://cdn.islamic.network/audio/8000/1.mp3"></audio>
 
   <script>
@@ -253,7 +258,6 @@
       audioEnabled = !audioEnabled;
       
       if (audioEnabled) {
-        // Play silent sound to unlock Safari iOS audio session
         azanAudio.play().then(() => {
           azanAudio.pause();
           azanAudio.currentTime = 0;
@@ -353,7 +357,7 @@
           Syuruk: syuruk,
           Dhuha: addMinutesToDate(syuruk, 28),
           Zohor: parseToTodayDate(p.dhuhr || p.zohor),
-          Asar: parseToTodayDate(p.asr || p.asar),
+          Asar: parseToTodayDate(p.asar || p.asar),
           Maghrib: parseToTodayDate(p.maghrib),
           Isyak: parseToTodayDate(p.isha || p.isyak)
         };
@@ -436,7 +440,6 @@
       else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTarget = p.Maghrib; }
       else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTarget = p.Isyak; }
 
-      // Reset played tracker when transition happens to next prayer
       if (activePrayerName !== lastPrayerName) {
         azanPlayedForCurrentSolat = false;
         lastPrayerName = activePrayerName;
@@ -459,22 +462,18 @@
 
       timeEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-      // Visual Blinking Modes
       timeEl.classList.remove('imminent', 'solat-now');
       
       if (diffSeconds === 0) {
-        // FLASH GLOW AT SOLAT TIME (First 60 seconds)
         timeEl.classList.add('solat-now');
         labelEl.innerText = `MASUK WAKTU ${nextPrayerName.toUpperCase()}`;
 
-        // PLAY AZAN AUDIO
         if (audioEnabled && !azanPlayedForCurrentSolat && nextPrayerName !== 'Syuruk' && nextPrayerName !== 'Dhuha') {
           azanPlayedForCurrentSolat = true;
           azanAudio.currentTime = 0;
           azanAudio.play().catch(e => console.error("Azan playback blocked:", e));
         }
       } else if (diffSeconds <= 600) {
-        // Red blink in final 10 minutes
         timeEl.classList.add('imminent');
       }
     }
