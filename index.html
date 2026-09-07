@@ -28,10 +28,7 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     h1 { text-align: center; font-size: 1.8rem; margin-bottom: 8px; color: #4CAF50; }
-    .select-container {
-      margin-bottom: 20px;
-      text-align: center;
-    }
+    .select-container { margin-bottom: 20px; text-align: center; }
     select {
       background: #2A2A2A;
       color: #FFF;
@@ -54,6 +51,7 @@
     .prayer-row.dhuha { border-left: 4px solid #FFC107; background: #332B00; }
     .prayer-name { font-weight: 600; }
     .prayer-time { color: #E0E0E0; }
+    .error-box { background: #3E1010; color: #FF9999; padding: 12px; border-radius: 8px; font-size: 0.9rem; word-break: break-all; }
   </style>
 </head>
 <body>
@@ -79,45 +77,105 @@
 
   <script>
     function formatTime(timeStr) {
-      if(!timeStr) return "--:--";
-      let [h, m] = timeStr.split(':').map(Number);
+      if (!timeStr) return "--:--";
+      // Handle epoch timestamps or HH:MM strings
+      if (typeof timeStr === 'number') {
+        let d = new Date(timeStr * 1000);
+        let h = d.getHours();
+        let m = d.getMinutes();
+        let ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
+      }
+      let parts = timeStr.split(':');
+      let h = parseInt(parts[0], 10);
+      let m = parseInt(parts[1], 10);
       let ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12;
       return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
     }
 
     function addMinutes(timeStr, minsToAdd) {
-      if(!timeStr) return "--:--";
-      let [h, m] = timeStr.split(':').map(Number);
-      let date = new Date();
-      date.setHours(h, m + minsToAdd, 0);
-      let newH = date.getHours();
-      let newM = date.getMinutes();
-      return `${newH < 10 ? '0' : ''}${newH}:${newM < 10 ? '0' : ''}${newM}`;
+      if (!timeStr) return "--:--";
+      let h, m;
+      if (typeof timeStr === 'number') {
+        let d = new Date((timeStr + minsToAdd * 60) * 1000);
+        return d.getTime() / 1000;
+      } else {
+        let parts = timeStr.split(':');
+        h = parseInt(parts[0], 10);
+        m = parseInt(parts[1], 10);
+        let date = new Date();
+        date.setHours(h, m + minsToAdd, 0);
+        let newH = date.getHours();
+        let newM = date.getMinutes();
+        return `${newH < 10 ? '0' : ''}${newH}:${newM < 10 ? '0' : ''}${newM}`;
+      }
     }
 
     async function fetchPrayerTimes(zone) {
+      document.getElementById('prayer-list').innerHTML = `<div class="prayer-row"><span class="prayer-name">Fetching times...</span></div>`;
+      
+      // Try primary API endpoint
       try {
         const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
+        if (!res.ok) throw new Error(`HTTP status ${res.status}`);
         const data = await res.json();
-        const today = data.prayerTime[0]; 
+        
+        let times = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
+        if (!times) throw new Error("Invalid response format");
 
-        const dhuha24 = addMinutes(today.syuruk, 28);
+        let fajr = times.fajr || times.subuh;
+        let syuruk = times.syuruk;
+        let dhuhr = times.dhuhr || times.zohor;
+        let asr = times.asr || times.asar;
+        let maghrib = times.maghrib;
+        let isha = times.isha || times.isyak;
 
-        const listHtml = `
-          <div class="prayer-row"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime(today.fajr)}</span></div>
-          <div class="prayer-row"><span class="prayer-name">Syuruk</span><span class="prayer-time">${formatTime(today.syuruk)}</span></div>
-          <div class="prayer-row dhuha"><span class="prayer-name">Dhuha</span><span class="prayer-time">${formatTime(dhuha24)}</span></div>
-          <div class="prayer-row"><span class="prayer-name">Zohor</span><span class="prayer-time">${formatTime(today.dhuhr)}</span></div>
-          <div class="prayer-row"><span class="prayer-name">Asar</span><span class="prayer-time">${formatTime(today.asr)}</span></div>
-          <div class="prayer-row"><span class="prayer-name">Maghrib</span><span class="prayer-time">${formatTime(today.maghrib)}</span></div>
-          <div class="prayer-row"><span class="prayer-name">Isyak</span><span class="prayer-time">${formatTime(today.isha)}</span></div>
-        `;
+        let dhuha = addMinutes(syuruk, 28);
 
-        document.getElementById('prayer-list').innerHTML = listHtml;
-      } catch (err) {
-        document.getElementById('prayer-list').innerHTML = `<div class="prayer-row">Failed to load prayer times. Check network.</div>`;
+        renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha);
+        return;
+      } catch (errPrimary) {
+        console.warn("Primary API failed, trying fallback...", errPrimary);
       }
+
+      // Fallback API endpoint (mpt.i906.my)
+      try {
+        const resFallback = await fetch(`https://mpt.i906.my/api/v2/solat/${zone}`);
+        if (!resFallback.ok) throw new Error(`Fallback HTTP ${resFallback.status}`);
+        const data = await resFallback.json();
+        const times = data.data.times[0]; // Unix timestamps array
+
+        let fajr = times[1];
+        let syuruk = times[2];
+        let dhuha = addMinutes(syuruk, 28);
+        let dhuhr = times[3];
+        let asr = times[4];
+        let maghrib = times[5];
+        let isha = times[6];
+
+        renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha);
+      } catch (errFallback) {
+        document.getElementById('prayer-list').innerHTML = `
+          <div class="error-box">
+            Failed to load prayer times. Check internet connection.<br><br>
+            <small>Details: ${errFallback.message}</small>
+          </div>`;
+      }
+    }
+
+    function renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha) {
+      const listHtml = `
+        <div class="prayer-row"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime(fajr)}</span></div>
+        <div class="prayer-row"><span class="prayer-name">Syuruk</span><span class="prayer-time">${formatTime(syuruk)}</span></div>
+        <div class="prayer-row dhuha"><span class="prayer-name">Dhuha</span><span class="prayer-time">${formatTime(dhuha)}</span></div>
+        <div class="prayer-row"><span class="prayer-name">Zohor</span><span class="prayer-time">${formatTime(dhuhr)}</span></div>
+        <div class="prayer-row"><span class="prayer-name">Asar</span><span class="prayer-time">${formatTime(asr)}</span></div>
+        <div class="prayer-row"><span class="prayer-name">Maghrib</span><span class="prayer-time">${formatTime(maghrib)}</span></div>
+        <div class="prayer-row"><span class="prayer-name">Isyak</span><span class="prayer-time">${formatTime(isha)}</span></div>
+      `;
+      document.getElementById('prayer-list').innerHTML = listHtml;
     }
 
     function changeZone(newZone) {
@@ -125,7 +183,6 @@
       fetchPrayerTimes(newZone);
     }
 
-    // Load saved zone or fallback to SGR01
     const savedZone = localStorage.getItem('selectedZone') || 'SGR01';
     document.getElementById('zone-select').value = savedZone;
     fetchPrayerTimes(savedZone);
