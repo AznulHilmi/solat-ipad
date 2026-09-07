@@ -5,16 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Solat Saya</title>
+  <title>Solat Saya - Smart Dashboard</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.75) 100%);
-      --accent-green: #2ecc71;
-      --accent-amber: #f39c12;
-      --accent-red: #e74c3c;
-      --text-main: #FFFFFF;
-      --text-sub: #e0e0e0;
-      --panel-bg: rgba(20, 20, 20, 0.85);
+      --bg-gradient: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+      --accent-green: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --text-main: #ffffff;
+      --text-sub: #cbd5e1;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,194 +25,225 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       min-height: 100vh;
-      background-color: #000;
+      background: var(--bg-gradient);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       transition: background-image 1.5s ease-in-out;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-      padding-bottom: 30px;
+      padding-top: 80px;
+      padding-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     /* Top Bar */
     .address-bar {
       width: 100%;
-      padding: 12px 20px;
-      background-color: rgba(0,0,0,0.8);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      padding: 14px 30px;
+      background-color: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
+      border-bottom: 1px solid var(--panel-border);
       position: fixed;
       top: 0;
       z-index: 100;
     }
     .address-info p {
-      color: var(--text-main);
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      color: var(--accent-cyan);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
     }
     .address-info span {
       display: block;
       color: var(--text-sub);
-      font-size: 0.8rem;
-      margin-top: 2px;
+      font-size: 0.85rem;
     }
 
     .audio-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
-      outline: none;
       transition: all 0.3s ease;
-      text-shadow: none;
     }
     .audio-btn.enabled {
-      background: var(--accent-green);
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
       color: #000;
-      border-color: var(--accent-green);
-      box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+      border: none;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
     }
 
-    /* Main Container */
-    .main-container {
+    /* Full-Width Grid Dashboard Layout */
+    .dashboard-grid {
       width: 100%;
-      max-width: 500px;
+      max-width: 1400px;
+      padding: 0 25px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-top: 75px;
-      padding: 15px;
-      gap: 15px;
+      gap: 25px;
     }
 
-    /* Time & Date Header Panel */
-    .datetime-panel {
-      width: 100%;
+    /* Common Card Style */
+    .card {
       background: var(--panel-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 15px 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 25px;
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Time & Date Panel */
+    .datetime-card {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.15);
     }
     .live-clock {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--accent-green);
+      font-size: 3.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       font-variant-numeric: tabular-nums;
+      letter-spacing: -1px;
     }
     .date-row {
       display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 8px;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .hijri-date { font-weight: 600; color: #f1c40f; }
+    .date-badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .date-badge.hijri {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
 
     /* Countdown Panel */
-    .countdown-panel {
-      width: 100%;
-      background-color: var(--panel-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 15px;
+    .countdown-card {
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
     }
-    .countdown-label { font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
-    .countdown-timer { font-size: 2.4rem; font-weight: 800; color: var(--accent-green); margin: 4px 0; font-variant-numeric: tabular-nums; }
-    .countdown-timer.imminent { color: var(--accent-red); animation: blink 1s step-end infinite; }
+    .countdown-label { font-size: 1rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 2px; }
+    .countdown-timer { 
+      font-size: 3.2rem; 
+      font-weight: 900; 
+      color: var(--accent-green); 
+      margin: 10px 0; 
+      font-variant-numeric: tabular-nums; 
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+    .countdown-timer.imminent { color: var(--accent-red); animation: blink 1s infinite; text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
     
-    @keyframes blink { 50% { opacity: 0.7; } }
+    @keyframes blink { 50% { opacity: 0.6; } }
 
-    /* Solat List Panel */
-    .card {
-      background: var(--panel-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 15px;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-    
+    /* Prayer Times List */
     select {
-      background: rgba(35, 35, 35, 0.9);
-      color: #FFF;
-      border: 1px solid #555;
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #fff;
+      border: 1px solid var(--accent-purple);
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 12px;
       width: 100%;
       outline: none;
-      margin-bottom: 15px;
-      -webkit-appearance: none;
+      margin-bottom: 20px;
+      cursor: pointer;
     }
     
     .prayer-row {
       display: flex;
       justify-content: space-between;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.03);
-      font-size: 1.05rem;
+      align-items: center;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 1.15rem;
       transition: all 0.3s ease;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
     
     .prayer-row.active {
-      background-color: rgba(46, 204, 113, 0.25);
-      border-left: 5px solid var(--accent-green);
-      transform: scale(1.02);
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.1));
+      border-left: 6px solid var(--accent-green);
+      transform: translateX(5px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .prayer-row.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.15); }
-    .prayer-row.active.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.3); }
+    .prayer-row.dhuha { border-left: 6px solid var(--accent-amber); background: rgba(245, 158, 11, 0.12); }
+    .prayer-row.active.dhuha { border-left: 6px solid var(--accent-amber); background: rgba(245, 158, 11, 0.25); }
     
-    .prayer-name { font-weight: 600; }
-    .prayer-time { font-weight: 700; }
+    .prayer-name { font-weight: 700; }
+    .prayer-time { font-weight: 800; color: #fff; }
 
     /* Quran & Hadith Panel */
     .inspiration-card {
-      background: var(--panel-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 16px;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.15);
-      line-height: 1.5;
+      background: linear-gradient(135deg, rgba(6, 78, 59, 0.5), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      line-height: 1.6;
+    }
+    .inspiration-header {
+      font-size: 0.9rem;
+      color: var(--accent-green);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 15px;
     }
     .arabic-text {
-      font-size: 1.25rem;
+      font-size: 1.8rem;
       direction: rtl;
       text-align: right;
-      color: #f1c40f;
-      margin-bottom: 8px;
+      color: #fde047;
+      margin-bottom: 12px;
       font-family: serif;
+      line-height: 1.8;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
     .translation-text {
-      font-size: 0.88rem;
+      font-size: 1.05rem;
       color: var(--text-sub);
       font-style: italic;
     }
@@ -219,38 +253,40 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.88);
+      background: rgba(2, 6, 23, 0.92);
       z-index: 1000;
       justify-content: center;
       align-items: center;
       padding: 20px;
     }
     .alarm-box {
-      background: rgba(30, 30, 30, 0.95);
-      border-radius: 20px;
-      padding: 25px;
+      background: #0f172a;
+      border-radius: 24px;
+      padding: 35px;
       width: 100%;
-      max-width: 360px;
+      max-width: 420px;
       text-align: center;
       border: 2px solid var(--accent-green);
-      box-shadow: 0 0 30px rgba(46, 204, 113, 0.4);
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
     }
-    .alarm-title { font-size: 1.5rem; font-weight: 800; color: var(--accent-green); margin-bottom: 8px; }
-    .alarm-msg { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px; }
-    .alarm-actions { display: flex; gap: 10px; justify-content: center; }
+    .alarm-title { font-size: 2rem; font-weight: 900; color: var(--accent-green); margin-bottom: 10px; }
+    .alarm-msg { font-size: 1.1rem; color: var(--text-sub); margin-bottom: 25px; }
+    .alarm-actions { display: flex; gap: 15px; }
     .btn {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 10px;
-      font-weight: 700;
+      border-radius: 12px;
+      font-weight: 800;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      transition: transform 0.2s;
     }
+    .btn:active { transform: scale(0.96); }
     .btn-off { background: var(--accent-red); color: white; }
     .btn-snooze { background: var(--accent-amber); color: white; }
 
-    .error-box { background: #3E1010; color: #FF9999; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
+    .error-box { background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 15px; border-radius: 12px; font-size: 0.95rem; }
   </style>
 </head>
 <body>
@@ -264,43 +300,51 @@
     <button class="audio-btn" id="audio-toggle" onclick="toggleAudio()">🔊 Azan: OFF</button>
   </div>
 
-  <div class="main-container">
+  <div class="dashboard-grid">
     
-    <!-- Time & Date Display -->
-    <div class="datetime-panel">
-      <div class="live-clock" id="live-clock">00:00:00 AM</div>
-      <div class="date-row">
-        <span id="gregorian-date">Loading date...</span>
-        <span class="hijri-date" id="hijri-date">Loading Hijri...</span>
-      </div>
-    </div>
-
-    <!-- Countdown Panel -->
-    <div class="countdown-panel">
-      <div class="countdown-label" id="cd-label">Menjelang Solat</div>
-      <div class="countdown-timer" id="cd-time">--:--:--</div>
-    </div>
-
-    <!-- Solat Schedule -->
-    <div class="card">
-      <select id="zone-select" onchange="changeZone(this.value)">
-        <option value="SGR01">Selangor / KL (SGR01)</option>
-        <option value="WLY01">KL / Putrajaya (WLY01)</option>
-        <option value="JHR02">Johor Bahru (JHR02)</option>
-        <option value="PNG01">Pulau Pinang (PNG01)</option>
-        <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
-        <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
-      </select>
+    <!-- LEFT COLUMN: Time, Countdown & Inspiration -->
+    <div class="column">
       
-      <div id="prayer-list">
-        <div class="prayer-row"><span class="prayer-name">Loading...</span></div>
+      <!-- Big Time & Date Display -->
+      <div class="card datetime-card">
+        <div class="live-clock" id="live-clock">00:00:00 AM</div>
+        <div class="date-row">
+          <div class="date-badge" id="gregorian-date">Loading date...</div>
+          <div class="date-badge hijri" id="hijri-date">Loading Hijri...</div>
+        </div>
       </div>
+
+      <!-- Live Countdown Panel -->
+      <div class="card countdown-card">
+        <div class="countdown-label" id="cd-label">Menjelang Solat</div>
+        <div class="countdown-timer" id="cd-time">--:--:--</div>
+      </div>
+
+      <!-- Bigger Quranic Verse & Inspiration Section -->
+      <div class="card inspiration-card">
+        <div class="inspiration-header">✨ Daily Verse</div>
+        <div class="arabic-text" id="inspiration-arabic">إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوَاقُوتًا</div>
+        <div class="translation-text" id="inspiration-trans">"Indeed, prayer has been decreed upon the believers a decree of specified times." (Surah An-Nisa 4:103)</div>
+      </div>
+
     </div>
 
-    <!-- Quranic Verse & Hadith Section -->
-    <div class="inspiration-card">
-      <div class="arabic-text" id="inspiration-arabic">إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوَاقُوتًا</div>
-      <div class="translation-text" id="inspiration-trans">"Indeed, prayer has been decreed upon the believers a decree of specified times." (Surah An-Nisa 4:103)</div>
+    <!-- RIGHT COLUMN: Solat Schedule -->
+    <div class="column">
+      <div class="card">
+        <select id="zone-select" onchange="changeZone(this.value)">
+          <option value="SGR01">Selangor / KL (SGR01)</option>
+          <option value="WLY01">KL / Putrajaya (WLY01)</option>
+          <option value="JHR02">Johor Bahru (JHR02)</option>
+          <option value="PNG01">Pulau Pinang (PNG01)</option>
+          <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
+          <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
+        </select>
+        
+        <div id="prayer-list">
+          <div class="prayer-row"><span class="prayer-name">Fetching prayer times...</span></div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -334,7 +378,7 @@
     function updateClockAndDates() {
       const now = new Date();
       document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-      document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
     }
     setInterval(updateClockAndDates, 1000);
     updateClockAndDates();
@@ -486,7 +530,7 @@
         updateLiveStatus();
         return;
       } catch (e1) {
-        console.warn("Primary API failed, trying proxy...", e1);
+        console.warn("Primary API failed, trying MPT...", e1);
       }
 
       try {
@@ -596,11 +640,11 @@
 
     // --- INITIALIZATION ---
     function changeZone(newZone) {
-      localStorage.setItem('selectedZone_v5', newZone);
+      localStorage.setItem('selectedZone_v6', newZone);
       fetchPrayerTimes(newZone);
     }
 
-    const savedZone = localStorage.getItem('selectedZone_v5') || 'SGR01';
+    const savedZone = localStorage.getItem('selectedZone_v6') || 'SGR01';
     document.getElementById('zone-select').value = savedZone;
     fetchPrayerTimes(savedZone);
 
