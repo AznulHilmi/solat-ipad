@@ -27,11 +27,11 @@
       align-items: center;
       justify-content: space-between;
       min-height: 100vh;
-      background-color: #000; /* Fallback */
+      background-color: #000;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: background-image 1.5s ease-in-out; /* Smooth fade between images */
+      transition: background-image 1.5s ease-in-out;
     }
 
     /* Address Bar at Top */
@@ -40,7 +40,7 @@
       padding: 15px 20px;
       background-color: rgba(0,0,0,0.6);
       backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px); /* Safari support */
+      -webkit-backdrop-filter: blur(5px);
       text-align: center;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       position: fixed;
@@ -70,7 +70,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-top: 75px; /* Leave space for address bar */
+      margin-top: 75px;
       padding: 20px;
     }
 
@@ -85,7 +85,7 @@
       margin-bottom: 20px;
       text-align: center;
       border: 1px solid rgba(255,255,255,0.1);
-      animation: pulse 10s infinite; /* Subtle lively pulse */
+      animation: pulse 10s infinite;
     }
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
@@ -106,7 +106,6 @@
       width: 100%;
       border: 1px solid rgba(255,255,255,0.05);
     }
-    h1 { text-align: center; font-size: 1.6rem; margin-bottom: 8px; color: var(--accent-green); }
     
     .select-container { margin-bottom: 20px; text-align: center; }
     select {
@@ -118,7 +117,7 @@
       border-radius: 8px;
       width: 100%;
       outline: none;
-      -webkit-appearance: none; /* Modern look on old Safari */
+      -webkit-appearance: none;
     }
     
     .prayer-row {
@@ -138,7 +137,7 @@
     .prayer-row.active {
       background-color: rgba(46, 204, 113, 0.2);
       border-left: 5px solid var(--accent-green);
-      transform: scale(1.03); /* Pops out slightly */
+      transform: scale(1.03);
     }
     .prayer-row.active::after {
       content: '';
@@ -163,15 +162,14 @@
   <!-- Address Bar -->
   <div class="address-bar">
     <p>RUMAH SAYA</p>
-    <!-- REPLACE THE LINE BELOW WITH YOUR ACTUAL ADDRESS -->
-    <span>No. 123, Jalan Subang Utama, 47500 Subang Jaya, Selangor</span>
+    <span>Subang Jaya, Selangor</span>
   </div>
 
   <div class="main-container">
     
-    <!-- Countdown -->
+    <!-- Countdown Panel -->
     <div class="countdown-panel">
-      <div class="countdown-label" id="cd-label">Next Solat</div>
+      <div class="countdown-label" id="cd-label">Menjelang Solat</div>
       <div class="countdown-timer" id="cd-time">--:--:--</div>
     </div>
 
@@ -179,12 +177,12 @@
     <div class="card">
       <div class="select-container">
         <select id="zone-select" onchange="changeZone(this.value)">
-          <option value="SGR01">Gombak, Petaling, Sepang</option>
-          <option value="WLY01">Kuala Lumpur, Putrajaya</option>
-          <option value="JHR02">Johor Bahru, Kota Tinggi</option>
-          <option value="PNG01">Pulau Pinang</option>
-          <option value="PRK02">Ipoh, Perak Tengah</option>
-          <option value="KDH01">Kota Setar</option>
+          <option value="SGR01">Selangor / KL (SGR01)</option>
+          <option value="WLY01">KL / Putrajaya (WLY01)</option>
+          <option value="JHR02">Johor Bahru (JHR02)</option>
+          <option value="PNG01">Pulau Pinang (PNG01)</option>
+          <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
+          <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
         </select>
       </div>
       
@@ -195,31 +193,19 @@
   </div>
 
   <script>
-    // --- BACKGROUND IMAGE CYCLE ---
-    // Change these filenames to match images you upload to your GitHub repository
-    const backgroundImages = [
-      'bg1.jpg', // Mosque/Calm
-      'bg2.jpg', // Family/House
-      'bg3.jpg'  // House/Alternative
-    ];
-
-    // REPLACE 'YOUR-GITHUB-USERNAME' BELOW!
-    const repoURL = 'https://YOUR-GITHUB-USERNAME.github.io/solat-ipad/';
-
+    // --- BACKGROUND IMAGE ROTATION ---
+    const backgroundImages = ['bg1.jpg', 'bg2.jpg', 'bg3.jpg'];
     let bgIndex = 0;
+
     function cycleBackground() {
-      // Create full URL to image hosted on GitHub Pages
-      const fullImageUrl = repoURL + backgroundImages[bgIndex];
-      // Set background image and apply gradient overlay for text readability
-      document.body.style.backgroundImage = `var(--bg-gradient), url('${fullImageUrl}')`;
-      
+      const imgName = backgroundImages[bgIndex];
+      document.body.style.backgroundImage = `var(--bg-gradient), url('${imgName}')`;
       bgIndex = (bgIndex + 1) % backgroundImages.length;
     }
-    // Change image every 15 seconds
-    cycleBackground(); // Initial set
+    cycleBackground();
     setInterval(cycleBackground, 15000); 
 
-    // --- TIME PARSING / MATH ---
+    // --- TIME PARSING & MATH ---
     function formatTime12h(unixTimestamp) {
       if (!unixTimestamp) return "--:--";
       let d = new Date(unixTimestamp * 1000);
@@ -234,35 +220,90 @@
       return unixTimestamp + (minsToAdd * 60);
     }
 
-    // --- DATA FETCHING ---
+    // --- MULTI-ENDPOINT DATA FETCHING ---
     let globalPrayerTimes = null;
 
     async function fetchPrayerTimes(zone) {
       document.getElementById('prayer-list').innerHTML = `<div class="prayer-row"><span class="prayer-name">Fetching times...</span></div>`;
       
+      function toUnix(timeStr) {
+        if (typeof timeStr === 'number') return timeStr;
+        let [h, m] = timeStr.split(':').map(Number);
+        let d = new Date();
+        d.setHours(h, m, 0, 0);
+        return Math.floor(d.getTime() / 1000);
+      }
+
+      // Endpoint 1: Primary API
       try {
-        // Fallback endpoint is generally safer on old iPads due to HTTPS certificates
-        const res = await fetch(`https://mpt.i906.my/api/v2/solat/${zone}`);
+        const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const times = data.data.times[0]; // Unix timestamps
+        let p = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
+        if (!p) throw new Error("Invalid structure");
+
+        let syuruk = toUnix(p.syuruk);
+        globalPrayerTimes = {
+          Subuh: toUnix(p.fajr || p.subuh),
+          Syuruk: syuruk,
+          Dhuha: addMinutes(syuruk, 28),
+          Zohor: toUnix(p.dhuhr || p.zohor),
+          Asar: toUnix(p.asr || p.asar),
+          Maghrib: toUnix(p.maghrib),
+          Isyak: toUnix(p.isha || p.isyak)
+        };
+        renderTimesList();
+        return;
+      } catch (e1) {
+        console.warn("Primary API failed, trying CORS proxy...", e1);
+      }
+
+      // Endpoint 2: Proxy Fallback
+      try {
+        const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://api.waktusolat.app/v2/solat/${zone}`);
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error(`Proxy HTTP ${res.status}`);
+        const data = await res.json();
+        let p = data.prayers ? data.prayers[0] : data.prayerTime[0];
+
+        let syuruk = toUnix(p.syuruk);
+        globalPrayerTimes = {
+          Subuh: toUnix(p.fajr || p.subuh),
+          Syuruk: syuruk,
+          Dhuha: addMinutes(syuruk, 28),
+          Zohor: toUnix(p.dhuhr || p.zohor),
+          Asar: toUnix(p.asr || p.asar),
+          Maghrib: toUnix(p.maghrib),
+          Isyak: toUnix(p.isha || p.isyak)
+        };
+        renderTimesList();
+        return;
+      } catch (e2) {
+        console.warn("Proxy failed, trying MPT v2 prayer endpoint...", e2);
+      }
+
+      // Endpoint 3: MPT Prayer API
+      try {
+        const res = await fetch(`https://mpt.i906.my/api/prayer/${zone}`);
+        if (!res.ok) throw new Error(`MPT HTTP ${res.status}`);
+        const data = await res.json();
+        const times = data.data.times[0];
 
         globalPrayerTimes = {
-          raw: times, // Store raw timestamps for math
           Subuh: times[1],
           Syuruk: times[2],
-          Dhuha: addMinutes(times[2], 28), // Compute Dhuha (+28m)
+          Dhuha: addMinutes(times[2], 28),
           Zohor: times[3],
           Asar: times[4],
           Maghrib: times[5],
           Isyak: times[6]
         };
-
         renderTimesList();
-      } catch (err) {
+      } catch (e3) {
         document.getElementById('prayer-list').innerHTML = `
           <div class="error-box">
-            Connection Error. Showing saved times (if any).<br>
-            <small>${err.message}</small>
+            Connection Error. Unable to fetch prayer times.<br>
+            <small>Details: ${e3.message}</small>
           </div>`;
       }
     }
@@ -270,7 +311,6 @@
     // --- INTERFACE RENDERING ---
     function renderTimesList() {
       if (!globalPrayerTimes) return;
-
       const p = globalPrayerTimes;
       const listHtml = `
         <div class="prayer-row" id="row-Subuh"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime12h(p.Subuh)}</span></div>
@@ -284,35 +324,23 @@
       document.getElementById('prayer-list').innerHTML = listHtml;
     }
 
-    // --- LIVE UPDATE LOOP (HIGHLIGHTING + COUNTDOWN) ---
+    // --- LIVE STATUS (HIGHLIGHTING & COUNTDOWN) ---
     function updateLiveStatus() {
       if (!globalPrayerTimes) return;
 
-      const now = Math.floor(Date.now() / 1000); // Current Unix time (seconds)
+      const now = Math.floor(Date.now() / 1000);
       const p = globalPrayerTimes;
       
-      // Reset highlighting
-      const rows = document.querySelectorAll('.prayer-row');
-      rows.forEach(row => row.classList.remove('active'));
+      document.querySelectorAll('.prayer-row').forEach(row => row.classList.remove('active'));
 
       let nextPrayerName = '';
       let nextPrayerTime = null;
       let activePrayerName = '';
 
-      // Determine the active prayer and the next prayer
-      // Checks sequentially: which range does 'now' fall into?
       if (now >= p.Isyak || now < p.Subuh) {
         activePrayerName = 'Isyak';
         nextPrayerName = 'Subuh';
-        // Need to handle midnight crossover for countdown
-        if (now >= p.Isyak) {
-          // It's after Isyak today, countdown to Subuh tomorrow (+24h approximately)
-          // The API gives times for today, we estimate tomorrow's subuh by +24h
-          nextPrayerTime = p.Subuh + (24 * 60 * 60); 
-        } else {
-          // It's very early morning, countdown to Subuh today
-          nextPrayerTime = p.Subuh;
-        }
+        nextPrayerTime = now >= p.Isyak ? p.Subuh + 86400 : p.Subuh;
       } else if (now < p.Syuruk) { activePrayerName = 'Subuh'; nextPrayerName = 'Syuruk'; nextPrayerTime = p.Syuruk; }
       else if (now < p.Dhuha) { activePrayerName = 'Syuruk'; nextPrayerName = 'Dhuha'; nextPrayerTime = p.Dhuha; }
       else if (now < p.Zohor) { activePrayerName = 'Dhuha'; nextPrayerName = 'Zohor'; nextPrayerTime = p.Zohor; }
@@ -320,33 +348,21 @@
       else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTime = p.Maghrib; }
       else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTime = p.Isyak; }
 
-      // Highlight the active prayer row
       const activeRow = document.getElementById(`row-${activePrayerName}`);
       if (activeRow) activeRow.classList.add('active');
 
-      // Update Countdown Panel
       const labelEl = document.getElementById('cd-label');
       const timeEl = document.getElementById('cd-time');
       
       labelEl.innerText = `Menjelang ${nextPrayerName}`;
       
-      // Calculate countdown duration
-      let diff = nextPrayerTime - now;
-      if (diff < 0) diff = 0; // Prevent negative countdowns on estimations
-
-      // Format countdown time HH:MM:SS
+      let diff = Math.max(0, nextPrayerTime - now);
       let h = Math.floor(diff / 3600);
       let m = Math.floor((diff % 3600) / 60);
       let s = Math.floor(diff % 60);
-      
-      // Padding with zeros (0:03 -> 00:03)
-      const fmtH = String(h).padStart(2, '0');
-      const fmtM = String(m).padStart(2, '0');
-      const fmtS = String(s).padStart(2, '0');
 
-      timeEl.innerText = `${fmtH}:${fmtM}:${fmtS}`;
+      timeEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-      // Lively change: turn countdown red if less than 10 minutes remaining
       if (diff <= 600) {
         timeEl.classList.add('imminent');
       } else {
@@ -354,19 +370,16 @@
       }
     }
 
-    // --- INITIALIZATION / SETTINGS ---
+    // --- INITIALIZATION ---
     function changeZone(newZone) {
-      localStorage.setItem('selectedZone_v2', newZone);
+      localStorage.setItem('selectedZone_v3', newZone);
       fetchPrayerTimes(newZone);
     }
 
-    const savedZone = localStorage.getItem('selectedZone_v2') || 'SGR01';
+    const savedZone = localStorage.getItem('selectedZone_v3') || 'SGR01';
     document.getElementById('zone-select').value = savedZone;
-    
-    // Initial fetch
     fetchPrayerTimes(savedZone);
 
-    // Run the live status loop every 1 second (essential for countdowns)
     setInterval(updateLiveStatus, 1000);
   </script>
 </body>
