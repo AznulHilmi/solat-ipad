@@ -5,187 +5,369 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Waktu Solat iPad</title>
+  <title>Solat Saya</title>
   <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, rgba(18,18,18,0.85) 0%, rgba(30,30,30,0.95) 100%);
+      --accent-green: #2ecc71;
+      --accent-amber: #f39c12;
+      --accent-red: #e74c3c;
+      --text-main: #FFFFFF;
+      --text-sub: #bdc3c7;
+      --panel-bg: rgba(42, 42, 42, 0.7);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #121212;
-      color: #FFFFFF;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 100vh;
+      background-color: #000; /* Fallback */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1.5s ease-in-out; /* Smooth fade between images */
+    }
+
+    /* Address Bar at Top */
+    .address-bar {
+      width: 100%;
+      padding: 15px 20px;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px); /* Safari support */
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: fixed;
+      top: 0;
+      z-index: 100;
+    }
+    .address-bar p {
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .address-bar span {
+      display: block;
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    /* Main Container with Margin for Fixed Header */
+    .main-container {
+      flex: 1;
+      width: 100%;
+      max-width: 500px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      margin-top: 75px; /* Leave space for address bar */
       padding: 20px;
     }
-    .card {
-      background: #1E1E1E;
-      border-radius: 16px;
-      padding: 24px;
+
+    /* Countdown Panel */
+    .countdown-panel {
       width: 100%;
-      max-width: 500px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      background-color: rgba(18, 18, 18, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: pulse 10s infinite; /* Subtle lively pulse */
     }
-    h1 { text-align: center; font-size: 1.8rem; margin-bottom: 8px; color: #4CAF50; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(46, 204, 113, 0.6); }
+    }
+    .countdown-label { font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
+    .countdown-timer { font-size: 2.5rem; font-weight: 800; color: var(--accent-green); margin: 5px 0; font-variant-numeric: tabular-nums; }
+    .countdown-timer.imminent { color: var(--accent-red); animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0.7; } }
+
+    /* Solat List Panel */
+    .card {
+      background: rgba(30, 30, 30, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    h1 { text-align: center; font-size: 1.6rem; margin-bottom: 8px; color: var(--accent-green); }
+    
     .select-container { margin-bottom: 20px; text-align: center; }
     select {
-      background: #2A2A2A;
+      background: var(--panel-bg);
       color: #FFF;
       border: 1px solid #444;
-      padding: 8px 12px;
+      padding: 10px 12px;
       font-size: 1rem;
       border-radius: 8px;
       width: 100%;
       outline: none;
+      -webkit-appearance: none; /* Modern look on old Safari */
     }
+    
     .prayer-row {
       display: flex;
       justify-content: space-between;
-      padding: 12px 16px;
-      margin-bottom: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
       border-radius: 8px;
-      background: #2A2A2A;
-      font-size: 1.1rem;
+      background: var(--panel-bg);
+      font-size: 1.15rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .prayer-row.dhuha { border-left: 4px solid #FFC107; background: #332B00; }
+    
+    /* Highlight Active Prayer Row */
+    .prayer-row.active {
+      background-color: rgba(46, 204, 113, 0.2);
+      border-left: 5px solid var(--accent-green);
+      transform: scale(1.03); /* Pops out slightly */
+    }
+    .prayer-row.active::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      animation: shine 3s infinite;
+    }
+    @keyframes shine { 100% { transform: translateX(100%); } }
+
+    .prayer-row.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.1); }
+    .prayer-row.active.dhuha { border-left: 5px solid var(--accent-amber); background-color: rgba(243, 156, 18, 0.25); }
+    
     .prayer-name { font-weight: 600; }
-    .prayer-time { color: #E0E0E0; }
+    .prayer-time { color: var(--text-main); font-weight: 700; }
+
     .error-box { background: #3E1010; color: #FF9999; padding: 12px; border-radius: 8px; font-size: 0.9rem; word-break: break-all; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>Waktu Solat</h1>
+  <!-- Address Bar -->
+  <div class="address-bar">
+    <p>RUMAH SAYA</p>
+    <!-- REPLACE THE LINE BELOW WITH YOUR ACTUAL ADDRESS -->
+    <span>No. 123, Jalan Subang Utama, 47500 Subang Jaya, Selangor</span>
+  </div>
+
+  <div class="main-container">
     
-    <div class="select-container">
-      <select id="zone-select" onchange="changeZone(this.value)">
-        <option value="SGR01">Selangor / KL (SGR01)</option>
-        <option value="WLY01">KL / Putrajaya (WLY01)</option>
-        <option value="JHR02">Johor Bahru (JHR02)</option>
-        <option value="PNG01">Pulau Pinang (PNG01)</option>
-        <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
-        <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
-      </select>
+    <!-- Countdown -->
+    <div class="countdown-panel">
+      <div class="countdown-label" id="cd-label">Next Solat</div>
+      <div class="countdown-timer" id="cd-time">--:--:--</div>
     </div>
-    
-    <div id="prayer-list">
-      <div class="prayer-row"><span class="prayer-name">Loading times...</span></div>
+
+    <!-- Solat List -->
+    <div class="card">
+      <div class="select-container">
+        <select id="zone-select" onchange="changeZone(this.value)">
+          <option value="SGR01">Gombak, Petaling, Sepang</option>
+          <option value="WLY01">Kuala Lumpur, Putrajaya</option>
+          <option value="JHR02">Johor Bahru, Kota Tinggi</option>
+          <option value="PNG01">Pulau Pinang</option>
+          <option value="PRK02">Ipoh, Perak Tengah</option>
+          <option value="KDH01">Kota Setar</option>
+        </select>
+      </div>
+      
+      <div id="prayer-list">
+        <div class="prayer-row"><span class="prayer-name">Loading...</span></div>
+      </div>
     </div>
   </div>
 
   <script>
-    function formatTime(timeStr) {
-      if (!timeStr) return "--:--";
-      // Handle epoch timestamps or HH:MM strings
-      if (typeof timeStr === 'number') {
-        let d = new Date(timeStr * 1000);
-        let h = d.getHours();
-        let m = d.getMinutes();
-        let ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
-      }
-      let parts = timeStr.split(':');
-      let h = parseInt(parts[0], 10);
-      let m = parseInt(parts[1], 10);
+    // --- BACKGROUND IMAGE CYCLE ---
+    // Change these filenames to match images you upload to your GitHub repository
+    const backgroundImages = [
+      'bg1.jpg', // Mosque/Calm
+      'bg2.jpg', // Family/House
+      'bg3.jpg'  // House/Alternative
+    ];
+
+    // REPLACE 'YOUR-GITHUB-USERNAME' BELOW!
+    const repoURL = 'https://YOUR-GITHUB-USERNAME.github.io/solat-ipad/';
+
+    let bgIndex = 0;
+    function cycleBackground() {
+      // Create full URL to image hosted on GitHub Pages
+      const fullImageUrl = repoURL + backgroundImages[bgIndex];
+      // Set background image and apply gradient overlay for text readability
+      document.body.style.backgroundImage = `var(--bg-gradient), url('${fullImageUrl}')`;
+      
+      bgIndex = (bgIndex + 1) % backgroundImages.length;
+    }
+    // Change image every 15 seconds
+    cycleBackground(); // Initial set
+    setInterval(cycleBackground, 15000); 
+
+    // --- TIME PARSING / MATH ---
+    function formatTime12h(unixTimestamp) {
+      if (!unixTimestamp) return "--:--";
+      let d = new Date(unixTimestamp * 1000);
+      let h = d.getHours();
+      let m = d.getMinutes();
       let ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12;
       return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
     }
 
-    function addMinutes(timeStr, minsToAdd) {
-      if (!timeStr) return "--:--";
-      let h, m;
-      if (typeof timeStr === 'number') {
-        let d = new Date((timeStr + minsToAdd * 60) * 1000);
-        return d.getTime() / 1000;
-      } else {
-        let parts = timeStr.split(':');
-        h = parseInt(parts[0], 10);
-        m = parseInt(parts[1], 10);
-        let date = new Date();
-        date.setHours(h, m + minsToAdd, 0);
-        let newH = date.getHours();
-        let newM = date.getMinutes();
-        return `${newH < 10 ? '0' : ''}${newH}:${newM < 10 ? '0' : ''}${newM}`;
-      }
+    function addMinutes(unixTimestamp, minsToAdd) {
+      return unixTimestamp + (minsToAdd * 60);
     }
+
+    // --- DATA FETCHING ---
+    let globalPrayerTimes = null;
 
     async function fetchPrayerTimes(zone) {
       document.getElementById('prayer-list').innerHTML = `<div class="prayer-row"><span class="prayer-name">Fetching times...</span></div>`;
       
-      // Try primary API endpoint
       try {
-        const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
-        if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+        // Fallback endpoint is generally safer on old iPads due to HTTPS certificates
+        const res = await fetch(`https://mpt.i906.my/api/v2/solat/${zone}`);
         const data = await res.json();
-        
-        let times = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
-        if (!times) throw new Error("Invalid response format");
+        const times = data.data.times[0]; // Unix timestamps
 
-        let fajr = times.fajr || times.subuh;
-        let syuruk = times.syuruk;
-        let dhuhr = times.dhuhr || times.zohor;
-        let asr = times.asr || times.asar;
-        let maghrib = times.maghrib;
-        let isha = times.isha || times.isyak;
+        globalPrayerTimes = {
+          raw: times, // Store raw timestamps for math
+          Subuh: times[1],
+          Syuruk: times[2],
+          Dhuha: addMinutes(times[2], 28), // Compute Dhuha (+28m)
+          Zohor: times[3],
+          Asar: times[4],
+          Maghrib: times[5],
+          Isyak: times[6]
+        };
 
-        let dhuha = addMinutes(syuruk, 28);
-
-        renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha);
-        return;
-      } catch (errPrimary) {
-        console.warn("Primary API failed, trying fallback...", errPrimary);
-      }
-
-      // Fallback API endpoint (mpt.i906.my)
-      try {
-        const resFallback = await fetch(`https://mpt.i906.my/api/v2/solat/${zone}`);
-        if (!resFallback.ok) throw new Error(`Fallback HTTP ${resFallback.status}`);
-        const data = await resFallback.json();
-        const times = data.data.times[0]; // Unix timestamps array
-
-        let fajr = times[1];
-        let syuruk = times[2];
-        let dhuha = addMinutes(syuruk, 28);
-        let dhuhr = times[3];
-        let asr = times[4];
-        let maghrib = times[5];
-        let isha = times[6];
-
-        renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha);
-      } catch (errFallback) {
+        renderTimesList();
+      } catch (err) {
         document.getElementById('prayer-list').innerHTML = `
           <div class="error-box">
-            Failed to load prayer times. Check internet connection.<br><br>
-            <small>Details: ${errFallback.message}</small>
+            Connection Error. Showing saved times (if any).<br>
+            <small>${err.message}</small>
           </div>`;
       }
     }
 
-    function renderTimes(fajr, syuruk, dhuha, dhuhr, asr, maghrib, isha) {
+    // --- INTERFACE RENDERING ---
+    function renderTimesList() {
+      if (!globalPrayerTimes) return;
+
+      const p = globalPrayerTimes;
       const listHtml = `
-        <div class="prayer-row"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime(fajr)}</span></div>
-        <div class="prayer-row"><span class="prayer-name">Syuruk</span><span class="prayer-time">${formatTime(syuruk)}</span></div>
-        <div class="prayer-row dhuha"><span class="prayer-name">Dhuha</span><span class="prayer-time">${formatTime(dhuha)}</span></div>
-        <div class="prayer-row"><span class="prayer-name">Zohor</span><span class="prayer-time">${formatTime(dhuhr)}</span></div>
-        <div class="prayer-row"><span class="prayer-name">Asar</span><span class="prayer-time">${formatTime(asr)}</span></div>
-        <div class="prayer-row"><span class="prayer-name">Maghrib</span><span class="prayer-time">${formatTime(maghrib)}</span></div>
-        <div class="prayer-row"><span class="prayer-name">Isyak</span><span class="prayer-time">${formatTime(isha)}</span></div>
+        <div class="prayer-row" id="row-Subuh"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime12h(p.Subuh)}</span></div>
+        <div class="prayer-row" id="row-Syuruk"><span class="prayer-name">Syuruk</span><span class="prayer-time">${formatTime12h(p.Syuruk)}</span></div>
+        <div class="prayer-row dhuha" id="row-Dhuha"><span class="prayer-name">Dhuha</span><span class="prayer-time">${formatTime12h(p.Dhuha)}</span></div>
+        <div class="prayer-row" id="row-Zohor"><span class="prayer-name">Zohor</span><span class="prayer-time">${formatTime12h(p.Zohor)}</span></div>
+        <div class="prayer-row" id="row-Asar"><span class="prayer-name">Asar</span><span class="prayer-time">${formatTime12h(p.Asar)}</span></div>
+        <div class="prayer-row" id="row-Maghrib"><span class="prayer-name">Maghrib</span><span class="prayer-time">${formatTime12h(p.Maghrib)}</span></div>
+        <div class="prayer-row" id="row-Isyak"><span class="prayer-name">Isyak</span><span class="prayer-time">${formatTime12h(p.Isyak)}</span></div>
       `;
       document.getElementById('prayer-list').innerHTML = listHtml;
     }
 
+    // --- LIVE UPDATE LOOP (HIGHLIGHTING + COUNTDOWN) ---
+    function updateLiveStatus() {
+      if (!globalPrayerTimes) return;
+
+      const now = Math.floor(Date.now() / 1000); // Current Unix time (seconds)
+      const p = globalPrayerTimes;
+      
+      // Reset highlighting
+      const rows = document.querySelectorAll('.prayer-row');
+      rows.forEach(row => row.classList.remove('active'));
+
+      let nextPrayerName = '';
+      let nextPrayerTime = null;
+      let activePrayerName = '';
+
+      // Determine the active prayer and the next prayer
+      // Checks sequentially: which range does 'now' fall into?
+      if (now >= p.Isyak || now < p.Subuh) {
+        activePrayerName = 'Isyak';
+        nextPrayerName = 'Subuh';
+        // Need to handle midnight crossover for countdown
+        if (now >= p.Isyak) {
+          // It's after Isyak today, countdown to Subuh tomorrow (+24h approximately)
+          // The API gives times for today, we estimate tomorrow's subuh by +24h
+          nextPrayerTime = p.Subuh + (24 * 60 * 60); 
+        } else {
+          // It's very early morning, countdown to Subuh today
+          nextPrayerTime = p.Subuh;
+        }
+      } else if (now < p.Syuruk) { activePrayerName = 'Subuh'; nextPrayerName = 'Syuruk'; nextPrayerTime = p.Syuruk; }
+      else if (now < p.Dhuha) { activePrayerName = 'Syuruk'; nextPrayerName = 'Dhuha'; nextPrayerTime = p.Dhuha; }
+      else if (now < p.Zohor) { activePrayerName = 'Dhuha'; nextPrayerName = 'Zohor'; nextPrayerTime = p.Zohor; }
+      else if (now < p.Asar) { activePrayerName = 'Zohor'; nextPrayerName = 'Asar'; nextPrayerTime = p.Asar; }
+      else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTime = p.Maghrib; }
+      else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTime = p.Isyak; }
+
+      // Highlight the active prayer row
+      const activeRow = document.getElementById(`row-${activePrayerName}`);
+      if (activeRow) activeRow.classList.add('active');
+
+      // Update Countdown Panel
+      const labelEl = document.getElementById('cd-label');
+      const timeEl = document.getElementById('cd-time');
+      
+      labelEl.innerText = `Menjelang ${nextPrayerName}`;
+      
+      // Calculate countdown duration
+      let diff = nextPrayerTime - now;
+      if (diff < 0) diff = 0; // Prevent negative countdowns on estimations
+
+      // Format countdown time HH:MM:SS
+      let h = Math.floor(diff / 3600);
+      let m = Math.floor((diff % 3600) / 60);
+      let s = Math.floor(diff % 60);
+      
+      // Padding with zeros (0:03 -> 00:03)
+      const fmtH = String(h).padStart(2, '0');
+      const fmtM = String(m).padStart(2, '0');
+      const fmtS = String(s).padStart(2, '0');
+
+      timeEl.innerText = `${fmtH}:${fmtM}:${fmtS}`;
+
+      // Lively change: turn countdown red if less than 10 minutes remaining
+      if (diff <= 600) {
+        timeEl.classList.add('imminent');
+      } else {
+        timeEl.classList.remove('imminent');
+      }
+    }
+
+    // --- INITIALIZATION / SETTINGS ---
     function changeZone(newZone) {
-      localStorage.setItem('selectedZone', newZone);
+      localStorage.setItem('selectedZone_v2', newZone);
       fetchPrayerTimes(newZone);
     }
 
-    const savedZone = localStorage.getItem('selectedZone') || 'SGR01';
+    const savedZone = localStorage.getItem('selectedZone_v2') || 'SGR01';
     document.getElementById('zone-select').value = savedZone;
+    
+    // Initial fetch
     fetchPrayerTimes(savedZone);
+
+    // Run the live status loop every 1 second (essential for countdowns)
+    setInterval(updateLiveStatus, 1000);
   </script>
 </body>
 </html>
