@@ -8,7 +8,7 @@
   <title>Solat Saya</title>
   <style>
     :root {
-      /* Reduced opacity for crystal clear background images */
+      /* Reduced opacity for clear background images */
       --bg-gradient: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.65) 100%);
       --accent-green: #2ecc71;
       --accent-amber: #f39c12;
@@ -314,6 +314,15 @@
       return newDate;
     }
 
+    // --- DYNAMIC DHUHA CALCULATION FORMULA ---
+    // Formula: Syuruk + (1/3 of the time difference between Subuh and Syuruk)
+    function calculateDhuha(subuhDate, syurukDate) {
+      if (!subuhDate || !syurukDate) return null;
+      let diffMinutes = (syurukDate.getTime() - subuhDate.getTime()) / (1000 * 60);
+      let dhuhaOffset = Math.round(diffMinutes / 3);
+      return addMinutesToDate(syurukDate, dhuhaOffset);
+    }
+
     // --- DATA FETCHING ---
     let globalPrayerTimes = null;
 
@@ -327,11 +336,13 @@
         let p = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
         if (!p) throw new Error("Invalid structure");
 
+        let subuh = parseToTodayDate(p.fajr || p.subuh);
         let syuruk = parseToTodayDate(p.syuruk);
+
         globalPrayerTimes = {
-          Subuh: parseToTodayDate(p.fajr || p.subuh),
+          Subuh: subuh,
           Syuruk: syuruk,
-          Dhuha: addMinutesToDate(syuruk, 28),
+          Dhuha: calculateDhuha(subuh, syuruk),
           Zohor: parseToTodayDate(p.dhuhr || p.zohor),
           Asar: parseToTodayDate(p.asr || p.asar),
           Maghrib: parseToTodayDate(p.maghrib),
@@ -351,11 +362,13 @@
         const data = await res.json();
         let p = data.prayers ? data.prayers[0] : data.prayerTime[0];
 
+        let subuh = parseToTodayDate(p.fajr || p.subuh);
         let syuruk = parseToTodayDate(p.syuruk);
+
         globalPrayerTimes = {
-          Subuh: parseToTodayDate(p.fajr || p.subuh),
+          Subuh: subuh,
           Syuruk: syuruk,
-          Dhuha: addMinutesToDate(syuruk, 28),
+          Dhuha: calculateDhuha(subuh, syuruk),
           Zohor: parseToTodayDate(p.dhuhr || p.zohor),
           Asar: parseToTodayDate(p.asar || p.asar),
           Maghrib: parseToTodayDate(p.maghrib),
@@ -374,11 +387,13 @@
         const data = await res.json();
         const times = data.data.times[0];
 
+        let subuh = parseToTodayDate(times[1]);
         let syuruk = parseToTodayDate(times[2]);
+
         globalPrayerTimes = {
-          Subuh: parseToTodayDate(times[1]),
+          Subuh: subuh,
           Syuruk: syuruk,
-          Dhuha: addMinutesToDate(syuruk, 28),
+          Dhuha: calculateDhuha(subuh, syuruk),
           Zohor: parseToTodayDate(times[3]),
           Asar: parseToTodayDate(times[4]),
           Maghrib: parseToTodayDate(times[5]),
