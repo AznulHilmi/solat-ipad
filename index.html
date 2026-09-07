@@ -401,18 +401,50 @@
     document.getElementById('hijri-date').innerText = "Hijri Date N/A";
   }
 }
-updateHijriDate();
+function gGregToHijri(d, m, y) {
+  let jd;
+  if ((y > 1582) || (y === 1582 && m > 10) || (y === 1582 && m === 10 && d >= 15)) {
+    jd = Math.floor((1461 * (y + 4800 + Math.floor((m - 14) / 12))) / 4) +
+         Math.floor((367 * (m - 2 - 12 * (Math.floor((m - 14) / 12)))) / 12) -
+         Math.floor((3 * (Math.floor((y + 4900 + Math.floor((m - 14) / 12)) / 100))) / 4) +
+         d - 32075;
+  } else {
+    jd = 367 * y - Math.floor((7 * (y + 5001 + Math.floor((m - 9) / 7))) / 4) +
+         Math.floor((275 * m) / 9) + d + 1729777;
+  }
 
-    // --- AZAN AUDIO & ALARM CONTROL ---
-    let audioEnabled = false;
-    let alarmTriggeredForCurrent = false;
-    let snoozeTimer = null;
-    const azanAudio = document.getElementById('azan-player');
+  let l = jd - 1948440 + 10632;
+  let n = Math.floor((l - 1) / 10631);
+  l = l - 10631 * n + 354;
+  let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) +
+          (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+  l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) -
+      (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+  
+  let month = Math.floor((24 * l) / 709);
+  let day = l - Math.floor((709 * month) / 24);
+  let year = 30 * n + j - 30;
 
-    const azanAudioUrls = {
-      fajr: 'https://cdn.islamicfinder.org/static/audio/azan/fajr.mp3',
-      standard: 'https://cdn.islamic.network/audio/8000/1.mp3'
-    };
+  const islamicMonths = [
+    "Muharram", "Safar", "Rabi'ul-Awwal", "Rabi'ul-Akhir",
+    "Jumadal-Ula", "Jumadal-Akhirah", "Rejab", "Sya'ban",
+    "Ramadhan", "Syawal", "Zulqa'dah", "Zulhijjah"
+  ];
+
+  return { day: day, month: islamicMonths[month - 1], year: year };
+}
+
+function updateHijriDate() {
+  try {
+    const today = new Date();
+    const h = gGregToHijri(today.getDate(), today.getMonth() + 1, today.getFullYear());
+    document.getElementById('hijri-date').innerText = `${h.day} ${h.month} ${h.year} AH`;
+  } catch (e) {
+    document.getElementById('hijri-date').innerText = "Hijri Date N/A";
+  }
+}
+
+updateHijriDate();;
 
     function toggleAudio() {
       const btn = document.getElementById('audio-toggle');
