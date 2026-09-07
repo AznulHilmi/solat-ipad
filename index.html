@@ -28,7 +28,20 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     h1 { text-align: center; font-size: 1.8rem; margin-bottom: 8px; color: #4CAF50; }
-    p.subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9rem; }
+    .select-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    select {
+      background: #2A2A2A;
+      color: #FFF;
+      border: 1px solid #444;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      width: 100%;
+      outline: none;
+    }
     .prayer-row {
       display: flex;
       justify-content: space-between;
@@ -47,7 +60,17 @@
 
   <div class="card">
     <h1>Waktu Solat</h1>
-    <p class="subtitle" id="zone-info">Loading Zone (SGR01)...</p>
+    
+    <div class="select-container">
+      <select id="zone-select" onchange="changeZone(this.value)">
+        <option value="SGR01">Selangor / KL (SGR01)</option>
+        <option value="WLY01">KL / Putrajaya (WLY01)</option>
+        <option value="JHR02">Johor Bahru (JHR02)</option>
+        <option value="PNG01">Pulau Pinang (PNG01)</option>
+        <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
+        <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
+      </select>
+    </div>
     
     <div id="prayer-list">
       <div class="prayer-row"><span class="prayer-name">Loading times...</span></div>
@@ -73,9 +96,9 @@
       return `${newH < 10 ? '0' : ''}${newH}:${newM < 10 ? '0' : ''}${newM}`;
     }
 
-    async function fetchPrayerTimes() {
+    async function fetchPrayerTimes(zone) {
       try {
-        const res = await fetch('https://api.waktusolat.online/api/solat/SGR01');
+        const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
         const data = await res.json();
         const today = data.prayerTime[0]; 
 
@@ -92,13 +115,20 @@
         `;
 
         document.getElementById('prayer-list').innerHTML = listHtml;
-        document.getElementById('zone-info').innerText = "Selangor / KL (SGR01)";
       } catch (err) {
         document.getElementById('prayer-list').innerHTML = `<div class="prayer-row">Failed to load prayer times. Check network.</div>`;
       }
     }
 
-    fetchPrayerTimes();
+    function changeZone(newZone) {
+      localStorage.setItem('selectedZone', newZone);
+      fetchPrayerTimes(newZone);
+    }
+
+    // Load saved zone or fallback to SGR01
+    const savedZone = localStorage.getItem('selectedZone') || 'SGR01';
+    document.getElementById('zone-select').value = savedZone;
+    fetchPrayerTimes(savedZone);
   </script>
 </body>
 </html>
