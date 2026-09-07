@@ -61,7 +61,7 @@
       margin-top: 2px;
     }
 
-    /* Main Container with Margin for Fixed Header */
+    /* Main Container */
     .main-container {
       flex: 1;
       width: 100%;
@@ -205,35 +205,56 @@
     cycleBackground();
     setInterval(cycleBackground, 15000); 
 
-    // --- TIME PARSING & MATH ---
-    function formatTime12h(unixTimestamp) {
-      if (!unixTimestamp) return "--:--";
-      let d = new Date(unixTimestamp * 1000);
-      let h = d.getHours();
-      let m = d.getMinutes();
+    // --- TIME PARSING AND CONVERSION ---
+    // Safely parse any API date/time format into a Javascript Date object for today
+    function parseToTodayDate(timeInput) {
+      if (!timeInput) return null;
+      let date = new Date();
+
+      if (typeof timeInput === 'number') {
+        // Unix timestamp input
+        let d = new Date(timeInput * 1000);
+        date.setHours(d.getHours(), d.getMinutes(), 0, 0);
+        return date;
+      }
+
+      if (typeof timeInput === 'string') {
+        // HH:MM or HH:MM:SS string input
+        let parts = timeInput.trim().split(':');
+        if (parts.length >= 2) {
+          let h = parseInt(parts[0], 10);
+          let m = parseInt(parts[1], 10);
+          if (!isNaN(h) && !isNaN(m)) {
+            date.setHours(h, m, 0, 0);
+            return date;
+          }
+        }
+      }
+      return null;
+    }
+
+    function formatTime12h(dateObj) {
+      if (!dateObj) return "--:--";
+      let h = dateObj.getHours();
+      let m = dateObj.getMinutes();
       let ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12;
       return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
     }
 
-    function addMinutes(unixTimestamp, minsToAdd) {
-      return unixTimestamp + (minsToAdd * 60);
+    function addMinutesToDate(dateObj, minsToAdd) {
+      if (!dateObj) return null;
+      let newDate = new Date(dateObj.getTime());
+      newDate.setMinutes(newDate.getMinutes() + minsToAdd);
+      return newDate;
     }
 
-    // --- MULTI-ENDPOINT DATA FETCHING ---
+    // --- DATA FETCHING ---
     let globalPrayerTimes = null;
 
     async function fetchPrayerTimes(zone) {
       document.getElementById('prayer-list').innerHTML = `<div class="prayer-row"><span class="prayer-name">Fetching times...</span></div>`;
       
-      function toUnix(timeStr) {
-        if (typeof timeStr === 'number') return timeStr;
-        let [h, m] = timeStr.split(':').map(Number);
-        let d = new Date();
-        d.setHours(h, m, 0, 0);
-        return Math.floor(d.getTime() / 1000);
-      }
-
       // Endpoint 1: Primary API
       try {
         const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
@@ -242,17 +263,18 @@
         let p = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
         if (!p) throw new Error("Invalid structure");
 
-        let syuruk = toUnix(p.syuruk);
+        let syuruk = parseToTodayDate(p.syuruk);
         globalPrayerTimes = {
-          Subuh: toUnix(p.fajr || p.subuh),
+          Subuh: parseToTodayDate(p.fajr || p.subuh),
           Syuruk: syuruk,
-          Dhuha: addMinutes(syuruk, 28),
-          Zohor: toUnix(p.dhuhr || p.zohor),
-          Asar: toUnix(p.asr || p.asar),
-          Maghrib: toUnix(p.maghrib),
-          Isyak: toUnix(p.isha || p.isyak)
+          Dhuha: addMinutesToDate(syuruk, 28),
+          Zohor: parseToTodayDate(p.dhuhr || p.zohor),
+          Asar: parseToTodayDate(p.asr || p.asar),
+          Maghrib: parseToTodayDate(p.maghrib),
+          Isyak: parseToTodayDate(p.isha || p.isyak)
         };
         renderTimesList();
+        updateLiveStatus();
         return;
       } catch (e1) {
         console.warn("Primary API failed, trying CORS proxy...", e1);
@@ -266,17 +288,18 @@
         const data = await res.json();
         let p = data.prayers ? data.prayers[0] : data.prayerTime[0];
 
-        let syuruk = toUnix(p.syuruk);
+        let syuruk = parseToTodayDate(p.syuruk);
         globalPrayerTimes = {
-          Subuh: toUnix(p.fajr || p.subuh),
+          Subuh: parseToTodayDate(p.fajr || p.subuh),
           Syuruk: syuruk,
-          Dhuha: addMinutes(syuruk, 28),
-          Zohor: toUnix(p.dhuhr || p.zohor),
-          Asar: toUnix(p.asr || p.asar),
-          Maghrib: toUnix(p.maghrib),
-          Isyak: toUnix(p.isha || p.isyak)
+          Dhuha: addMinutesToDate(syuruk, 28),
+          Zohor: parseToTodayDate(p.dhuhr || p.zohor),
+          Asar: parseToTodayDate(p.asr || p.asar),
+          Maghrib: parseToTodayDate(p.maghrib),
+          Isyak: parseToTodayDate(p.isha || p.isyak)
         };
         renderTimesList();
+        updateLiveStatus();
         return;
       } catch (e2) {
         console.warn("Proxy failed, trying MPT v2 prayer endpoint...", e2);
@@ -289,16 +312,18 @@
         const data = await res.json();
         const times = data.data.times[0];
 
+        let syuruk = parseToTodayDate(times[2]);
         globalPrayerTimes = {
-          Subuh: times[1],
-          Syuruk: times[2],
-          Dhuha: addMinutes(times[2], 28),
-          Zohor: times[3],
-          Asar: times[4],
-          Maghrib: times[5],
-          Isyak: times[6]
+          Subuh: parseToTodayDate(times[1]),
+          Syuruk: syuruk,
+          Dhuha: addMinutesToDate(syuruk, 28),
+          Zohor: parseToTodayDate(times[3]),
+          Asar: parseToTodayDate(times[4]),
+          Maghrib: parseToTodayDate(times[5]),
+          Isyak: parseToTodayDate(times[6])
         };
         renderTimesList();
+        updateLiveStatus();
       } catch (e3) {
         document.getElementById('prayer-list').innerHTML = `
           <div class="error-box">
@@ -324,29 +349,33 @@
       document.getElementById('prayer-list').innerHTML = listHtml;
     }
 
-    // --- LIVE STATUS (HIGHLIGHTING & COUNTDOWN) ---
+    // --- LIVE COUNTDOWN & HIGHLIGHT LOOP ---
     function updateLiveStatus() {
-      if (!globalPrayerTimes) return;
+      if (!globalPrayerTimes || !globalPrayerTimes.Subuh) return;
 
-      const now = Math.floor(Date.now() / 1000);
+      const now = new Date();
       const p = globalPrayerTimes;
       
       document.querySelectorAll('.prayer-row').forEach(row => row.classList.remove('active'));
 
       let nextPrayerName = '';
-      let nextPrayerTime = null;
+      let nextPrayerTarget = null;
       let activePrayerName = '';
 
       if (now >= p.Isyak || now < p.Subuh) {
         activePrayerName = 'Isyak';
         nextPrayerName = 'Subuh';
-        nextPrayerTime = now >= p.Isyak ? p.Subuh + 86400 : p.Subuh;
-      } else if (now < p.Syuruk) { activePrayerName = 'Subuh'; nextPrayerName = 'Syuruk'; nextPrayerTime = p.Syuruk; }
-      else if (now < p.Dhuha) { activePrayerName = 'Syuruk'; nextPrayerName = 'Dhuha'; nextPrayerTime = p.Dhuha; }
-      else if (now < p.Zohor) { activePrayerName = 'Dhuha'; nextPrayerName = 'Zohor'; nextPrayerTime = p.Zohor; }
-      else if (now < p.Asar) { activePrayerName = 'Zohor'; nextPrayerName = 'Asar'; nextPrayerTime = p.Asar; }
-      else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTime = p.Maghrib; }
-      else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTime = p.Isyak; }
+        // Handle midnight crossover: if past Isyak, target Subuh tomorrow (+24h)
+        nextPrayerTarget = new Date(p.Subuh.getTime());
+        if (now >= p.Isyak) {
+          nextPrayerTarget.setDate(nextPrayerTarget.getDate() + 1);
+        }
+      } else if (now < p.Syuruk) { activePrayerName = 'Subuh'; nextPrayerName = 'Syuruk'; nextPrayerTarget = p.Syuruk; }
+      else if (now < p.Dhuha) { activePrayerName = 'Syuruk'; nextPrayerName = 'Dhuha'; nextPrayerTarget = p.Dhuha; }
+      else if (now < p.Zohor) { activePrayerName = 'Dhuha'; nextPrayerName = 'Zohor'; nextPrayerTarget = p.Zohor; }
+      else if (now < p.Asar) { activePrayerName = 'Zohor'; nextPrayerName = 'Asar'; nextPrayerTarget = p.Asar; }
+      else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTarget = p.Maghrib; }
+      else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTarget = p.Isyak; }
 
       const activeRow = document.getElementById(`row-${activePrayerName}`);
       if (activeRow) activeRow.classList.add('active');
@@ -356,14 +385,17 @@
       
       labelEl.innerText = `Menjelang ${nextPrayerName}`;
       
-      let diff = Math.max(0, nextPrayerTime - now);
-      let h = Math.floor(diff / 3600);
-      let m = Math.floor((diff % 3600) / 60);
-      let s = Math.floor(diff % 60);
+      // Countdown calculation in seconds
+      let diffSeconds = Math.floor((nextPrayerTarget.getTime() - now.getTime()) / 1000);
+      if (diffSeconds < 0) diffSeconds = 0;
+
+      let h = Math.floor(diffSeconds / 3600);
+      let m = Math.floor((diffSeconds % 3600) / 60);
+      let s = Math.floor(diffSeconds % 60);
 
       timeEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-      if (diff <= 600) {
+      if (diffSeconds <= 600) {
         timeEl.classList.add('imminent');
       } else {
         timeEl.classList.remove('imminent');
@@ -372,11 +404,11 @@
 
     // --- INITIALIZATION ---
     function changeZone(newZone) {
-      localStorage.setItem('selectedZone_v3', newZone);
+      localStorage.setItem('selectedZone_v4', newZone);
       fetchPrayerTimes(newZone);
     }
 
-    const savedZone = localStorage.getItem('selectedZone_v3') || 'SGR01';
+    const savedZone = localStorage.getItem('selectedZone_v4') || 'SGR01';
     document.getElementById('zone-select').value = savedZone;
     fetchPrayerTimes(savedZone);
 
