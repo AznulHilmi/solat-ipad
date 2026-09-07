@@ -383,23 +383,25 @@
     setInterval(updateClockAndDates, 1000);
     updateClockAndDates();
 
-    async function fetchHijriDate() {
-      try {
-        const today = new Date();
-        const d = String(today.getDate()).padStart(2, '0');
-        const m = String(today.getMonth() + 1).padStart(2, '0');
-        const y = today.getFullYear();
-        const res = await fetch(`https://api.aladhan.com/v1/gregorianToHijri/${d}-${m}-${y}`);
-        const data = await res.json();
-        if (data && data.data && data.data.hijri) {
-          const h = data.data.hijri;
-          document.getElementById('hijri-date').innerText = `${h.day} ${h.month.en} ${h.year} AH`;
-        }
-      } catch (e) {
-        document.getElementById('hijri-date').innerText = '';
-      }
-    }
-    fetchHijriDate();
+    function updateHijriDate() {
+  try {
+    const today = new Date();
+    // Native browser Hijri formatter using Islamic Umm al-Qura calendar
+    const formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-uma', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    
+    // Formats into e.g. "25 Rabiʻ I 1448 AH"
+    let formattedHijri = formatter.format(today);
+    document.getElementById('hijri-date').innerText = `${formattedHijri} AH`;
+  } catch (e) {
+    console.warn("Native Hijri conversion fallback", e);
+    document.getElementById('hijri-date').innerText = "Hijri Date N/A";
+  }
+}
+updateHijriDate();
 
     // --- AZAN AUDIO & ALARM CONTROL ---
     let audioEnabled = false;
