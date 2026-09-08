@@ -8,9 +8,9 @@
   <title>Waktu Solat - Serene Heights</title>
   <style>
     :root {
-      --gold: #ffd166;
-      --teal: #06d6a0;
-      --cyan: #48cae4;
+      --gold: #ffe58f;
+      --teal: #10b981;
+      --cyan: #38bdf8;
     }
 
     * {
@@ -44,14 +44,14 @@
       transition: background-image 1.5s ease-in-out;
     }
 
-    /* Soft vignette overlay so the background image shows through clearly everywhere */
+    /* Very light vignette so the gorgeous scenery dominates the screen */
     .bg-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.2);
       z-index: 2;
     }
 
@@ -68,15 +68,15 @@
       gap: 6px;
     }
 
-    /* Ultra-transparent glass cards with crisp borders and drop-shadows for high readability */
+    /* Feather-light crystal glass cards so the background scenery is fully visible */
     .transparent-card {
-      background: rgba(10, 18, 35, 0.22);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-radius: 12px;
       padding: 6px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .quran-box {
@@ -87,12 +87,12 @@
       font-size: 1.25rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
     }
 
     .quran-en {
       font-size: 0.8rem;
-      color: #f1f5f9;
+      color: #f8fafc;
       font-style: italic;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
@@ -168,7 +168,7 @@
 
     .address-box span {
       font-size: 0.73rem;
-      color: #f1f5f9;
+      color: #f8fafc;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
 
@@ -186,27 +186,27 @@
       align-items: center;
       padding: 3px 12px;
       border-radius: 6px;
-      background: rgba(15, 23, 42, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.65) 0%, rgba(72, 202, 228, 0.5) 100%);
+      background: rgba(16, 185, 129, 0.35);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 12px rgba(6, 214, 160, 0.4);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
     }
 
     .solat-name {
       font-size: 1.1rem;
       font-weight: 800;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
 
     .solat-time {
       font-size: 1.2rem;
       font-weight: 900;
       color: var(--gold);
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
 
     .next-label {
@@ -247,7 +247,7 @@
 
     .hadith-en {
       font-size: 0.78rem;
-      color: #f1f5f9;
+      color: #f8fafc;
       font-style: italic;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
     }
