@@ -28,7 +28,7 @@
       color: #ffffff;
     }
 
-    /* Native Scalable Vector Graphic Background - Guaranteed to never fail on iOS */
+    /* Native Scalable Vector Graphic Background */
     .bg-svg-container {
       position: fixed;
       top: 0;
@@ -56,14 +56,15 @@
       gap: 10px;
     }
 
+    /* Adjusted transparency so the background shines through nicely */
     .transparent-card {
-      background: rgba(11, 19, 43, 0.65);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(11, 19, 43, 0.28);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 12px;
       padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 
     .quran-box {
@@ -162,11 +163,11 @@
       align-items: center;
       padding: 4px 16px;
       border-radius: 6px;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.5) 0%, rgba(72, 202, 228, 0.35) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.45) 0%, rgba(72, 202, 228, 0.3) 100%);
       border: 1px solid var(--teal);
     }
 
@@ -226,12 +227,12 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
       <defs>
         <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#030712" />
+          <stop offset="0%" stop-color="#020617" />
           <stop offset="50%" stop-color="#0f172a" />
           <stop offset="100%" stop-color="#1e1b4b" />
         </linearGradient>
-        <radialGradient id="moonGlow" cx="80%" cy="20%" r="40%">
-          <stop offset="0%" stop-color="rgba(255, 209, 102, 0.25)" />
+        <radialGradient id="moonGlow" cx="82%" cy="18%" r="45%">
+          <stop offset="0%" stop-color="rgba(255, 209, 102, 0.35)" />
           <stop offset="100%" stop-color="transparent" />
         </radialGradient>
       </defs>
@@ -241,27 +242,24 @@
       <rect width="1920" height="1080" fill="url(#moonGlow)" />
       
       <!-- Stars -->
-      <g fill="#ffffff" opacity="0.6">
-        <circle cx="200" cy="150" r="2" />
-        <circle cx="450" cy="100" r="1.5" />
-        <circle cx="800" cy="180" r="2" />
-        <circle cx="1100" cy="90" r="2.5" />
-        <circle cx="1500" cy="140" r="1.5" />
-        <circle cx="1750" cy="200" r="2" />
-        <circle cx="300" cy="280" r="1" />
-        <circle cx="950" cy="250" r="1.5" />
-        <circle cx="1350" cy="220" r="2" />
+      <g fill="#ffffff" opacity="0.8">
+        <circle cx="150" cy="120" r="2" />
+        <circle cx="420" cy="80" r="1.5" />
+        <circle cx="750" cy="150" r="2" />
+        <circle cx="1050" cy="70" r="2.5" />
+        <circle cx="1450" cy="110" r="1.5" />
+        <circle cx="1780" cy="170" r="2" />
+        <circle cx="280" cy="250" r="1" />
+        <circle cx="900" cy="220" r="1.5" />
+        <circle cx="1300" cy="190" r="2" />
       </g>
 
       <!-- Crescent Moon -->
-      <path d="M1500,180 a40,40 0 1,0 40,40 a32,32 0 1,1 -40,-40 z" fill="#ffd166" opacity="0.9"/>
+      <path d="M1520,150 a45,45 0 1,0 45,45 a36,36 0 1,1 -45,-45 z" fill="#ffd166" opacity="0.95"/>
 
-      <!-- Distant Horizon / Mosque Silhouette Layers -->
-      <g fill="#070a14" opacity="0.95">
-        <!-- Rolling Hills / City Silhouette -->
+      <!-- Mosque Silhouette Layers -->
+      <g fill="#070a14" opacity="0.9">
         <path d="M0,950 L0,1080 L1920,1080 L1920,900 Q1600,850 1200,920 Q800,880 400,930 Q200,910 0,950 Z" />
-        
-        <!-- Detailed Mosque Silhouette (Domes & Minarets) -->
         <path d="
           M750,1080 L750,750 Q750,700 780,700 Q810,700 810,750 L810,1080
           M1150,1080 L1150,700 Q1150,650 1180,650 Q1210,650 1210,700 L1210,1080
