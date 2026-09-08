@@ -252,8 +252,8 @@
     
     <!-- TOP SECTION: Quran Verse -->
     <div class="quran-box transparent-card">
-      <div class="quran-ar" id="quran-ar">Loading...</div>
-      <div class="quran-en" id="quran-en">Loading...</div>
+      <div class="quran-ar" id="quran-ar">الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ</div>
+      <div class="quran-en" id="quran-en">"Those who believe and whose hearts find rest in the remembrance of Allah."</div>
     </div>
 
     <!-- MAIN DISPLAY (3 COLUMNS) -->
@@ -294,14 +294,14 @@
 
     <!-- BOTTOM SECTION: Hadith -->
     <div class="footer-bar transparent-card">
-      <div class="hadith-ar" id="hadith-ar">Loading...</div>
-      <div class="hadith-en" id="hadith-en">Loading...</div>
+      <div class="hadith-ar" id="hadith-ar">قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...</div>
+      <div class="hadith-en" id="hadith-en">"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status." — Sahih Muslim</div>
     </div>
 
   </div>
 
   <script>
-    // Default fallback times for SGR01 (Ulu Langat)
+    // Baseline prayer times for SGR01 (Ulu Langat)
     let prayerTimesToday = {
       subuh: "05:59",
       syuruk: "07:05",
@@ -311,57 +311,26 @@
       isyak: "20:27"
     };
 
-    // Fetch official daily prayer times directly from JAKIM API for Zone SGR01
-    async function fetchJakimPrayerTimes() {
-      try {
-        const response = await fetch('https://www.e-solat.gov.my/index.php?r=esolat/jakimperiod&zone=SGR01&period=today');
-        const data = await response.json();
-        
-        if (data && data.prayerTime && data.prayerTime.length > 0) {
-          const times = data.prayerTime[0];
-          
-          // Format 24h string HH:mm from API response (HH:mm:ss)
-          prayerTimesToday = {
-            subuh: times.fajr.substring(0, 5),
-            syuruk: times.syuruk.substring(0, 5),
-            zohor: times.dhuhr.substring(0, 5),
-            asar: times.asr.substring(0, 5),
-            maghrib: times.maghrib.substring(0, 5),
-            isyak: times.isha.substring(0, 5)
-          };
-
-          // Update UI time labels
-          document.getElementById('time-subuh').innerText = format12Hour(prayerTimesToday.subuh);
-          document.getElementById('time-syuruk').innerText = format12Hour(prayerTimesToday.syuruk);
-          document.getElementById('time-zohor').innerText = format12Hour(prayerTimesToday.zohor);
-          document.getElementById('time-asar').innerText = format12Hour(prayerTimesToday.asar);
-          document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
-          document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
-        }
-      } catch (err) {
-        console.warn('JAKIM API request failed, utilizing local baseline times for SGR01.', err);
-      }
-    }
-
     function format12Hour(time24) {
-      const [h, m] = time24.split(':');
-      let hours = parseInt(h);
+      if (!time24) return "--:--";
+      const parts = time24.split(':');
+      let hours = parseInt(parts[0], 10);
+      const minutes = parts[1];
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12 || 12;
-      return `${String(hours).padStart(2, '0')}:${m} ${ampm}`;
+      return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
     }
 
-    // SVG Islamic Star Geometry Pattern overlay
+    // SVG Islamic Star Geometry Pattern
     const islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
 
-    // Pure Islamic Themes matched to Prayer Slots
     const prayerBackgroundStyles = {
-      subuh: `url("${islamicPatternSVG}"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)`, // Deep Dawn Sky
-      syuruk: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)`, // Golden Sunrise
-      zohor: `url("${islamicPatternSVG}"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)`, // Bright Daylight Teal
-      asar: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)`,  // Warm Afternoon Gold
-      maghrib: `url("${islamicPatternSVG}"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)`,// Twilight Sunset
-      isyak: `url("${islamicPatternSVG}"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)`  // Deep Night Stars
+      subuh: `url("${islamicPatternSVG}"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)`,
+      syuruk: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)`,
+      zohor: `url("${islamicPatternSVG}"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)`,
+      asar: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)`,
+      maghrib: `url("${islamicPatternSVG}"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)`,
+      isyak: `url("${islamicPatternSVG}"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)`
     };
 
     let currentPrayerSlot = '';
@@ -369,11 +338,42 @@
     function updatePrayerBackground(activeSlot) {
       if (currentPrayerSlot !== activeSlot && prayerBackgroundStyles[activeSlot]) {
         currentPrayerSlot = activeSlot;
-        document.getElementById('bg-carousel').style.background = prayerBackgroundStyles[activeSlot];
+        const bgElem = document.getElementById('bg-carousel');
+        if (bgElem) bgElem.style.background = prayerBackgroundStyles[activeSlot];
       }
     }
 
-    // Fetch Daily Quranic Verse
+    // Fetch official daily prayer times via a CORS-safe endpoint with fallback
+    async function fetchJakimPrayerTimes() {
+      try {
+        const res = await fetch('https://api.waktusolat.app/v2/solat/SGR01');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.prayers && data.prayers.length > 0) {
+            const todayData = data.prayers[0];
+            prayerTimesToday = {
+              subuh: todayData.fajr,
+              syuruk: todayData.syuruk,
+              zohor: todayData.dhuhr,
+              asar: todayData.asr,
+              maghrib: todayData.maghrib,
+              isyak: todayData.isha
+            };
+          }
+        }
+      } catch (e) {
+        console.warn('Network request fallback to default SGR01 times:', e);
+      }
+
+      // Update Solat Time Labels
+      document.getElementById('time-subuh').innerText = format12Hour(prayerTimesToday.subuh);
+      document.getElementById('time-syuruk').innerText = format12Hour(prayerTimesToday.syuruk);
+      document.getElementById('time-zohor').innerText = format12Hour(prayerTimesToday.zohor);
+      document.getElementById('time-asar').innerText = format12Hour(prayerTimesToday.asar);
+      document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
+      document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
+    }
+
     async function fetchDailyQuran() {
       try {
         const now = new Date();
@@ -391,38 +391,39 @@
           document.getElementById('quran-en').innerText = `"${enData.data.text}" — Surah ${enData.data.surah.englishName} (${enData.data.surah.number}:${enData.data.numberInSurah})`;
         }
       } catch (err) {
-        document.getElementById('quran-ar').innerText = "الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ";
-        document.getElementById('quran-en').innerText = "\"Those who believe and whose hearts find rest in the remembrance of Allah.\" — Surah Ar-Ra'd 13:28";
+        // Keeps preloaded fallback text on error
       }
     }
 
-    // Fetch Daily Sahih Hadith
     async function fetchDailyHadith() {
       try {
         const res = await fetch(`https://random-hadith-generator.vercel.app/bukhari/`);
         const data = await res.json();
-
         if (data && data.data) {
           document.getElementById('hadith-ar').innerText = data.data.hadithArabic || "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...";
           document.getElementById('hadith-en').innerText = `"${data.data.hadithEnglish}" — ${data.data.refno || 'Sahih Bukhari'}`;
         }
       } catch (err) {
-        document.getElementById('hadith-ar').innerText = "مَنْ طَهَّرَ فِي بَيْتِهِ ثُمَّ مَشَى إِلَى بَيْتٍ مِنْ بُيُوتِ اللَّهِ لِيَقْضِيَ فَرِيضَةً كَانَتْ خُطُوَاتُهُ إِحْدَاهُمَا تَحُطُّ خَطِيئَةً وَالأُخْرَى تَرْفَعُ دَرَجَةً";
-        document.getElementById('hadith-en').innerText = "\"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status.\" — Sahih Muslim 666";
+        // Keeps preloaded fallback text on error
       }
     }
 
     function updateClock() {
       const now = new Date();
+      
+      // Clock
       document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
 
+      // Gregorian Date
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', options);
 
+      // Hijri Date with safe fallback
       try {
-        document.getElementById('hijri-date').innerText = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+        const hijri = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
           day: 'numeric', month: 'long', year: 'numeric'
-        }).format(now) + "H";
+        }).format(now);
+        document.getElementById('hijri-date').innerText = hijri.includes('AH') ? hijri : hijri + " AH";
       } catch (e) {
         document.getElementById('hijri-date').innerText = "";
       }
@@ -440,7 +441,10 @@
         { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
       ];
 
-      times.forEach(t => document.getElementById(t.rowId)?.classList.remove('active'));
+      times.forEach(t => {
+        const el = document.getElementById(t.rowId);
+        if (el) el.classList.remove('active');
+      });
 
       let nextPrayer = null;
       let nextPrayerTime = null;
@@ -448,14 +452,16 @@
 
       for (let i = 0; i < times.length; i++) {
         const p = times[i];
-        const [hours, minutes] = p.time.split(':');
+        if (!p.time) continue;
+        const parts = p.time.split(':');
         const pDate = new Date(now);
-        pDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
 
         if (pDate > now) {
           nextPrayer = p.name;
           nextPrayerTime = pDate;
-          document.getElementById(p.rowId)?.classList.add('active');
+          const el = document.getElementById(p.rowId);
+          if (el) el.classList.add('active');
           activeSlot = i > 0 ? times[i - 1].key : 'isyak';
           break;
         }
@@ -463,20 +469,20 @@
 
       if (!nextPrayer) {
         nextPrayer = "Subuh";
-        const [hours, minutes] = prayerTimesToday.subuh.split(':');
+        const parts = prayerTimesToday.subuh.split(':');
         nextPrayerTime = new Date(now);
         nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
-        nextPrayerTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-        document.getElementById("row-subuh")?.classList.add('active');
+        nextPrayerTime.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+        const el = document.getElementById("row-subuh");
+        if (el) el.classList.add('active');
         activeSlot = 'isyak';
       }
 
-      // Update background theme based on active prayer time slot
       updatePrayerBackground(activeSlot);
 
       document.getElementById('next-prayer-name').innerText = nextPrayer;
 
-      const diffMs = nextPrayerTime - now;
+      const diffMs = Math.max(0, nextPrayerTime - now);
       const hrs = Math.floor(diffMs / (1000 * 60 * 60));
       const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
@@ -485,13 +491,14 @@
         `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // Initialize
+    // Start Clock Immediately
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Fetch async data independently
     fetchJakimPrayerTimes();
     fetchDailyQuran();
     fetchDailyHadith();
-    updateClock();
-
-    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
