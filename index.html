@@ -34,20 +34,25 @@
       color: #ffffff;
     }
 
-    /* Dynamic Photo Background Container */
-    #bg-carousel {
+    /* Hardware-Accelerated Dynamic Photo Background Layers */
+    .bg-layer {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background-color: #1b263b; /* Fallback color */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: background-image 2s ease-in-out;
+      will-change: opacity;
+      transition: opacity 1.5s ease-in-out;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
+
+    #bg-1 { opacity: 1; }
+    #bg-2 { opacity: 0; }
 
     /* Gradient Dark Overlay for Readability */
     .bg-overlay {
@@ -58,6 +63,7 @@
       height: 100vh;
       z-index: 2;
       background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none;
     }
 
     /* Main Dashboard Layout with Safe-Area Insets for Fullscreen */
@@ -257,8 +263,9 @@
 </head>
 <body>
 
-  <!-- Dynamic Background Element -->
-  <div id="bg-carousel"></div>
+  <!-- Dual Crossfading Background Layers for iOS Safari Performance -->
+  <div id="bg-1" class="bg-layer"></div>
+  <div id="bg-2" class="bg-layer"></div>
   <div class="bg-overlay"></div>
 
   <div class="dashboard-container">
@@ -351,7 +358,6 @@
       return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
     }
 
-    // Weekly Rotating Photo Arrays for each prayer slot (Index 0 = Sunday, 1 = Monday, ..., 6 = Saturday)
     var prayerPhotosWeekly = {
       subuh: [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
@@ -419,10 +425,11 @@
     };
 
     var currentPrayerSlot = '';
+    var activeBgLayer = 1;
 
     function updatePrayerBackground(activeSlot) {
       var now = new Date();
-      var dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+      var dayOfWeek = now.getDay();
       
       if (prayerPhotosWeekly[activeSlot]) {
         var imagesForSlot = prayerPhotosWeekly[activeSlot];
@@ -431,10 +438,20 @@
         if (currentPrayerSlot !== activeSlot || window.lastLoadedImage !== targetImage) {
           currentPrayerSlot = activeSlot;
           window.lastLoadedImage = targetImage;
-          var bgElem = document.getElementById('bg-carousel');
-          if (bgElem) {
-            // Directly set background image immediately without waiting on preloading hooks
-            bgElem.style.backgroundImage = 'url("' + targetImage + '")';
+
+          var layer1 = document.getElementById('bg-1');
+          var layer2 = document.getElementById('bg-2');
+
+          if (activeBgLayer === 1) {
+            layer2.style.backgroundImage = 'url("' + targetImage + '")';
+            layer2.style.opacity = '1';
+            layer1.style.opacity = '0';
+            activeBgLayer = 2;
+          } else {
+            layer1.style.backgroundImage = 'url("' + targetImage + '")';
+            layer1.style.opacity = '1';
+            layer2.style.opacity = '0';
+            activeBgLayer = 1;
           }
         }
       }
@@ -654,6 +671,9 @@
         }
       } catch (err) {}
     }
+
+    // Initialize first background image immediately on load
+    document.getElementById('bg-1').style.backgroundImage = 'url("' + prayerPhotosWeekly.subuh[0] + '")';
 
     updateClock();
     setInterval(updateClock, 1000);
