@@ -24,11 +24,10 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #111e30;
+      background: #09121e;
       color: #ffffff;
     }
 
-    /* Solid Gradient Background Fallback to guarantee no black screens */
     .bg-layer {
       position: fixed;
       top: 0;
@@ -36,9 +35,11 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: cover;
-      background-position: center;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(6, 214, 160, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(72, 202, 228, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 209, 102, 0.08) 0%, transparent 60%),
+        linear-gradient(135deg, #0b192c, #1e3c72, #2a5298);
     }
 
     .bg-overlay {
