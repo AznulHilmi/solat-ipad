@@ -22,11 +22,11 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #000000;
+      background-color: #0d1b2a;
       color: #ffffff;
     }
 
-    /* Dynamic Mosque Background */
+    /* Dynamic Islamic Background Container */
     #bg-carousel {
       position: fixed;
       top: 0;
@@ -36,10 +36,10 @@
       z-index: 1;
       background-size: cover;
       background-position: center;
-      transition: background-image 2s ease-in-out;
+      transition: background 1.5s ease-in-out;
     }
 
-    /* Dark Overlay for Sunlight / Background High Contrast Readability */
+    /* Subtle Overlay for Optimum Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -47,7 +47,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -175,7 +175,7 @@
       align-items: center;
       padding: 6px 20px;
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
     }
 
     .solat-row.active {
@@ -244,7 +244,7 @@
 </head>
 <body>
 
-  <!-- Dynamic Solat-Based Background -->
+  <!-- Dynamic Background Element -->
   <div id="bg-carousel"></div>
   <div class="bg-overlay"></div>
 
@@ -301,22 +301,25 @@
   </div>
 
   <script>
-    // Pure Islamic & Malaysian Mosque Sceneries Matched to Prayer Slots
-    const prayerBackgrounds = {
-      subuh: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1920&q=80',   // Sunrise over Putra Mosque, Putrajaya
-      syuruk: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1920&q=80',  // Golden hour over Sultan Salahuddin Abdul Aziz Mosque (Blue Mosque)
-      zohor: 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1920&q=80',   // Midday view of Federal Territory Mosque
-      asar: 'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1920&q=80',    // Soft afternoon light at Tuanku Mizan Zainal Abidin Mosque (Iron Mosque)
-      maghrib: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=80', // Majestic sunset at Malacca Straits Floating Mosque
-      isyak: 'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1920&q=80'    // Beautiful illuminated Kota Kinabalu City Mosque at night
+    // SVG Islamic Star Geometry Pattern overlay
+    const islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
+
+    // Pure Islamic Themes matched to Prayer Slots
+    const prayerBackgroundStyles = {
+      subuh: `url("${islamicPatternSVG}"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)`, // Deep Dawn Sky
+      syuruk: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)`, // Golden Sunrise
+      zohor: `url("${islamicPatternSVG}"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)`, // Bright Daylight Teal
+      asar: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)`,  // Warm Afternoon Gold
+      maghrib: `url("${islamicPatternSVG}"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)`,// Twilight Sunset
+      isyak: `url("${islamicPatternSVG}"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)`  // Deep Night Stars
     };
 
     let currentPrayerSlot = '';
 
     function updatePrayerBackground(activeSlot) {
-      if (currentPrayerSlot !== activeSlot && prayerBackgrounds[activeSlot]) {
+      if (currentPrayerSlot !== activeSlot && prayerBackgroundStyles[activeSlot]) {
         currentPrayerSlot = activeSlot;
-        document.getElementById('bg-carousel').style.backgroundImage = `url('${prayerBackgrounds[activeSlot]}')`;
+        document.getElementById('bg-carousel').style.background = prayerBackgroundStyles[activeSlot];
       }
     }
 
@@ -427,7 +430,7 @@
         activeSlot = 'isyak';
       }
 
-      // Update background picture based on active prayer time slot
+      // Update background theme based on active prayer time slot
       updatePrayerBackground(activeSlot);
 
       document.getElementById('next-prayer-name').innerText = nextPrayer;
