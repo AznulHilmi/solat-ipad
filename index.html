@@ -363,14 +363,36 @@
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
-    // Force Converts Numeric/API Months to Word Format in Malaysian Style
+    // Converts incoming string to DD Month YYYY format
     function formatMalaysianHijriString(rawString) {
       if (!rawString) return "";
-      
-      // Clean up accidental duplicate 'AH' or trailing symbols
-      var cleaned = rawString.replace(/(AH\s*)+$/gi, '').trim();
 
-      // String-based month replacements
+      // Strip suffix 'H', 'AH', etc., before processing
+      var cleaned = rawString.replace(/\s*(AH|H)\s*$/gi, '').trim();
+
+      // Check if API returned an ISO pattern like "1448-03-19" or "1448/03/19"
+      var isoMatch = cleaned.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+      if (isoMatch) {
+        var year = isoMatch[1];
+        var monthNum = parseInt(isoMatch[2], 10);
+        var day = parseInt(isoMatch[3], 10);
+
+        var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
+        return day + " " + monthWord + " " + year + " H";
+      }
+
+      // Check for "19-03-1448" or "19/03/1448" pattern
+      var revMatch = cleaned.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+      if (revMatch) {
+        var dayRev = parseInt(revMatch[1], 10);
+        var monthNumRev = parseInt(revMatch[2], 10);
+        var yearRev = revMatch[3];
+
+        var monthWordRev = (monthNumRev >= 1 && monthNumRev <= 12) ? jakimMonths[monthNumRev - 1] : monthNumRev;
+        return dayRev + " " + monthWordRev + " " + yearRev + " H";
+      }
+
+      // String-based month replacements for text responses
       var monthReplacements = {
         "Rabiʻ I": "Rabiulawal", "Rabi' I": "Rabiulawal", "Rabi` I": "Rabiulawal", "Rabi al-Awwal": "Rabiulawal", "Rabi'ul Awal": "Rabiulawal",
         "Rabiʻ II": "Rabiulakhir", "Rabi' II": "Rabiulakhir", "Rabi` II": "Rabiulakhir", "Rabi al-Thani": "Rabiulakhir", "Rabi'ul Akhir": "Rabiulakhir",
@@ -387,15 +409,10 @@
         }
       }
 
-      // Ensure suffix is standard Malaysian 'H'
-      if (!cleaned.endsWith('H') && !cleaned.endsWith('Hijri')) {
-        cleaned += ' H';
-      }
-
-      return cleaned;
+      return cleaned + ' H';
     }
 
-    // Robust Fallback Converter (Direct Numeric-to-Word Mapping)
+    // Browser Engine Fallback Converter (Formats explicitly as DD Month YYYY)
     function getMalaysianHijriDate(date) {
       try {
         var formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura', {
@@ -409,9 +426,7 @@
           if (parts[i].type === 'year') year = parts[i].value;
         }
 
-        // Map month index (1-12) directly to word list
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
-        
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
         return "";
@@ -526,7 +541,7 @@
               isyak: todayData.isha
             };
 
-            // Process and format Hijri string according to JAKIM standard
+            // Format ISO/Numeric Hijri string into standard DD Month YYYY format
             if (todayData.hijri) {
               var formattedHijri = formatMalaysianHijriString(todayData.hijri);
               var hijriElem = document.getElementById('hijri-date');
