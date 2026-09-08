@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Landscape Waktu Solat Display - Ulu Langat</title>
+  <title>Landscape Waktu Solat Display - Serene Heights</title>
   <style>
     :root {
       --gold: #ffd166;
@@ -26,7 +26,7 @@
       color: #ffffff;
     }
 
-    /* Dynamic Islamic Background Container */
+    /* Dynamic Background Container */
     #bg-carousel {
       position: fixed;
       top: 0;
@@ -151,13 +151,13 @@
 
     .address-box strong {
       color: var(--cyan);
-      font-size: 1.05rem;
+      font-size: 1rem;
       display: block;
       text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
     .address-box span {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #ffffff;
       text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
@@ -253,7 +253,7 @@
     <!-- TOP SECTION: Quran Verse -->
     <div class="quran-box transparent-card">
       <div class="quran-ar" id="quran-ar">الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ</div>
-      <div class="quran-en" id="quran-en">"Those who believe and whose hearts find rest in the remembrance of Allah."</div>
+      <div class="quran-en" id="quran-en">"Those who believe and whose hearts find rest in the remembrance of Allah." — Surah Ar-Ra'd 13:28</div>
     </div>
 
     <!-- MAIN DISPLAY (3 COLUMNS) -->
@@ -262,16 +262,16 @@
       <!-- LEFT: Date & Time -->
       <div class="col-card transparent-card">
         <div class="time-title">CURRENT TIME</div>
-        <div class="clock-display" id="clock">00:00:00</div>
-        <div class="gregorian-date" id="gregorian-date">Loading...</div>
-        <div class="hijri-date" id="hijri-date">Loading...</div>
+        <div class="clock-display" id="clock">--:--:--</div>
+        <div class="gregorian-date" id="gregorian-date">---</div>
+        <div class="hijri-date" id="hijri-date">---</div>
       </div>
 
       <!-- CENTER: Address Box ON TOP of Solat Box -->
       <div class="center-column">
         <div class="address-box transparent-card">
-          <strong>📍 Ulu Langat, Selangor</strong>
-          <span>JAKIM Zone: SGR01 (Gombak, Petaling, Hulu Langat)</span>
+          <strong>📍 No 8, Jalan Serene 3/4, Serene Heights, 43500 Semenyih, Selangor</strong>
+          <span>JAKIM Zone: SGR01 (Hulu Langat, Gombak, Petaling)</span>
         </div>
 
         <div class="solat-container transparent-card">
@@ -301,8 +301,8 @@
   </div>
 
   <script>
-    // Baseline prayer times for SGR01 (Ulu Langat)
-    let prayerTimesToday = {
+    // Baseline prayer times for SGR01 (Semenyih / Hulu Langat)
+    var prayerTimesToday = {
       subuh: "05:59",
       syuruk: "07:05",
       zohor: "13:14",
@@ -312,38 +312,138 @@
     };
 
     function format12Hour(time24) {
-      if (!time24) return "--:--";
-      const parts = time24.split(':');
-      let hours = parseInt(parts[0], 10);
-      const minutes = parts[1];
-      const ampm = hours >= 12 ? 'PM' : 'AM';
+      if (!time24 || time24.indexOf(':') === -1) return "--:--";
+      var parts = time24.split(':');
+      var hours = parseInt(parts[0], 10);
+      var minutes = parts[1];
+      var ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12 || 12;
-      return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+      return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
     }
 
-    // SVG Islamic Star Geometry Pattern
-    const islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
+    var islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
 
-    const prayerBackgroundStyles = {
-      subuh: `url("${islamicPatternSVG}"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)`,
-      syuruk: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)`,
-      zohor: `url("${islamicPatternSVG}"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)`,
-      asar: `url("${islamicPatternSVG}"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)`,
-      maghrib: `url("${islamicPatternSVG}"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)`,
-      isyak: `url("${islamicPatternSVG}"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)`
+    var prayerBackgroundStyles = {
+      subuh: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)',
+      syuruk: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)',
+      zohor: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)',
+      asar: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)',
+      maghrib: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)',
+      isyak: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)'
     };
 
-    let currentPrayerSlot = '';
+    var currentPrayerSlot = '';
 
     function updatePrayerBackground(activeSlot) {
       if (currentPrayerSlot !== activeSlot && prayerBackgroundStyles[activeSlot]) {
         currentPrayerSlot = activeSlot;
-        const bgElem = document.getElementById('bg-carousel');
+        var bgElem = document.getElementById('bg-carousel');
         if (bgElem) bgElem.style.background = prayerBackgroundStyles[activeSlot];
       }
     }
 
-    // Fetch official daily prayer times via a CORS-safe endpoint with fallback
+    function updateClock() {
+      try {
+        var now = new Date();
+        
+        // Clock Display
+        var clockElem = document.getElementById('clock');
+        if (clockElem) {
+          clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
+        }
+
+        // Gregorian Date Display
+        var gregElem = document.getElementById('gregorian-date');
+        if (gregElem) {
+          var options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+          gregElem.innerText = now.toLocaleDateString('en-US', options);
+        }
+
+        // Hijri Date Display (Safari iPad Compatible)
+        var hijriElem = document.getElementById('hijri-date');
+        if (hijriElem) {
+          try {
+            var formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            });
+            hijriElem.innerText = formatter.format(now) + " AH";
+          } catch (e) {
+            hijriElem.innerText = "";
+          }
+        }
+
+        updateCountdown(now);
+      } catch (err) {
+        console.error("Clock update error:", err);
+      }
+    }
+
+    function updateCountdown(now) {
+      var times = [
+        { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
+        { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
+        { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
+        { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
+        { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
+        { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
+      ];
+
+      for (var i = 0; i < times.length; i++) {
+        var el = document.getElementById(times[i].rowId);
+        if (el) el.classList.remove('active');
+      }
+
+      var nextPrayer = null;
+      var nextPrayerTime = null;
+      var activeSlot = 'isyak';
+
+      for (var j = 0; j < times.length; j++) {
+        var p = times[j];
+        if (!p.time) continue;
+        var parts = p.time.split(':');
+        var pDate = new Date(now.getTime());
+        pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+
+        if (pDate > now) {
+          nextPrayer = p.name;
+          nextPrayerTime = pDate;
+          var activeEl = document.getElementById(p.rowId);
+          if (activeEl) activeEl.classList.add('active');
+          activeSlot = j > 0 ? times[j - 1].key : 'isyak';
+          break;
+        }
+      }
+
+      if (!nextPrayer) {
+        nextPrayer = "Subuh";
+        var subParts = prayerTimesToday.subuh.split(':');
+        nextPrayerTime = new Date(now.getTime());
+        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+        nextPrayerTime.setHours(parseInt(subParts[0], 10), parseInt(subParts[1], 10), 0, 0);
+        var subEl = document.getElementById("row-subuh");
+        if (subEl) subEl.classList.add('active');
+        activeSlot = 'isyak';
+      }
+
+      updatePrayerBackground(activeSlot);
+
+      var nextLabel = document.getElementById('next-prayer-name');
+      if (nextLabel) nextLabel.innerText = nextPrayer;
+
+      var diffMs = Math.max(0, nextPrayerTime - now);
+      var hrs = Math.floor(diffMs / (1000 * 60 * 60));
+      var mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      var secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      var countElem = document.getElementById('countdown');
+      if (countElem) {
+        countElem.innerText = 
+          (hrs < 10 ? '0' + hrs : hrs) + ':' + 
+          (mins < 10 ? '0' + mins : mins) + ':' + 
+          (secs < 10 ? '0' + secs : secs);
+      }
+    }
+
     async function fetchJakimPrayerTimes() {
       try {
         const res = await fetch('https://api.waktusolat.app/v2/solat/SGR01');
@@ -365,7 +465,6 @@
         console.warn('Network request fallback to default SGR01 times:', e);
       }
 
-      // Update Solat Time Labels
       document.getElementById('time-subuh').innerText = format12Hour(prayerTimesToday.subuh);
       document.getElementById('time-syuruk').innerText = format12Hour(prayerTimesToday.syuruk);
       document.getElementById('time-zohor').innerText = format12Hour(prayerTimesToday.zohor);
@@ -390,9 +489,7 @@
           document.getElementById('quran-ar').innerText = arData.data.text;
           document.getElementById('quran-en').innerText = `"${enData.data.text}" — Surah ${enData.data.surah.englishName} (${enData.data.surah.number}:${enData.data.numberInSurah})`;
         }
-      } catch (err) {
-        // Keeps preloaded fallback text on error
-      }
+      } catch (err) {}
     }
 
     async function fetchDailyHadith() {
@@ -403,99 +500,14 @@
           document.getElementById('hadith-ar').innerText = data.data.hadithArabic || "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...";
           document.getElementById('hadith-en').innerText = `"${data.data.hadithEnglish}" — ${data.data.refno || 'Sahih Bukhari'}`;
         }
-      } catch (err) {
-        // Keeps preloaded fallback text on error
-      }
+      } catch (err) {}
     }
 
-    function updateClock() {
-      const now = new Date();
-      
-      // Clock
-      document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-
-      // Gregorian Date
-      const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-      document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', options);
-
-      // Hijri Date with safe fallback
-      try {
-        const hijri = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-          day: 'numeric', month: 'long', year: 'numeric'
-        }).format(now);
-        document.getElementById('hijri-date').innerText = hijri.includes('AH') ? hijri : hijri + " AH";
-      } catch (e) {
-        document.getElementById('hijri-date').innerText = "";
-      }
-
-      updateCountdown(now);
-    }
-
-    function updateCountdown(now) {
-      const times = [
-        { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
-        { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
-        { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
-        { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
-        { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
-        { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
-      ];
-
-      times.forEach(t => {
-        const el = document.getElementById(t.rowId);
-        if (el) el.classList.remove('active');
-      });
-
-      let nextPrayer = null;
-      let nextPrayerTime = null;
-      let activeSlot = 'isyak';
-
-      for (let i = 0; i < times.length; i++) {
-        const p = times[i];
-        if (!p.time) continue;
-        const parts = p.time.split(':');
-        const pDate = new Date(now);
-        pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-
-        if (pDate > now) {
-          nextPrayer = p.name;
-          nextPrayerTime = pDate;
-          const el = document.getElementById(p.rowId);
-          if (el) el.classList.add('active');
-          activeSlot = i > 0 ? times[i - 1].key : 'isyak';
-          break;
-        }
-      }
-
-      if (!nextPrayer) {
-        nextPrayer = "Subuh";
-        const parts = prayerTimesToday.subuh.split(':');
-        nextPrayerTime = new Date(now);
-        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
-        nextPrayerTime.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-        const el = document.getElementById("row-subuh");
-        if (el) el.classList.add('active');
-        activeSlot = 'isyak';
-      }
-
-      updatePrayerBackground(activeSlot);
-
-      document.getElementById('next-prayer-name').innerText = nextPrayer;
-
-      const diffMs = Math.max(0, nextPrayerTime - now);
-      const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-      document.getElementById('countdown').innerText = 
-        `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    // Start Clock Immediately
+    // Initialize Timer Immediately
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Fetch async data independently
+    // Fetch dynamic content asynchronously
     fetchJakimPrayerTimes();
     fetchDailyQuran();
     fetchDailyHadith();
