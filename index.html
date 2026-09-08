@@ -9,8 +9,6 @@
       --gold: #ffd166;
       --teal: #06d6a0;
       --cyan: #48cae4;
-      --glass-bg: rgba(15, 23, 42, 0.35); /* Translucent so background shows clearly */
-      --glass-border: rgba(255, 255, 255, 0.25);
     }
 
     * {
@@ -24,11 +22,11 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #050b14;
+      background-color: #000000;
       color: #ffffff;
     }
 
-    /* Dynamic Background Carousel */
+    /* Dynamic Prayer-Based Background */
     #bg-carousel {
       position: fixed;
       top: 0;
@@ -38,10 +36,10 @@
       z-index: 1;
       background-size: cover;
       background-position: center;
-      transition: background-image 1.5s ease-in-out;
+      transition: background-image 2s ease-in-out;
     }
 
-    /* Subtle Overlay for Contrast */
+    /* Gradient Overlay for Text Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -49,7 +47,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -60,51 +58,46 @@
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 14px 20px;
+      padding: 14px 24px;
       gap: 12px;
     }
 
-    /* Glassmorphism Panel */
-    .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    /* Fully Transparent Containers with High Contrast Text Shadows */
+    .transparent-card {
+      background: transparent;
+      border: none;
+      padding: 10px;
     }
 
     /* TOP HEADER: Quran Banner */
     .quran-box {
-      padding: 8px 16px;
       text-align: center;
     }
 
     .quran-ar {
-      font-size: 1.35rem;
+      font-size: 1.45rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0,0,0,0.9);
     }
 
     .quran-en {
-      font-size: 0.9rem;
-      color: #f1f5f9;
+      font-size: 0.95rem;
+      color: #ffffff;
       font-style: italic;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     /* MIDDLE CONTENT: 3 Columns */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 1.3fr 1fr;
-      gap: 14px;
+      gap: 20px;
       height: 100%;
       min-height: 0;
     }
 
     .col-card {
-      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -114,70 +107,66 @@
 
     /* LEFT COL: Clock & Date */
     .time-title {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       letter-spacing: 2px;
       color: var(--cyan);
-      font-weight: 700;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      font-weight: 800;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
     .clock-display {
-      font-size: 3.6rem;
+      font-size: 3.8rem;
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      text-shadow: 0 0 16px rgba(72, 202, 228, 0.8), 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 0 16px rgba(72, 202, 228, 0.9), 0 3px 8px rgba(0,0,0,1);
       margin: 8px 0;
     }
 
     .gregorian-date {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
     .hijri-date {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       color: var(--gold);
       margin-top: 4px;
-      font-weight: 600;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
     /* CENTER COL: Address + Waktu Solat Table */
     .center-column {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       height: 100%;
     }
 
-    /* Dedicated Address Box directly on top of Solat Box */
+    /* Address Box Header */
     .address-box {
-      padding: 8px 14px;
-      background: rgba(15, 23, 42, 0.5);
-      border: 1px solid var(--cyan);
-      border-radius: 12px;
       text-align: center;
+      padding: 6px;
     }
 
     .address-box strong {
       color: var(--cyan);
-      font-size: 1rem;
+      font-size: 1.05rem;
       display: block;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
     .address-box span {
-      font-size: 0.8rem;
-      color: #e2e8f0;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      font-size: 0.85rem;
+      color: #ffffff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
-    /* Solat Box - Tight layout & Big Fonts */
+    /* Solat Container */
     .solat-container {
       flex-grow: 1;
-      padding: 10px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -187,92 +176,85 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 18px;
+      padding: 6px 20px;
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.45) 0%, rgba(72, 202, 228, 0.3) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.45) 0%, rgba(72, 202, 228, 0.35) 100%);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 12px rgba(6, 214, 160, 0.4);
+      box-shadow: 0 0 14px rgba(6, 214, 160, 0.6);
     }
 
     .solat-name {
-      font-size: 1.35rem; /* Larger font */
+      font-size: 1.45rem;
       font-weight: 800;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     .solat-time {
-      font-size: 1.5rem; /* Larger font */
+      font-size: 1.6rem;
       font-weight: 900;
       color: var(--gold);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     /* RIGHT COL: Countdown */
     .next-label {
       font-size: 0.95rem;
       letter-spacing: 1.5px;
-      color: #f1f5f9;
+      color: #ffffff;
       text-transform: uppercase;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
     }
 
     .next-prayer {
-      font-size: 2.6rem;
+      font-size: 2.8rem;
       font-weight: 900;
       color: var(--teal);
       margin: 6px 0;
-      text-shadow: 0 0 12px rgba(6, 214, 160, 0.7), 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 0 14px rgba(6, 214, 160, 0.8), 0 3px 8px rgba(0,0,0,1);
     }
 
     .countdown-box {
-      font-size: 3rem;
+      font-size: 3.2rem;
       font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 209, 102, 0.5);
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 0 12px rgba(255, 209, 102, 0.6), 0 3px 8px rgba(0,0,0,1);
     }
 
     /* BOTTOM FOOTER: Hadith */
     .footer-bar {
-      padding: 8px 16px;
       text-align: center;
     }
 
     .hadith-ar {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     .hadith-en {
-      font-size: 0.85rem;
-      color: #f1f5f9;
+      font-size: 0.9rem;
+      color: #ffffff;
       font-style: italic;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
   </style>
 </head>
 <body>
 
-  <!-- Dynamic Landscape Slideshow -->
+  <!-- Dynamic Solat-Based Background -->
   <div id="bg-carousel"></div>
   <div class="bg-overlay"></div>
 
   <div class="dashboard-container">
     
     <!-- TOP SECTION: Quran Verse -->
-    <div class="quran-box glass-card">
+    <div class="quran-box transparent-card">
       <div class="quran-ar" id="quran-ar">Loading...</div>
       <div class="quran-en" id="quran-en">Loading...</div>
     </div>
@@ -281,7 +263,7 @@
     <div class="main-grid">
       
       <!-- LEFT: Date & Time -->
-      <div class="col-card glass-card">
+      <div class="col-card transparent-card">
         <div class="time-title">CURRENT TIME</div>
         <div class="clock-display" id="clock">00:00:00</div>
         <div class="gregorian-date" id="gregorian-date">Loading...</div>
@@ -290,14 +272,12 @@
 
       <!-- CENTER: Address Box ON TOP of Solat Box -->
       <div class="center-column">
-        <!-- Address Box Header -->
-        <div class="address-box glass-card">
+        <div class="address-box transparent-card">
           <strong>📍 No 8, Jalan Serene 3/4, Serene Heights</strong>
           <span>43500 Semenyih, Selangor (JAKIM: SGR01)</span>
         </div>
 
-        <!-- Waktu Solat List -->
-        <div class="solat-container glass-card">
+        <div class="solat-container transparent-card">
           <div class="solat-row" id="row-subuh"><span class="solat-name">Subuh</span><span class="solat-time" id="time-subuh">05:52 AM</span></div>
           <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:03 AM</span></div>
           <div class="solat-row" id="row-zohor"><span class="solat-name">Zohor</span><span class="solat-time" id="time-zohor">01:15 PM</span></div>
@@ -308,7 +288,7 @@
       </div>
 
       <!-- RIGHT: Countdown -->
-      <div class="col-card glass-card">
+      <div class="col-card transparent-card">
         <div class="next-label">COUNTDOWN TO</div>
         <div class="next-prayer" id="next-prayer-name">--</div>
         <div class="countdown-box" id="countdown">00:00:00</div>
@@ -316,7 +296,7 @@
     </div>
 
     <!-- BOTTOM SECTION: Hadith -->
-    <div class="footer-bar glass-card">
+    <div class="footer-bar transparent-card">
       <div class="hadith-ar" id="hadith-ar">Loading...</div>
       <div class="hadith-en" id="hadith-en">Loading...</div>
     </div>
@@ -324,47 +304,23 @@
   </div>
 
   <script>
-    // Time-based Malaysian Sceneries (Unsplash HD)
-    const malaysianScenes = {
-      sunrise: [
-        'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1600&q=80',
-        'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1600&q=80'
-      ],
-      daytime: [
-        'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1600&q=80',
-        'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80'
-      ],
-      afternoon: [
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
-        'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1600&q=80'
-      ],
-      evening: [
-        'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1600&q=80',
-        'https://images.unsplash.com/photo-1510009228795-006f1eb7ebbe?auto=format&fit=crop&w=1600&q=80'
-      ],
-      night: [
-        'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1600&q=80',
-        'https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=1600&q=80'
-      ]
+    // Distinct Malaysian Sceneries Matched to Prayer Slots
+    const prayerBackgrounds = {
+      subuh: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1920&q=80',   // Sunrise mosque horizon
+      syuruk: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1920&q=80',  // Golden hour KL skyline
+      zohor: 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1920&q=80',   // Midday Putra Mosque Putrajaya
+      asar: 'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1920&q=80',    // Warm afternoon Sultan Abdul Samad
+      maghrib: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=80', // Vibrant Malaysian sunset
+      isyak: 'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1920&q=80'    // Illuminated KLCC & Mosque at night
     };
 
-    let bgIndex = 0;
+    let currentPrayerSlot = '';
 
-    function updateBackground() {
-      const hour = new Date().getHours();
-      let sceneCategory = 'daytime';
-
-      if (hour >= 6 && hour < 8) sceneCategory = 'sunrise';
-      else if (hour >= 8 && hour < 14) sceneCategory = 'daytime';
-      else if (hour >= 14 && hour < 18) sceneCategory = 'afternoon';
-      else if (hour >= 18 && hour < 20) sceneCategory = 'evening';
-      else sceneCategory = 'night';
-
-      const images = malaysianScenes[sceneCategory];
-      const imageUrl = images[bgIndex % images.length];
-      
-      document.getElementById('bg-carousel').style.backgroundImage = `url('${imageUrl}')`;
-      bgIndex++;
+    function updatePrayerBackground(activeSlot) {
+      if (currentPrayerSlot !== activeSlot && prayerBackgrounds[activeSlot]) {
+        currentPrayerSlot = activeSlot;
+        document.getElementById('bg-carousel').style.backgroundImage = `url('${prayerBackgrounds[activeSlot]}')`;
+      }
     }
 
     // Fetch Daily Quranic Verse
@@ -435,20 +391,22 @@
 
     function updateCountdown(now) {
       const times = [
-        { name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
-        { name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
-        { name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
-        { name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
-        { name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
-        { name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
+        { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
+        { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
+        { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
+        { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
+        { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
+        { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
       ];
 
       times.forEach(t => document.getElementById(t.rowId)?.classList.remove('active'));
 
       let nextPrayer = null;
       let nextPrayerTime = null;
+      let activeSlot = 'isyak'; // Default to night slot if past Isyak
 
-      for (let p of times) {
+      for (let i = 0; i < times.length; i++) {
+        const p = times[i];
         const [hours, minutes] = p.time.split(':');
         const pDate = new Date(now);
         pDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
@@ -457,6 +415,9 @@
           nextPrayer = p.name;
           nextPrayerTime = pDate;
           document.getElementById(p.rowId)?.classList.add('active');
+          
+          // Current active prayer slot is the previous one in the list
+          activeSlot = i > 0 ? times[i - 1].key : 'isyak';
           break;
         }
       }
@@ -468,7 +429,11 @@
         nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
         nextPrayerTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
         document.getElementById("row-subuh")?.classList.add('active');
+        activeSlot = 'isyak';
       }
+
+      // Update background picture based on current prayer slot
+      updatePrayerBackground(activeSlot);
 
       document.getElementById('next-prayer-name').innerText = nextPrayer;
 
@@ -484,11 +449,9 @@
     // Initialize
     fetchDailyQuran();
     fetchDailyHadith();
-    updateBackground();
     updateClock();
 
     setInterval(updateClock, 1000);
-    setInterval(updateBackground, 20000); // 20s Slideshow
   </script>
 </body>
 </html>
