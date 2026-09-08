@@ -28,6 +28,7 @@
       color: #ffffff;
     }
 
+    /* Reliable fallback background color and gradient */
     .bg-layer {
       position: fixed;
       top: 0;
@@ -35,12 +36,24 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+      background-color: #0b192c;
       background-image: 
-        linear-gradient(rgba(11, 25, 44, 0.65), rgba(11, 25, 44, 0.82)),
-        url('https://images.unsplash.com/photo-1564769625405-afcde465b8c0?auto=format&fit=crop&w=1920&q=80');
+        linear-gradient(rgba(11, 25, 44, 0.4), rgba(11, 25, 44, 0.65)),
+        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1920&q=80');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+    }
+
+    /* Fallback image element that explicitly loads over the DOM */
+    .bg-img-tag {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 1;
     }
 
     .bg-overlay {
@@ -50,7 +63,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
       pointer-events: none;
     }
 
@@ -66,13 +79,13 @@
     }
 
     .transparent-card {
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-radius: 12px;
       padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
 
     .quran-box {
@@ -171,7 +184,7 @@
       align-items: center;
       padding: 4px 16px;
       border-radius: 6px;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.35);
     }
 
     .solat-row.active {
@@ -230,7 +243,8 @@
 </head>
 <body>
 
-  <div class="bg-layer" id="bg-layer"></div>
+  <!-- Physical image tag guarantee to bypass Safari CSS background quirks -->
+  <img class="bg-img-tag" src="https://images.unsplash.com/photo-1564769625405-afcde465b8c0?auto=format&fit=crop&w=1920&q=80" alt="Background">
   <div class="bg-overlay"></div>
 
   <div class="dashboard-container">
@@ -260,7 +274,6 @@
           <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:05 AM</span></div>
           <div class="solat-row" id="row-dhuha"><span class="solat-name">Dhuha</span><span class="solat-time" id="time-dhuha">07:31 AM</span></div>
           <div class="solat-row" id="row-zohor"><span class="solat-name">Zohor</span><span class="solat-time" id="time-zohor">01:14 PM</span></div>
-          <div class="solst-row" id="row-asar"></div>
           <div class="solat-row" id="row-asar"><span class="solat-name">Asar</span><span class="solat-time" id="time-asar">04:18 PM</span></div>
           <div class="solat-row" id="row-maghrib"><span class="solat-name">Maghrib</span><span class="solat-time" id="time-maghrib">07:18 PM</span></div>
           <div class="solat-row" id="row-isyak"><span class="solat-name">Isyak</span><span class="solat-time" id="time-isyak">08:27 PM</span></div>
