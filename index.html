@@ -363,14 +363,14 @@
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
-    // Converts Raw/API Hijri Strings to Malaysian Standard Format
+    // Force Converts Numeric/API Months to Word Format in Malaysian Style
     function formatMalaysianHijriString(rawString) {
       if (!rawString) return "";
       
       // Clean up accidental duplicate 'AH' or trailing symbols
       var cleaned = rawString.replace(/(AH\s*)+$/gi, '').trim();
 
-      // Replace Arabic/English month variants with Malaysian JAKIM transliterations
+      // String-based month replacements
       var monthReplacements = {
         "Rabiʻ I": "Rabiulawal", "Rabi' I": "Rabiulawal", "Rabi` I": "Rabiulawal", "Rabi al-Awwal": "Rabiulawal", "Rabi'ul Awal": "Rabiulawal",
         "Rabiʻ II": "Rabiulakhir", "Rabi' II": "Rabiulakhir", "Rabi` II": "Rabiulakhir", "Rabi al-Thani": "Rabiulakhir", "Rabi'ul Akhir": "Rabiulakhir",
@@ -395,20 +395,24 @@
       return cleaned;
     }
 
-    // Offline Fallback Converter (Uses Browser Intl Engine mapped to JAKIM Format)
+    // Robust Fallback Converter (Direct Numeric-to-Word Mapping)
     function getMalaysianHijriDate(date) {
       try {
         var formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura', {
           day: 'numeric', month: 'numeric', year: 'numeric'
         });
         var parts = formatter.formatToParts(date);
-        var day, monthIndex, year;
+        var day, monthNum, year;
         for (var i = 0; i < parts.length; i++) {
           if (parts[i].type === 'day') day = parts[i].value;
-          if (parts[i].type === 'month') monthIndex = parseInt(parts[i].value, 10) - 1;
+          if (parts[i].type === 'month') monthNum = parseInt(parts[i].value, 10);
           if (parts[i].type === 'year') year = parts[i].value;
         }
-        return day + " " + jakimMonths[monthIndex] + " " + year + " H";
+
+        // Map month index (1-12) directly to word list
+        var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
+        
+        return day + " " + monthWord + " " + year + " H";
       } catch (e) {
         return "";
       }
