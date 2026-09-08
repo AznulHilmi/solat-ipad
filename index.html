@@ -2,16 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- WebApp & Fullscreen Meta Tags for iPad/iOS Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Waktu Solat">
-  <meta name="mobile-web-app-capable" content="yes">
-  
-  <!-- Lock scaling and fit display into iPad screen boundaries -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  
-  <title>Landscape Waktu Solat Display - Serene Heights</title>
+  <title>Waktu Solat - Serene Heights</title>
   <style>
     :root {
       --gold: #ffd166;
@@ -30,11 +24,11 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #0d1b2a;
+      background-color: #111e30;
       color: #ffffff;
     }
 
-    /* Hardware-Accelerated Dynamic Photo Background Layers */
+    /* Solid Gradient Background Fallback to guarantee no black screens */
     .bg-layer {
       position: fixed;
       top: 0;
@@ -42,19 +36,11 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      will-change: opacity;
-      transition: opacity 1.5s ease-in-out;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
     }
 
-    #bg-1 { opacity: 1; }
-    #bg-2 { opacity: 0; }
-
-    /* Gradient Dark Overlay for Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -62,11 +48,10 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%);
+      background: rgba(0, 0, 0, 0.4);
       pointer-events: none;
     }
 
-    /* Main Dashboard Layout with Safe-Area Insets for Fullscreen */
     .dashboard-container {
       position: relative;
       z-index: 3;
@@ -74,19 +59,19 @@
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: env(safe-area-inset-top, 14px) env(safe-area-inset-right, 24px) env(safe-area-inset-bottom, 14px) env(safe-area-inset-left, 24px);
+      padding: 14px 24px;
       gap: 10px;
     }
 
     .transparent-card {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border-radius: 12px;
       padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* TOP HEADER: Quran Banner */
     .quran-box {
       text-align: center;
     }
@@ -95,17 +80,14 @@
       font-size: 1.35rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
     }
 
     .quran-en {
       font-size: 0.88rem;
       color: #ffffff;
       font-style: italic;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
-    /* MIDDLE CONTENT: 3 Columns */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 1.3fr 1fr;
@@ -122,13 +104,11 @@
       text-align: center;
     }
 
-    /* LEFT COL: Clock & Date */
     .time-title {
       font-size: 0.9rem;
       letter-spacing: 2px;
       color: var(--cyan);
       font-weight: 800;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
     .clock-display {
@@ -136,14 +116,12 @@
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      text-shadow: 0 0 16px rgba(72, 202, 228, 0.9), 0 3px 8px rgba(0,0,0,1);
       margin: 8px 0;
     }
 
     .gregorian-date {
       font-size: 1.25rem;
       font-weight: 700;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
     .hijri-date {
@@ -151,10 +129,8 @@
       color: var(--gold);
       margin-top: 4px;
       font-weight: 700;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     }
 
-    /* CENTER COL: Address + Waktu Solat Table */
     .center-column {
       display: flex;
       flex-direction: column;
@@ -171,13 +147,11 @@
       color: var(--cyan);
       font-size: 0.95rem;
       display: block;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
     .address-box span {
       font-size: 0.78rem;
       color: #ffffff;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
     .solat-container {
@@ -194,35 +168,30 @@
       align-items: center;
       padding: 4px 16px;
       border-radius: 6px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .solat-row.active {
       background: linear-gradient(90deg, rgba(6, 214, 160, 0.5) 0%, rgba(72, 202, 228, 0.35) 100%);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 12px rgba(6, 214, 160, 0.6);
     }
 
     .solat-name {
       font-size: 1.25rem;
       font-weight: 800;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     .solat-time {
       font-size: 1.35rem;
       font-weight: 900;
       color: var(--gold);
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
-    /* RIGHT COL: Countdown */
     .next-label {
       font-size: 0.95rem;
       letter-spacing: 1.5px;
       color: #ffffff;
       text-transform: uppercase;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
     }
 
     .next-prayer {
@@ -230,7 +199,6 @@
       font-weight: 900;
       color: var(--teal);
       margin: 6px 0;
-      text-shadow: 0 0 14px rgba(6, 214, 160, 0.8), 0 3px 8px rgba(0,0,0,1);
     }
 
     .countdown-box {
@@ -238,10 +206,8 @@
       font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
-      text-shadow: 0 0 12px rgba(255, 209, 102, 0.6), 0 3px 8px rgba(0,0,0,1);
     }
 
-    /* BOTTOM FOOTER: Hadith */
     .footer-bar {
       text-align: center;
     }
@@ -250,36 +216,29 @@
       font-size: 1.1rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
 
     .hadith-en {
       font-size: 0.85rem;
       color: #ffffff;
       font-style: italic;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
   </style>
 </head>
 <body>
 
-  <!-- Dual Crossfading Background Layers for iOS Safari Performance -->
-  <div id="bg-1" class="bg-layer"></div>
-  <div id="bg-2" class="bg-layer"></div>
+  <div class="bg-layer" id="bg-layer"></div>
   <div class="bg-overlay"></div>
 
   <div class="dashboard-container">
     
-    <!-- TOP SECTION: Quran Verse -->
     <div class="quran-box transparent-card">
       <div class="quran-ar" id="quran-ar">الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ</div>
       <div class="quran-en" id="quran-en">"Those who believe and whose hearts find rest in the remembrance of Allah." — Surah Ar-Ra'd 13:28</div>
     </div>
 
-    <!-- MAIN DISPLAY (3 COLUMNS) -->
     <div class="main-grid">
       
-      <!-- LEFT: Date & Time -->
       <div class="col-card transparent-card">
         <div class="time-title">CURRENT TIME</div>
         <div class="clock-display" id="clock">--:--:--</div>
@@ -287,7 +246,6 @@
         <div class="hijri-date" id="hijri-date">---</div>
       </div>
 
-      <!-- CENTER: Address Box ON TOP of Solat Box -->
       <div class="center-column">
         <div class="address-box transparent-card">
           <strong>📍 No 8, Jalan Serene 3/4, Serene Heights, 43500 Semenyih, Selangor</strong>
@@ -305,7 +263,6 @@
         </div>
       </div>
 
-      <!-- RIGHT: Countdown -->
       <div class="col-card transparent-card">
         <div class="next-label">COUNTDOWN TO</div>
         <div class="next-prayer" id="next-prayer-name">--</div>
@@ -313,10 +270,9 @@
       </div>
     </div>
 
-    <!-- BOTTOM SECTION: Hadith -->
     <div class="footer-bar transparent-card">
       <div class="hadith-ar" id="hadith-ar">قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...</div>
-      <div class="hadith-en" id="hadith-en">"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status." — Sahih Muslim</div>
+      <div class="hadith-en" id="hadith-en">"He who purifies himself in his house and then walks to a house of Allah..." — Sahih Muslim</div>
     </div>
 
   </div>
@@ -332,21 +288,11 @@
       isyak: "20:27"
     };
 
-    function calculateJakimDhuha(subuhStr, syurukStr) {
-      try {
-        var subParts = subuhStr.split(':');
-        var syuParts = syurukStr.split(':');
-        var subMin = parseInt(subParts[0], 10) * 60 + parseInt(subParts[1], 10);
-        var syuMin = parseInt(syuParts[0], 10) * 60 + parseInt(syuParts[1], 10);
-        var diffMin = syuMin - subMin;
-        var dhuhaTotalMin = syuMin + Math.round(diffMin / 3);
-        var dH = Math.floor(dhuhaTotalMin / 60) % 24;
-        var dM = dhuhaTotalMin % 60;
-        return (dH < 10 ? '0' + dH : dH) + ':' + (dM < 10 ? '0' + dM : dM);
-      } catch(e) {
-        return "07:31";
-      }
-    }
+    var jakimMonths = [
+      "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
+      "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
+      "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
+    ];
 
     function format12Hour(time24) {
       if (!time24 || time24.indexOf(':') === -1) return "--:--";
@@ -356,133 +302,6 @@
       var ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12 || 12;
       return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
-    }
-
-    var prayerPhotosWeekly = {
-      subuh: [
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1426604966848-d7adacbd02bff?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1920&q=80"
-      ],
-      syuruk: [
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1433086966358-5485990ed716?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1920&q=80"
-      ],
-      dhuha: [
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80"
-      ],
-      zohor: [
-        "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1433086966358-5485990ed716?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1426604966848-d7adacbd02bff?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
-      ],
-      asar: [
-        "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80"
-      ],
-      maghrib: [
-        "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80"
-      ],
-      isyak: [
-        "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1426604966848-d7adacbd02bff?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80"
-      ]
-    };
-
-    var currentPrayerSlot = '';
-    var activeBgLayer = 1;
-
-    function updatePrayerBackground(activeSlot) {
-      var now = new Date();
-      var dayOfWeek = now.getDay();
-      
-      if (prayerPhotosWeekly[activeSlot]) {
-        var imagesForSlot = prayerPhotosWeekly[activeSlot];
-        var targetImage = imagesForSlot[dayOfWeek % imagesForSlot.length];
-
-        if (currentPrayerSlot !== activeSlot || window.lastLoadedImage !== targetImage) {
-          currentPrayerSlot = activeSlot;
-          window.lastLoadedImage = targetImage;
-
-          var layer1 = document.getElementById('bg-1');
-          var layer2 = document.getElementById('bg-2');
-
-          if (activeBgLayer === 1) {
-            layer2.style.backgroundImage = 'url("' + targetImage + '")';
-            layer2.style.opacity = '1';
-            layer1.style.opacity = '0';
-            activeBgLayer = 2;
-          } else {
-            layer1.style.backgroundImage = 'url("' + targetImage + '")';
-            layer1.style.opacity = '1';
-            layer2.style.opacity = '0';
-            activeBgLayer = 1;
-          }
-        }
-      }
-    }
-
-    var jakimMonths = [
-      "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
-      "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
-      "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
-    ];
-
-    function formatMalaysianHijriString(rawString) {
-      if (!rawString) return "";
-      var cleaned = rawString.replace(/\s*(AH|H)\s*$/gi, '').trim();
-      var isoMatch = cleaned.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-      if (isoMatch) {
-        var year = isoMatch[1];
-        var monthNum = parseInt(isoMatch[2], 10);
-        var day = parseInt(isoMatch[3], 10);
-        var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
-        return day + " " + monthWord + " " + year + " H";
-      }
-      var revMatch = cleaned.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
-      if (revMatch) {
-        var dayRev = parseInt(revMatch[1], 10);
-        var monthNumRev = parseInt(revMatch[2], 10);
-        var yearRev = revMatch[3];
-        var monthWordRev = (monthNumRev >= 1 && monthNumRev <= 12) ? jakimMonths[monthNumRev - 1] : monthNumRev;
-        return dayRev + " " + monthWordRev + " " + yearRev + " H";
-      }
-      return cleaned + ' H';
     }
 
     function getMalaysianHijriDate(date) {
@@ -500,22 +319,24 @@
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
-        return "";
+        return "1447 Hijri";
       }
     }
 
-    function updateClock() {
+    function updateEngine() {
       try {
         var now = new Date();
+        
+        // 1. Clock Update
         var clockElem = document.getElementById('clock');
         if (clockElem) {
           clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
         }
 
+        // 2. Date Update
         var gregElem = document.getElementById('gregorian-date');
         if (gregElem) {
-          var options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-          gregElem.innerText = now.toLocaleDateString('en-US', options);
+          gregElem.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
         }
 
         var hijriElem = document.getElementById('hijri-date');
@@ -523,164 +344,75 @@
           hijriElem.innerText = getMalaysianHijriDate(now);
         }
 
-        updateCountdown(now);
-      } catch (err) {
-        console.error("Clock update error:", err);
-      }
-    }
+        // 3. Countdown & Active Row Logic
+        var times = [
+          { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
+          { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
+          { key: "dhuha", name: "Dhuha", time: prayerTimesToday.dhuha, rowId: "row-dhuha" },
+          { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
+          { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
+          { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
+          { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
+        ];
 
-    function updateCountdown(now) {
-      var times = [
-        { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
-        { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
-        { key: "dhuha", name: "Dhuha", time: prayerTimesToday.dhuha, rowId: "row-dhuha" },
-        { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
-        { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
-        { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
-        { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
-      ];
-
-      for (var i = 0; i < times.length; i++) {
-        var el = document.getElementById(times[i].rowId);
-        if (el) el.classList.remove('active');
-      }
-
-      var nextPrayer = null;
-      var nextPrayerTime = null;
-      var activeSlot = 'isyak';
-
-      for (var j = 0; j < times.length; j++) {
-        var p = times[j];
-        if (!p.time) continue;
-        var parts = p.time.split(':');
-        var pDate = new Date(now.getTime());
-        pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-
-        if (pDate > now) {
-          nextPrayer = p.name;
-          nextPrayerTime = pDate;
-          var activeEl = document.getElementById(p.rowId);
-          if (activeEl) activeEl.classList.add('active');
-          activeSlot = j > 0 ? times[j - 1].key : 'isyak';
-          break;
+        for (var i = 0; i < times.length; i++) {
+          var el = document.getElementById(times[i].rowId);
+          if (el) el.classList.remove('active');
         }
-      }
 
-      if (!nextPrayer) {
-        nextPrayer = "Subuh";
-        var subParts = prayerTimesToday.subuh.split(':');
-        nextPrayerTime = new Date(now.getTime());
-        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
-        nextPrayerTime.setHours(parseInt(subParts[0], 10), parseInt(subParts[1], 10), 0, 0);
-        var subEl = document.getElementById("row-subuh");
-        if (subEl) subEl.classList.add('active');
-        activeSlot = 'isyak';
-      }
+        var nextPrayer = null;
+        var nextPrayerTime = null;
 
-      updatePrayerBackground(activeSlot);
+        for (var j = 0; j < times.length; j++) {
+          var p = times[j];
+          if (!p.time) continue;
+          var parts = p.time.split(':');
+          var pDate = new Date(now.getTime());
+          pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
 
-      var nextLabel = document.getElementById('next-prayer-name');
-      if (nextLabel) nextLabel.innerText = nextPrayer;
-
-      var diffMs = Math.max(0, nextPrayerTime - now);
-      var hrs = Math.floor(diffMs / (1000 * 60 * 60));
-      var mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      var secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-      var countElem = document.getElementById('countdown');
-      if (countElem) {
-        countElem.innerText = 
-          (hrs < 10 ? '0' + hrs : hrs) + ':' + 
-          (mins < 10 ? '0' + mins : mins) + ':' + 
-          (secs < 10 ? '0' + secs : secs);
-      }
-    }
-
-    async function fetchJakimPrayerTimes() {
-      try {
-        const res = await fetch('https://api.waktusolat.app/v2/solat/SGR01');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.prayers && data.prayers.length > 0) {
-            const todayData = data.prayers[0];
-            var subuhVal = todayData.fajr;
-            var syurukVal = todayData.syuruk;
-            var dhuhaVal = calculateJakimDhuha(subuhVal, syurukVal);
-
-            prayerTimesToday = {
-              subuh: subuhVal,
-              syuruk: syurukVal,
-              dhuha: dhuhaVal,
-              zohor: todayData.dhuhr,
-              asar: todayData.asr,
-              maghrib: todayData.maghrib,
-              isyak: todayData.isha
-            };
-
-            if (todayData.hijri) {
-              var formattedHijri = formatMalaysianHijriString(todayData.hijri);
-              var hijriElem = document.getElementById('hijri-date');
-              if (hijriElem) {
-                hijriElem.innerText = formattedHijri;
-                hijriElem.setAttribute('data-jakim', 'true');
-              }
-            }
+          if (pDate > now) {
+            nextPrayer = p.name;
+            nextPrayerTime = pDate;
+            var activeEl = document.getElementById(p.rowId);
+            if (activeEl) activeEl.classList.add('active');
+            break;
           }
         }
-      } catch (e) {
-        console.warn('Network request fallback to default SGR01 times:', e);
+
+        if (!nextPrayer) {
+          nextPrayer = "Subuh";
+          var subParts = prayerTimesToday.subuh.split(':');
+          nextPrayerTime = new Date(now.getTime());
+          nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+          nextPrayerTime.setHours(parseInt(subParts[0], 10), parseInt(subParts[1], 10), 0, 0);
+          var subEl = document.getElementById("row-subuh");
+          if (subEl) subEl.classList.add('active');
+        }
+
+        var nextLabel = document.getElementById('next-prayer-name');
+        if (nextLabel) nextLabel.innerText = nextPrayer;
+
+        var diffMs = Math.max(0, nextPrayerTime - now);
+        var hrs = Math.floor(diffMs / (1000 * 60 * 60));
+        var mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        var secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+        var countElem = document.getElementById('countdown');
+        if (countElem) {
+          countElem.innerText = 
+            (hrs < 10 ? '0' + hrs : hrs) + ':' + 
+            (mins < 10 ? '0' + mins : mins) + ':' + 
+            (secs < 10 ? '0' + secs : secs);
+        }
+
+      } catch (err) {
+        console.error("Main loop error caught:", err);
       }
-
-      document.getElementById('time-subuh').innerText = format12Hour(prayerTimesToday.subuh);
-      document.getElementById('time-syuruk').innerText = format12Hour(prayerTimesToday.syuruk);
-      document.getElementById('time-dhuha').innerText = format12Hour(prayerTimesToday.dhuha);
-      document.getElementById('time-zohor').innerText = format12Hour(prayerTimesToday.zohor);
-      document.getElementById('time-asar').innerText = format12Hour(prayerTimesToday.asar);
-      document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
-      document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
-      
-      updateClock();
     }
 
-    async function fetchDailyQuran() {
-      try {
-        const now = new Date();
-        const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-        const verseNumber = (dayOfYear * 17) % 6236 + 1; 
-
-        const arRes = await fetch(`https://api.alquran.cloud/v1/ayah/${verseNumber}/ar.alafasy`);
-        const arData = await arRes.json();
-
-        const enRes = await fetch(`https://api.alquran.cloud/v1/ayah/${verseNumber}/en.sahih`);
-        const enData = await enRes.json();
-
-        if (arData.code === 200 && enData.code === 200) {
-          document.getElementById('quran-ar').innerText = arData.data.text;
-          document.getElementById('quran-en').innerText = `"${enData.data.text}" — Surah ${enData.data.surah.englishName} (${enData.data.surah.number}:${enData.data.numberInSurah})`;
-        }
-      } catch (err) {}
-    }
-
-    async function fetchDailyHadith() {
-      try {
-        const res = await fetch(`https://random-hadith-generator.vercel.app/bukhari/`);
-        const data = await res.json();
-        if (data && data.data) {
-          document.getElementById('hadith-ar').innerText = data.data.hadithArabic || "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...";
-          document.getElementById('hadith-en').innerText = `"${data.data.hadithEnglish}" — ${data.data.refno || 'Sahih Bukhari'}`;
-        }
-      } catch (err) {}
-    }
-
-    // Initialize first background image immediately on load
-    document.getElementById('bg-1').style.backgroundImage = 'url("' + prayerPhotosWeekly.subuh[0] + '")';
-
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    fetchJakimPrayerTimes();
-    fetchDailyQuran();
-    fetchDailyHadith();
+    // Run immediately and set safe tick interval
+    updateEngine();
+    setInterval(updateEngine, 1000);
   </script>
 </body>
 </html>
