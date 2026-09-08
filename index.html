@@ -26,7 +26,7 @@
       color: #ffffff;
     }
 
-    /* Dynamic Background Container */
+    /* Dynamic Photo Background Container */
     #bg-carousel {
       position: fixed;
       top: 0;
@@ -34,10 +34,13 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      transition: background 1.5s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 2s ease-in-out;
     }
 
-    /* Overlay for Contrast */
+    /* Gradient Dark Overlay for Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -45,7 +48,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -61,8 +64,10 @@
     }
 
     .transparent-card {
-      background: transparent;
-      border: none;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 12px;
       padding: 10px;
     }
 
@@ -318,28 +323,29 @@
       return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
     }
 
-    // Native CSS Geometric Grid Backgrounds (Cross-browser / Safari Safe)
-    var gridOverlay = "radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)";
-    var gridStyle = gridOverlay + ", linear-gradient(135deg, ";
-
-    var prayerBackgroundStyles = {
-      subuh: gridOverlay + ", linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #3a506b 100%)",
-      syuruk: gridOverlay + ", linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)",
-      zohor: gridOverlay + ", linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)",
-      asar: gridOverlay + ", linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)",
-      maghrib: gridOverlay + ", linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)",
-      isyak: gridOverlay + ", linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)"
+    // Dynamic High Resolution Nature Photography matched to Prayer & Time of Day
+    var prayerPhotos = {
+      subuh: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80", // Pre-dawn mist & coastal blue hour
+      syuruk: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80", // Sunrise over misty hills & mountain peaks
+      zohor: "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80", // Bright rainforest river & lush canopy
+      asar: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80", // Warm afternoon sun in forest stream
+      maghrib: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1920&q=80", // Crimson & golden sunset over ocean waves
+      isyak: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80"   // Starlit night sky, full moon & calm waters
     };
 
     var currentPrayerSlot = '';
 
     function updatePrayerBackground(activeSlot) {
-      if (currentPrayerSlot !== activeSlot && prayerBackgroundStyles[activeSlot]) {
+      if (currentPrayerSlot !== activeSlot && prayerPhotos[activeSlot]) {
         currentPrayerSlot = activeSlot;
         var bgElem = document.getElementById('bg-carousel');
         if (bgElem) {
-          bgElem.style.background = prayerBackgroundStyles[activeSlot];
-          bgElem.style.backgroundSize = "20px 20px, 100% 100%";
+          // Preload Image to avoid flashing on iPad Safari
+          var img = new Image();
+          img.src = prayerPhotos[activeSlot];
+          img.onload = function() {
+            bgElem.style.backgroundImage = 'url("' + prayerPhotos[activeSlot] + '")';
+          };
         }
       }
     }
