@@ -44,7 +44,7 @@
       transition: background-image 1.5s ease-in-out;
     }
 
-    /* Very light vignette so the gorgeous scenery dominates the screen */
+    /* Light vignette overlay to let photos shine */
     .bg-overlay {
       position: absolute;
       top: 0;
@@ -68,7 +68,7 @@
       gap: 6px;
     }
 
-    /* Feather-light crystal glass cards so the background scenery is fully visible */
+    /* Feather-light crystal glass cards */
     .transparent-card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(8px);
@@ -323,14 +323,15 @@
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
+    // Diverse scenery collection featuring rivers, creeks, lakes, snowy winter, autumn foliage, and summer landscapes
     var sceneryImages = {
-      subuh: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop", // Misty dawn forest / mountains
-      syuruk: "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=1920&auto=format&fit=crop", // Golden sunrise over plainfield
-      dhuha: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop", // Majestic mountain & lake daylight
-      zohor: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop", // Pristine tropical beach & sea
-      asar: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=1920&auto=format&fit=crop", // Vast savannah / plainfield
-      maghrib: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1920&auto=format&fit=crop", // Golden hour sunset over mountains
-      isyak: "https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1920&auto=format&fit=crop"  // Magnificent illuminated mosque at night
+      subuh: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=1920&auto=format&fit=crop", // Misty dawn over a quiet mountain creek/river
+      syuruk: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop", // Golden morning sunlight reflecting on a pristine lake
+      dhuha: "https://images.unsplash.com/photo-1491557345352-5929e343eb89?q=80&w=1920&auto=format&fit=crop", // Bright summer alpine scenery with lush green valleys and snow peaks
+      zohor: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop", // Crystal-clear blue lake and summer forest landscape
+      asar: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=1920&auto=format&fit=crop", // Vibrant autumn / fall foliage along a winding river
+      maghrib: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop", // Breathtaking winter snowy mountain range under a glowing sunset sky
+      isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop"  // Serene night landscape with a star-filled sky over a glassy lake
     };
 
     var currentActiveSceneryKey = "";
