@@ -26,7 +26,7 @@
       color: #ffffff;
     }
 
-    /* Dynamic Prayer-Based Background */
+    /* Dynamic Mosque Background */
     #bg-carousel {
       position: fixed;
       top: 0;
@@ -39,7 +39,7 @@
       transition: background-image 2s ease-in-out;
     }
 
-    /* Gradient Overlay for Text Readability */
+    /* Dark Overlay for Sunlight / Background High Contrast Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -47,7 +47,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -62,7 +62,6 @@
       gap: 12px;
     }
 
-    /* Fully Transparent Containers with High Contrast Text Shadows */
     .transparent-card {
       background: transparent;
       border: none;
@@ -145,7 +144,6 @@
       height: 100%;
     }
 
-    /* Address Box Header */
     .address-box {
       text-align: center;
       padding: 6px;
@@ -164,7 +162,6 @@
       text-shadow: 0 2px 6px rgba(0,0,0,0.95);
     }
 
-    /* Solat Container */
     .solat-container {
       flex-grow: 1;
       display: flex;
@@ -178,11 +175,11 @@
       align-items: center;
       padding: 6px 20px;
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.45) 0%, rgba(72, 202, 228, 0.35) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.5) 0%, rgba(72, 202, 228, 0.35) 100%);
       border: 1px solid var(--teal);
       box-shadow: 0 0 14px rgba(6, 214, 160, 0.6);
     }
@@ -304,14 +301,14 @@
   </div>
 
   <script>
-    // Distinct Malaysian Sceneries Matched to Prayer Slots
+    // Pure Islamic & Malaysian Mosque Sceneries Matched to Prayer Slots
     const prayerBackgrounds = {
-      subuh: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1920&q=80',   // Sunrise mosque horizon
-      syuruk: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1920&q=80',  // Golden hour KL skyline
-      zohor: 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1920&q=80',   // Midday Putra Mosque Putrajaya
-      asar: 'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1920&q=80',    // Warm afternoon Sultan Abdul Samad
-      maghrib: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=80', // Vibrant Malaysian sunset
-      isyak: 'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1920&q=80'    // Illuminated KLCC & Mosque at night
+      subuh: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1920&q=80',   // Sunrise over Putra Mosque, Putrajaya
+      syuruk: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1920&q=80',  // Golden hour over Sultan Salahuddin Abdul Aziz Mosque (Blue Mosque)
+      zohor: 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1920&q=80',   // Midday view of Federal Territory Mosque
+      asar: 'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1920&q=80',    // Soft afternoon light at Tuanku Mizan Zainal Abidin Mosque (Iron Mosque)
+      maghrib: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=80', // Majestic sunset at Malacca Straits Floating Mosque
+      isyak: 'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1920&q=80'    // Beautiful illuminated Kota Kinabalu City Mosque at night
     };
 
     let currentPrayerSlot = '';
@@ -403,7 +400,7 @@
 
       let nextPrayer = null;
       let nextPrayerTime = null;
-      let activeSlot = 'isyak'; // Default to night slot if past Isyak
+      let activeSlot = 'isyak';
 
       for (let i = 0; i < times.length; i++) {
         const p = times[i];
@@ -415,8 +412,6 @@
           nextPrayer = p.name;
           nextPrayerTime = pDate;
           document.getElementById(p.rowId)?.classList.add('active');
-          
-          // Current active prayer slot is the previous one in the list
           activeSlot = i > 0 ? times[i - 1].key : 'isyak';
           break;
         }
@@ -432,7 +427,7 @@
         activeSlot = 'isyak';
       }
 
-      // Update background picture based on current prayer slot
+      // Update background picture based on active prayer time slot
       updatePrayerBackground(activeSlot);
 
       document.getElementById('next-prayer-name').innerText = nextPrayer;
