@@ -42,7 +42,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background-color: #1b263b; /* Fallback color so it's never purely black */
+      background-color: #1b263b; /* Fallback color */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -433,14 +433,8 @@
           window.lastLoadedImage = targetImage;
           var bgElem = document.getElementById('bg-carousel');
           if (bgElem) {
-            var img = new Image();
-            img.src = targetImage;
-            img.onload = function() {
-              bgElem.style.backgroundImage = 'url("' + targetImage + '")';
-            };
-            img.onerror = function() {
-              console.warn("Failed to load image, keeping fallback background.");
-            };
+            // Directly set background image immediately without waiting on preloading hooks
+            bgElem.style.backgroundImage = 'url("' + targetImage + '")';
           }
         }
       }
@@ -628,7 +622,6 @@
       document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
       document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
       
-      // Trigger background check immediately after prayer times load
       updateClock();
     }
 
