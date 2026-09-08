@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Landscape Waktu Solat Display</title>
+  <title>Landscape Waktu Solat Display - Ulu Langat</title>
   <style>
     :root {
       --gold: #ffd166;
@@ -39,7 +39,7 @@
       transition: background 1.5s ease-in-out;
     }
 
-    /* Subtle Overlay for Optimum Readability */
+    /* Subtle Overlay for Readability */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -270,17 +270,17 @@
       <!-- CENTER: Address Box ON TOP of Solat Box -->
       <div class="center-column">
         <div class="address-box transparent-card">
-          <strong>📍 No 8, Jalan Serene 3/4, Serene Heights</strong>
-          <span>43500 Semenyih, Selangor (JAKIM: SGR01)</span>
+          <strong>📍 Ulu Langat, Selangor</strong>
+          <span>JAKIM Zone: SGR01 (Gombak, Petaling, Hulu Langat)</span>
         </div>
 
         <div class="solat-container transparent-card">
-          <div class="solat-row" id="row-subuh"><span class="solat-name">Subuh</span><span class="solat-time" id="time-subuh">05:52 AM</span></div>
-          <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:03 AM</span></div>
-          <div class="solat-row" id="row-zohor"><span class="solat-name">Zohor</span><span class="solat-time" id="time-zohor">01:15 PM</span></div>
-          <div class="solat-row" id="row-asar"><span class="solat-name">Asar</span><span class="solat-time" id="time-asar">04:21 PM</span></div>
-          <div class="solat-row" id="row-maghrib"><span class="solat-name">Maghrib</span><span class="solat-time" id="time-maghrib">07:20 PM</span></div>
-          <div class="solat-row" id="row-isyak"><span class="solat-name">Isyak</span><span class="solat-time" id="time-isyak">08:29 PM</span></div>
+          <div class="solat-row" id="row-subuh"><span class="solat-name">Subuh</span><span class="solat-time" id="time-subuh">05:59 AM</span></div>
+          <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:05 AM</span></div>
+          <div class="solat-row" id="row-zohor"><span class="solat-name">Zohor</span><span class="solat-time" id="time-zohor">01:14 PM</span></div>
+          <div class="solat-row" id="row-asar"><span class="solat-name">Asar</span><span class="solat-time" id="time-asar">04:18 PM</span></div>
+          <div class="solat-row" id="row-maghrib"><span class="solat-name">Maghrib</span><span class="solat-time" id="time-maghrib">07:18 PM</span></div>
+          <div class="solat-row" id="row-isyak"><span class="solat-name">Isyak</span><span class="solat-time" id="time-isyak">08:27 PM</span></div>
         </div>
       </div>
 
@@ -301,6 +301,56 @@
   </div>
 
   <script>
+    // Default fallback times for SGR01 (Ulu Langat)
+    let prayerTimesToday = {
+      subuh: "05:59",
+      syuruk: "07:05",
+      zohor: "13:14",
+      asar: "16:18",
+      maghrib: "19:18",
+      isyak: "20:27"
+    };
+
+    // Fetch official daily prayer times directly from JAKIM API for Zone SGR01
+    async function fetchJakimPrayerTimes() {
+      try {
+        const response = await fetch('https://www.e-solat.gov.my/index.php?r=esolat/jakimperiod&zone=SGR01&period=today');
+        const data = await response.json();
+        
+        if (data && data.prayerTime && data.prayerTime.length > 0) {
+          const times = data.prayerTime[0];
+          
+          // Format 24h string HH:mm from API response (HH:mm:ss)
+          prayerTimesToday = {
+            subuh: times.fajr.substring(0, 5),
+            syuruk: times.syuruk.substring(0, 5),
+            zohor: times.dhuhr.substring(0, 5),
+            asar: times.asr.substring(0, 5),
+            maghrib: times.maghrib.substring(0, 5),
+            isyak: times.isha.substring(0, 5)
+          };
+
+          // Update UI time labels
+          document.getElementById('time-subuh').innerText = format12Hour(prayerTimesToday.subuh);
+          document.getElementById('time-syuruk').innerText = format12Hour(prayerTimesToday.syuruk);
+          document.getElementById('time-zohor').innerText = format12Hour(prayerTimesToday.zohor);
+          document.getElementById('time-asar').innerText = format12Hour(prayerTimesToday.asar);
+          document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
+          document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
+        }
+      } catch (err) {
+        console.warn('JAKIM API request failed, utilizing local baseline times for SGR01.', err);
+      }
+    }
+
+    function format12Hour(time24) {
+      const [h, m] = time24.split(':');
+      let hours = parseInt(h);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return `${String(hours).padStart(2, '0')}:${m} ${ampm}`;
+    }
+
     // SVG Islamic Star Geometry Pattern overlay
     const islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
 
@@ -361,15 +411,6 @@
         document.getElementById('hadith-en').innerText = "\"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status.\" — Sahih Muslim 666";
       }
     }
-
-    const prayerTimesToday = {
-      subuh: "05:52",
-      syuruk: "07:03",
-      zohor: "13:15",
-      asar: "16:21",
-      maghrib: "19:20",
-      isyak: "20:29"
-    };
 
     function updateClock() {
       const now = new Date();
@@ -445,6 +486,7 @@
     }
 
     // Initialize
+    fetchJakimPrayerTimes();
     fetchDailyQuran();
     fetchDailyHadith();
     updateClock();
