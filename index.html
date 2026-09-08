@@ -3,686 +3,401 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Solat Saya - Smart Dashboard</title>
+  <title>Digital Waktu Solat Display</title>
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-      --accent-green: #10b981;
-      --accent-cyan: #06b6d4;
-      --accent-amber: #f59e0b;
-      --accent-red: #ef4444;
-      --accent-purple: #8b5cf6;
+      --bg-color: #0b132b;
+      --card-bg: #1c2541;
+      --accent-color: #48cae4;
+      --gold-color: #ffd166;
       --text-main: #ffffff;
-      --text-sub: #cbd5e1;
-      --panel-bg: rgba(15, 23, 42, 0.75);
-      --panel-border: rgba(255, 255, 255, 0.12);
+      --text-sub: #00b4d8;
+      --highlight: #06d6a0;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
       color: var(--text-main);
       min-height: 100vh;
-      background: var(--bg-gradient);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: background-image 1.5s ease-in-out;
-      padding-top: 80px;
-      padding-bottom: 40px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-    }
-
-    /* Top Bar */
-    .address-bar {
-      width: 100%;
-      padding: 14px 30px;
-      background-color: rgba(2, 6, 23, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--panel-border);
-      position: fixed;
-      top: 0;
-      z-index: 100;
-    }
-    .address-info p {
-      color: var(--accent-cyan);
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-    }
-    .address-info span {
-      display: block;
-      color: var(--text-sub);
-      font-size: 0.85rem;
+      padding: 20px;
     }
 
-    .audio-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .audio-btn.enabled {
-      background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
-      color: #000;
-      border: none;
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
-    }
-
-    /* Full-Width Grid Dashboard Layout */
-    .dashboard-grid {
-      width: 100%;
-      max-width: 1400px;
-      padding: 0 25px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
-      align-items: start;
-    }
-
-    @media (max-width: 900px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    /* Common Card Style */
-    .card {
-      background: var(--panel-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 20px;
-      padding: 25px;
-      border: 1px solid var(--panel-border);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Time & Date Panel */
-    .datetime-card {
-      background: linear-gradient(135deg, rgba(30, 27, 75, 0.8), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
-      text-align: center;
-    }
-    .live-clock {
-      font-size: 3.8rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -1px;
-    }
-    .date-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .date-badge {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 8px 16px;
+    /* Top Quran Section */
+    .top-quran {
+      background-color: var(--card-bg);
       border-radius: 12px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-    .date-badge.hijri {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--accent-amber);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-
-    /* Countdown Panel */
-    .countdown-card {
+      padding: 20px;
       text-align: center;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
-    }
-    .countdown-label { font-size: 1rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 2px; }
-    .countdown-timer { 
-      font-size: 3.2rem; 
-      font-weight: 900; 
-      color: var(--accent-green); 
-      margin: 10px 0; 
-      font-variant-numeric: tabular-nums; 
-      text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-    }
-    .countdown-timer.imminent { color: var(--accent-red); animation: blink 1s infinite; text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
-    
-    @keyframes blink { 50% { opacity: 0.6; } }
-
-    /* Prayer Times List */
-    select {
-      background: rgba(15, 23, 42, 0.9);
-      color: #fff;
-      border: 1px solid var(--accent-purple);
-      padding: 12px 16px;
-      font-size: 1rem;
-      border-radius: 12px;
-      width: 100%;
-      outline: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 20px;
-      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
-    
-    .prayer-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
+
+    .quran-arabic {
+      font-size: 1.8rem;
+      color: var(--gold-color);
       margin-bottom: 10px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      font-size: 1.15rem;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .prayer-row.active {
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.1));
-      border-left: 6px solid var(--accent-green);
-      transform: translateX(5px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .prayer-row.dhuha { border-left: 6px solid var(--accent-amber); background: rgba(245, 158, 11, 0.12); }
-    .prayer-row.active.dhuha { border-left: 6px solid var(--accent-amber); background: rgba(245, 158, 11, 0.25); }
-    
-    .prayer-name { font-weight: 700; }
-    .prayer-time { font-weight: 800; color: #fff; }
-
-    /* Quran & Hadith Panel */
-    .inspiration-card {
-      background: linear-gradient(135deg, rgba(6, 78, 59, 0.5), rgba(15, 23, 42, 0.8));
-      border: 1px solid rgba(16, 185, 129, 0.3);
       line-height: 1.6;
     }
-    .inspiration-header {
-      font-size: 0.9rem;
-      color: var(--accent-green);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-    .arabic-text {
-      font-size: 1.8rem;
-      direction: rtl;
-      text-align: right;
-      color: #fde047;
-      margin-bottom: 12px;
-      font-family: serif;
-      line-height: 1.8;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    }
-    .translation-text {
-      font-size: 1.05rem;
-      color: var(--text-sub);
+
+    .quran-english {
+      font-size: 1.1rem;
+      color: #e0e0e0;
       font-style: italic;
     }
 
-    /* Alarm Overlay Modal */
-    #alarm-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.92);
-      z-index: 1000;
+    /* Main Grid Section */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 20px;
+      flex-grow: 1;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-    }
-    .alarm-box {
-      background: #0f172a;
-      border-radius: 24px;
-      padding: 35px;
-      width: 100%;
-      max-width: 420px;
       text-align: center;
-      border: 2px solid var(--accent-green);
-      box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
-    .alarm-title { font-size: 2rem; font-weight: 900; color: var(--accent-green); margin-bottom: 10px; }
-    .alarm-msg { font-size: 1.1rem; color: var(--text-sub); margin-bottom: 25px; }
-    .alarm-actions { display: flex; gap: 15px; }
-    .btn {
-      flex: 1;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: transform 0.2s;
-    }
-    .btn:active { transform: scale(0.96); }
-    .btn-off { background: var(--accent-red); color: white; }
-    .btn-snooze { background: var(--accent-amber); color: white; }
 
-    .error-box { background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 15px; border-radius: 12px; font-size: 0.95rem; }
+    /* Left Card: Date & Time */
+    .time-display {
+      font-size: 2.8rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      font-family: monospace;
+      margin: 15px 0;
+    }
+
+    .date-gregorian {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .date-hijri {
+      font-size: 1.1rem;
+      color: var(--gold-color);
+      margin-top: 5px;
+    }
+
+    /* Center Card: Solat Times */
+    .location-header {
+      font-size: 0.95rem;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+      width: 100%;
+    }
+
+    .solat-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .solat-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .solat-table tr.active {
+      background-color: rgba(6, 214, 160, 0.15);
+      border-radius: 8px;
+    }
+
+    .solat-table td {
+      padding: 10px 15px;
+      font-size: 1.2rem;
+    }
+
+    .solat-name {
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .solat-time {
+      text-align: right;
+      color: var(--gold-color);
+      font-weight: bold;
+    }
+
+    /* Right Card: Countdown */
+    .countdown-title {
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ccc;
+    }
+
+    .next-prayer-name {
+      font-size: 2rem;
+      color: var(--highlight);
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .countdown-timer {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--gold-color);
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 209, 102, 0.3);
+    }
+
+    /* Bottom Hadith Section */
+    .bottom-hadith {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .hadith-arabic {
+      font-size: 1.4rem;
+      color: var(--gold-color);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .hadith-english {
+      font-size: 1rem;
+      color: #e0e0e0;
+      font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Bar -->
-  <div class="address-bar">
-    <div class="address-info">
-      <p>RUMAH SAYA</p>
-      <span>Subang Jaya, Selangor</span>
-    </div>
-    <button class="audio-btn" id="audio-toggle" onclick="toggleAudio()">🔊 Azan: OFF</button>
+  <!-- TOP: Daily Quranic Verse -->
+  <div class="top-quran">
+    <div class="quran-arabic" id="quran-ar">Loading...</div>
+    <div class="quran-english" id="quran-en">Loading...</div>
   </div>
 
-  <div class="dashboard-grid">
-    
-    <!-- LEFT COLUMN: Time, Countdown & Inspiration -->
-    <div class="column">
-      
-      <!-- Big Time & Date Display -->
-      <div class="card datetime-card">
-        <div class="live-clock" id="live-clock">00:00:00 AM</div>
-        <div class="date-row">
-          <div class="date-badge" id="gregorian-date">Loading date...</div>
-          <div class="date-badge hijri" id="hijri-date">Loading Hijri...</div>
-        </div>
-      </div>
-
-      <!-- Live Countdown Panel -->
-      <div class="card countdown-card">
-        <div class="countdown-label" id="cd-label">Menjelang Solat</div>
-        <div class="countdown-timer" id="cd-time">--:--:--</div>
-      </div>
-
-      <!-- Bigger Quranic Verse & Inspiration Section -->
-      <div class="card inspiration-card">
-        <div class="inspiration-header">✨ Daily Verse</div>
-        <div class="arabic-text" id="inspiration-arabic">إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوَاقُوتًا</div>
-        <div class="translation-text" id="inspiration-trans">"Indeed, prayer has been decreed upon the believers a decree of specified times." (Surah An-Nisa 4:103)</div>
-      </div>
-
+  <!-- CENTER: 3-Column Display -->
+  <div class="main-grid">
+    <!-- LEFT: Date & Time -->
+    <div class="card">
+      <div style="font-size: 0.9rem; letter-spacing: 1px; color: var(--text-sub);">CURRENT TIME</div>
+      <div class="time-display" id="clock">00:00:00</div>
+      <div class="date-gregorian" id="gregorian-date">Loading date...</div>
+      <div class="date-hijri" id="hijri-date">Loading Hijri...</div>
     </div>
 
-    <!-- RIGHT COLUMN: Solat Schedule -->
-    <div class="column">
-      <div class="card">
-        <select id="zone-select" onchange="changeZone(this.value)">
-          <option value="SGR01">Selangor / KL (SGR01)</option>
-          <option value="WLY01">KL / Putrajaya (WLY01)</option>
-          <option value="JHR02">Johor Bahru (JHR02)</option>
-          <option value="PNG01">Pulau Pinang (PNG01)</option>
-          <option value="PRK02">Ipoh / Perak Tengah (PRK02)</option>
-          <option value="KDH01">Kota Setar / Kedah (KDH01)</option>
-        </select>
-        
-        <div id="prayer-list">
-          <div class="prayer-row"><span class="prayer-name">Fetching prayer times...</span></div>
-        </div>
+    <!-- CENTER: Waktu Solat -->
+    <div class="card">
+      <div class="location-header">
+        <strong>📍 No 8, Jalan Serene 3/4, Serene Heights</strong><br>
+        43500 Semenyih, Selangor (SGR01)
       </div>
+      <table class="solat-table">
+        <tr id="row-subuh"><td class="solat-name">Subuh</td><td class="solat-time" id="time-subuh">--:--</td></tr>
+        <tr id="row-syuruk"><td class="solat-name">Syuruk</td><td class="solat-time" id="time-syuruk">--:--</td></tr>
+        <tr id="row-zohor"><td class="solat-name">Zohor</td><td class="solat-time" id="time-zohor">--:--</td></tr>
+        <tr id="row-asar"><td class="solat-name">Asar</td><td class="solat-time" id="time-asar">--:--</td></tr>
+        <tr id="row-maghrib"><td class="solat-name">Maghrib</td><td class="solat-time" id="time-maghrib">--:--</td></tr>
+        <tr id="row-isyak"><td class="solat-name">Isyak</td><td class="solat-time" id="time-isyak">--:--</td></tr>
+      </table>
     </div>
 
-  </div>
-
-  <!-- Interactive Azan Alarm Modal -->
-  <div id="alarm-modal">
-    <div class="alarm-box">
-      <div class="alarm-title" id="modal-prayer-name">Subuh</div>
-      <div class="alarm-msg">Telah masuk waktu solat.</div>
-      <div class="alarm-actions">
-        <button class="btn btn-off" onclick="dismissAlarm()">Turn Off</button>
-        <button class="btn btn-snooze" onclick="snoozeAlarm(5)">Snooze (5m)</button>
-      </div>
+    <!-- RIGHT: Countdown -->
+    <div class="card">
+      <div class="countdown-title">Next Prayer In</div>
+      <div class="next-prayer-name" id="next-prayer-name">--</div>
+      <div class="countdown-timer" id="countdown">00:00:00</div>
     </div>
   </div>
 
-  <audio id="azan-player" preload="auto"></audio>
+  <!-- BOTTOM: Daily Sahih Hadith -->
+  <div class="bottom-hadith">
+    <div class="hadith-arabic" id="hadith-ar">Loading...</div>
+    <div class="hadith-english" id="hadith-en">Loading...</div>
+  </div>
 
   <script>
-    // --- BACKGROUND IMAGE ROTATION ---
-    const backgroundImages = ['bg1.jpg', 'bg2.jpg', 'bg3.jpg'];
-    let bgIndex = 0;
-    function cycleBackground() {
-      document.body.style.backgroundImage = `var(--bg-gradient), url('${backgroundImages[bgIndex]}')`;
-      bgIndex = (bgIndex + 1) % backgroundImages.length;
-    }
-    cycleBackground();
-    setInterval(cycleBackground, 15000);
+    // Daily Rotating Quranic Verses
+    const quranVerses = [
+      {
+        ar: "الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+        en: "\"Those who believe and whose hearts find rest in the remembrance of Allah. Unquestionably, by the remembrance of Allah do hearts find rest.\" — (Surah Ar-Ra'd 13:28)"
+      },
+      {
+        ar: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ",
+        en: "\"And establish prayer and give zakah and bow with those who bow [in worship].\" — (Surah Al-Baqarah 2:43)"
+      },
+      {
+        ar: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًامَّوْقُوتًا",
+        en: "\"Indeed, prayer has been decreed upon the believers a decree of specified times.\" — (Surah An-Nisa 4:103)"
+      },
+      {
+        ar: "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ وَإِنَّهَا لَكَبِيرَةٌ إِلَّا عَلَى الْخَاشِعِينَ",
+        en: "\"And seek help through patience and prayer, and indeed, it is difficult except for the humbly submissive [to Allah].\" — (Surah Al-Baqarah 2:45)"
+      },
+      {
+        ar: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
+        en: "\"So remember Me; I will remember you. And be grateful to Me and do not deny Me.\" — (Surah Al-Baqarah 2:152)"
+      }
+    ];
 
-    // --- LIVE CLOCK & DATES ---
-    function updateClockAndDates() {
+    // Daily Rotating Sahih Hadiths
+    const sahihHadiths = [
+      {
+        ar: "مَنْ طَهَّرَ فِي بَيْتِهِ ثُمَّ مَشَى إِلَى بَيْتٍ مِنْ بُيُوتِ اللَّهِ لِيَقْضِيَ فَرِيضَةً كَانَتْ خُطُوَاتُهُ إِحْدَاهُمَا تَحُطُّ خَطِيئَةً وَالأُخْرَى تَرْفَعُ دَرَجَةً",
+        en: "\"He who purifies himself in his house and then walks to one of the houses of Allah to perform an obligatory prayer, one of his steps wipes away a sin and the other raises his status.\" — Sahih Muslim 666"
+      },
+      {
+        ar: "بُنِيَ الإِسْلاَمُ عَلَى خَمْسٍ: شَهَادَةِ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَإِقَامِ الصَّلاَةِ، وَإِيتَاءِ الزَّكَاةِ...",
+        en: "\"Islam is built upon five pillars: Testifying that there is no god but Allah and Muhammad is His messenger, establishing prayer, paying Zakah...\" — Sahih Bukhari 8"
+      },
+      {
+        ar: "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ الصَّلاَةُ عَلَى وَقْتِهَا",
+        en: "\"The most beloved of deeds to Allah is the prayer offered at its proper time.\" — Sahih Bukhari 527"
+      },
+      {
+        ar: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ",
+        en: "\"Whoever prays the two cool prayers (Asr and Fajr) will enter Paradise.\" — Sahih Bukhari 574"
+      }
+    ];
+
+    let prayerTimesToday = {
+      subuh: "05:52",
+      syuruk: "07:03",
+      zohor: "13:15",
+      asar: "16:21",
+      maghrib: "19:20",
+      isyak: "20:29"
+    };
+
+    function updateDailyContent() {
       const now = new Date();
-      document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-      document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
-    }
-    setInterval(updateClockAndDates, 1000);
-    updateClockAndDates();
+      const startOfYear = new Date(now.getFullYear(), 0, 0);
+      const diff = now - startOfYear;
+      const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    function updateHijriDate() {
-  try {
-    const today = new Date();
-    // Native browser Hijri formatter using Islamic Umm al-Qura calendar
-    const formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-uma', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    
-    // Formats into e.g. "25 Rabiʻ I 1448 AH"
-    let formattedHijri = formatter.format(today);
-    document.getElementById('hijri-date').innerText = `${formattedHijri} AH`;
-  } catch (e) {
-    console.warn("Native Hijri conversion fallback", e);
-    document.getElementById('hijri-date').innerText = "Hijri Date N/A";
-  }
-}
-function gGregToHijri(d, m, y) {
-  let jd;
-  if ((y > 1582) || (y === 1582 && m > 10) || (y === 1582 && m === 10 && d >= 15)) {
-    jd = Math.floor((1461 * (y + 4800 + Math.floor((m - 14) / 12))) / 4) +
-         Math.floor((367 * (m - 2 - 12 * (Math.floor((m - 14) / 12)))) / 12) -
-         Math.floor((3 * (Math.floor((y + 4900 + Math.floor((m - 14) / 12)) / 100))) / 4) +
-         d - 32075;
-  } else {
-    jd = 367 * y - Math.floor((7 * (y + 5001 + Math.floor((m - 9) / 7))) / 4) +
-         Math.floor((275 * m) / 9) + d + 1729777;
-  }
+      const quranIndex = dayOfYear % quranVerses.length;
+      const hadithIndex = dayOfYear % sahihHadiths.length;
 
-  let l = jd - 1948440 + 10632;
-  let n = Math.floor((l - 1) / 10631);
-  l = l - 10631 * n + 354;
-  let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) +
-          (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-  l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) -
-      (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
-  
-  let month = Math.floor((24 * l) / 709);
-  let day = l - Math.floor((709 * month) / 24);
-  let year = 30 * n + j - 30;
+      document.getElementById('quran-ar').innerText = quranVerses[quranIndex].ar;
+      document.getElementById('quran-en').innerText = quranVerses[quranIndex].en;
 
-  const islamicMonths = [
-    "Muharram", "Safar", "Rabi'ul-Awwal", "Rabi'ul-Akhir",
-    "Jumadal-Ula", "Jumadal-Akhirah", "Rejab", "Sya'ban",
-    "Ramadhan", "Syawal", "Zulqa'dah", "Zulhijjah"
-  ];
-
-  return { day: day, month: islamicMonths[month - 1], year: year };
-}
-
-function updateHijriDate() {
-  try {
-    const today = new Date();
-    const h = gGregToHijri(today.getDate(), today.getMonth() + 1, today.getFullYear());
-    document.getElementById('hijri-date').innerText = `${h.day} ${h.month} ${h.year} AH`;
-  } catch (e) {
-    document.getElementById('hijri-date').innerText = "Hijri Date N/A";
-  }
-}
-
-updateHijriDate();;
-
-    function toggleAudio() {
-      const btn = document.getElementById('audio-toggle');
-      audioEnabled = !audioEnabled;
-      if (audioEnabled) {
-        azanAudio.src = azanAudioUrls.standard;
-        azanAudio.play().then(() => { azanAudio.pause(); azanAudio.currentTime = 0; }).catch(() => {});
-        btn.innerText = "🔊 Azan: ON";
-        btn.classList.add('enabled');
-      } else {
-        dismissAlarm();
-        btn.innerText = "🔊 Azan: OFF";
-        btn.classList.remove('enabled');
-      }
+      document.getElementById('hadith-ar').innerText = sahihHadiths[hadithIndex].ar;
+      document.getElementById('hadith-en').innerText = sahihHadiths[hadithIndex].en;
     }
 
-    function triggerAlarmModal(prayerName) {
-      if (snoozeTimer) clearTimeout(snoozeTimer);
-      document.getElementById('modal-prayer-name').innerText = `Waktu ${prayerName}`;
-      document.getElementById('alarm-modal').style.display = 'flex';
-
-      if (audioEnabled) {
-        azanAudio.src = (prayerName.toLowerCase() === 'subuh') ? azanAudioUrls.fajr : azanAudioUrls.standard;
-        azanAudio.play().catch(e => console.log("Audio auto-play prevented:", e));
-      }
+    function renderPrayerTimes() {
+      document.getElementById('time-subuh').innerText = prayerTimesToday.subuh + " AM";
+      document.getElementById('time-syuruk').innerText = prayerTimesToday.syuruk + " AM";
+      document.getElementById('time-zohor').innerText = "01:15 PM";
+      document.getElementById('time-asar').innerText = "04:21 PM";
+      document.getElementById('time-maghrib').innerText = "07:20 PM";
+      document.getElementById('time-isyak').innerText = "08:29 PM";
     }
 
-    function dismissAlarm() {
-      azanAudio.pause();
-      azanAudio.currentTime = 0;
-      document.getElementById('alarm-modal').style.display = 'none';
-      if (snoozeTimer) clearTimeout(snoozeTimer);
-    }
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
 
-    function snoozeAlarm(minutes) {
-      azanAudio.pause();
-      azanAudio.currentTime = 0;
-      document.getElementById('alarm-modal').style.display = 'none';
-      snoozeTimer = setTimeout(() => {
-        triggerAlarmModal('Solat (Snoozed)');
-      }, minutes * 60 * 1000);
-    }
-
-    // --- TIME PARSING & CALCULATION ---
-    function parseToTodayDate(timeInput) {
-      if (!timeInput) return null;
-      let date = new Date();
-      if (typeof timeInput === 'number') {
-        let d = new Date(timeInput * 1000);
-        date.setHours(d.getHours(), d.getMinutes(), 0, 0);
-        return date;
-      }
-      if (typeof timeInput === 'string') {
-        let parts = timeInput.trim().split(':');
-        if (parts.length >= 2) {
-          let h = parseInt(parts[0], 10);
-          let m = parseInt(parts[1], 10);
-          if (!isNaN(h) && !isNaN(m)) {
-            date.setHours(h, m, 0, 0);
-            return date;
-          }
-        }
-      }
-      return null;
-    }
-
-    function formatTime12h(dateObj) {
-      if (!dateObj) return "--:--";
-      let h = dateObj.getHours();
-      let m = dateObj.getMinutes();
-      let ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      return `${h}:${m < 10 ? '0' : ''}${m} ${ampm}`;
-    }
-
-    function addMinutesToDate(dateObj, minsToAdd) {
-      if (!dateObj) return null;
-      let newDate = new Date(dateObj.getTime());
-      newDate.setMinutes(newDate.getMinutes() + minsToAdd);
-      return newDate;
-    }
-
-    // Dynamic Falak Formula: Syuruk + 1/3 of (Syuruk - Subuh)
-    function calculateDhuha(subuhDate, syurukDate) {
-      if (!subuhDate || !syurukDate) return null;
-      let diffMinutes = (syurukDate.getTime() - subuhDate.getTime()) / (1000 * 60);
-      let dhuhaOffset = Math.round(diffMinutes / 3);
-      return addMinutesToDate(syurukDate, dhuhaOffset);
-    }
-
-    // --- FETCH PRAYER TIMES ---
-    let globalPrayerTimes = null;
-
-    async function fetchPrayerTimes(zone) {
-      document.getElementById('prayer-list').innerHTML = `<div class="prayer-row"><span class="prayer-name">Fetching times...</span></div>`;
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('gregorian-date').innerText = now.toLocaleDateString('en-US', options);
       
       try {
-        const res = await fetch(`https://api.waktusolat.app/v2/solat/${zone}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        let p = data.prayers ? data.prayers[0] : (data.prayerTime ? data.prayerTime[0] : null);
-        if (!p) throw new Error("Invalid structure");
-
-        let subuh = parseToTodayDate(p.fajr || p.subuh);
-        let syuruk = parseToTodayDate(p.syuruk);
-
-        globalPrayerTimes = {
-          Subuh: subuh,
-          Syuruk: syuruk,
-          Dhuha: calculateDhuha(subuh, syuruk),
-          Zohor: parseToTodayDate(p.dhuhr || p.zohor),
-          Asar: parseToTodayDate(p.asr || p.asar),
-          Maghrib: parseToTodayDate(p.maghrib),
-          Isyak: parseToTodayDate(p.isha || p.isyak)
-        };
-        renderTimesList();
-        updateLiveStatus();
-        return;
-      } catch (e1) {
-        console.warn("Primary API failed, trying MPT...", e1);
+        document.getElementById('hijri-date').innerText = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        }).format(now) + "H";
+      } catch (e) {
+        document.getElementById('hijri-date').innerText = "";
       }
 
-      try {
-        const res = await fetch(`https://mpt.i906.my/api/prayer/${zone}`);
-        if (!res.ok) throw new Error(`MPT HTTP ${res.status}`);
-        const data = await res.json();
-        const times = data.data.times[0];
-
-        let subuh = parseToTodayDate(times[1]);
-        let syuruk = parseToTodayDate(times[2]);
-
-        globalPrayerTimes = {
-          Subuh: subuh,
-          Syuruk: syuruk,
-          Dhuha: calculateDhuha(subuh, syuruk),
-          Zohor: parseToTodayDate(times[3]),
-          Asar: parseToTodayDate(times[4]),
-          Maghrib: parseToTodayDate(times[5]),
-          Isyak: parseToTodayDate(times[6])
-        };
-        renderTimesList();
-        updateLiveStatus();
-      } catch (e2) {
-        document.getElementById('prayer-list').innerHTML = `
-          <div class="error-box">
-            Connection Error. Unable to fetch prayer times.<br>
-            <small>Details: ${e2.message}</small>
-          </div>`;
-      }
+      updateCountdown(now);
     }
 
-    function renderTimesList() {
-      if (!globalPrayerTimes) return;
-      const p = globalPrayerTimes;
-      document.getElementById('prayer-list').innerHTML = `
-        <div class="prayer-row" id="row-Subuh"><span class="prayer-name">Subuh</span><span class="prayer-time">${formatTime12h(p.Subuh)}</span></div>
-        <div class="prayer-row" id="row-Syuruk"><span class="prayer-name">Syuruk</span><span class="prayer-time">${formatTime12h(p.Syuruk)}</span></div>
-        <div class="prayer-row dhuha" id="row-Dhuha"><span class="prayer-name">Dhuha</span><span class="prayer-time">${formatTime12h(p.Dhuha)}</span></div>
-        <div class="prayer-row" id="row-Zohor"><span class="prayer-name">Zohor</span><span class="prayer-time">${formatTime12h(p.Zohor)}</span></div>
-        <div class="prayer-row" id="row-Asar"><span class="prayer-name">Asar</span><span class="prayer-time">${formatTime12h(p.Asar)}</span></div>
-        <div class="prayer-row" id="row-Maghrib"><span class="prayer-name">Maghrib</span><span class="prayer-time">${formatTime12h(p.Maghrib)}</span></div>
-        <div class="prayer-row" id="row-Isyak"><span class="prayer-name">Isyak</span><span class="prayer-time">${formatTime12h(p.Isyak)}</span></div>
-      `;
-    }
+    function updateCountdown(now) {
+      const times = [
+        { name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
+        { name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
+        { name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
+        { name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
+        { name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
+        { name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
+      ];
 
-    // --- LIVE COUNTDOWN & ALARM TRIGGER LOOP ---
-    let lastPrayerName = '';
+      // Reset row highlights
+      times.forEach(t => {
+        const el = document.getElementById(t.rowId);
+        if (el) el.classList.remove('active');
+      });
 
-    function updateLiveStatus() {
-      if (!globalPrayerTimes || !globalPrayerTimes.Subuh) return;
+      let nextPrayer = null;
+      let nextPrayerTime = null;
 
-      const now = new Date();
-      const p = globalPrayerTimes;
-      
-      document.querySelectorAll('.prayer-row').forEach(row => row.classList.remove('active'));
+      for (let p of times) {
+        const [hours, minutes] = p.time.split(':');
+        const pDate = new Date(now);
+        pDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-      let nextPrayerName = '';
-      let nextPrayerTarget = null;
-      let activePrayerName = '';
-
-      if (now >= p.Isyak || now < p.Subuh) {
-        activePrayerName = 'Isyak';
-        nextPrayerName = 'Subuh';
-        nextPrayerTarget = new Date(p.Subuh.getTime());
-        if (now >= p.Isyak) nextPrayerTarget.setDate(nextPrayerTarget.getDate() + 1);
-      } else if (now < p.Syuruk) { activePrayerName = 'Subuh'; nextPrayerName = 'Syuruk'; nextPrayerTarget = p.Syuruk; }
-      else if (now < p.Dhuha) { activePrayerName = 'Syuruk'; nextPrayerName = 'Dhuha'; nextPrayerTarget = p.Dhuha; }
-      else if (now < p.Zohor) { activePrayerName = 'Dhuha'; nextPrayerName = 'Zohor'; nextPrayerTarget = p.Zohor; }
-      else if (now < p.Asar) { activePrayerName = 'Zohor'; nextPrayerName = 'Asar'; nextPrayerTarget = p.Asar; }
-      else if (now < p.Maghrib) { activePrayerName = 'Asar'; nextPrayerName = 'Maghrib'; nextPrayerTarget = p.Maghrib; }
-      else { activePrayerName = 'Maghrib'; nextPrayerName = 'Isyak'; nextPrayerTarget = p.Isyak; }
-
-      if (activePrayerName !== lastPrayerName) {
-        alarmTriggeredForCurrent = false;
-        lastPrayerName = activePrayerName;
-      }
-
-      const activeRow = document.getElementById(`row-${activePrayerName}`);
-      if (activeRow) activeRow.classList.add('active');
-
-      const labelEl = document.getElementById('cd-label');
-      const timeEl = document.getElementById('cd-time');
-      
-      labelEl.innerText = `Menjelang ${nextPrayerName}`;
-      
-      let diffSeconds = Math.floor((nextPrayerTarget.getTime() - now.getTime()) / 1000);
-      if (diffSeconds < 0) diffSeconds = 0;
-
-      let h = Math.floor(diffSeconds / 3600);
-      let m = Math.floor((diffSeconds % 3600) / 60);
-      let s = Math.floor(diffSeconds % 60);
-
-      timeEl.innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      timeEl.classList.remove('imminent');
-
-      if (diffSeconds === 0) {
-        labelEl.innerText = `MASUK WAKTU ${nextPrayerName.toUpperCase()}`;
-
-        if (!alarmTriggeredForCurrent && nextPrayerName !== 'Syuruk' && nextPrayerName !== 'Dhuha') {
-          alarmTriggeredForCurrent = true;
-          triggerAlarmModal(nextPrayerName);
+        if (pDate > now) {
+          nextPrayer = p.name;
+          nextPrayerTime = pDate;
+          const targetRow = document.getElementById(p.rowId);
+          if (targetRow) targetRow.classList.add('active');
+          break;
         }
-      } else if (diffSeconds <= 600) {
-        timeEl.classList.add('imminent');
       }
+
+      if (!nextPrayer) {
+        nextPrayer = "Subuh";
+        const [hours, minutes] = prayerTimesToday.subuh.split(':');
+        nextPrayerTime = new Date(now);
+        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+        nextPrayerTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        const subuhRow = document.getElementById("row-subuh");
+        if (subuhRow) subuhRow.classList.add('active');
+      }
+
+      document.getElementById('next-prayer-name').innerText = nextPrayer;
+
+      const diffMs = nextPrayerTime - now;
+      const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      document.getElementById('countdown').innerText = 
+        `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // --- INITIALIZATION ---
-    function changeZone(newZone) {
-      localStorage.setItem('selectedZone_v6', newZone);
-      fetchPrayerTimes(newZone);
-    }
-
-    const savedZone = localStorage.getItem('selectedZone_v6') || 'SGR01';
-    document.getElementById('zone-select').value = savedZone;
-    fetchPrayerTimes(savedZone);
-
-    setInterval(updateLiveStatus, 1000);
+    // Initialize display
+    updateDailyContent();
+    renderPrayerTimes();
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
