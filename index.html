@@ -34,12 +34,10 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background-size: cover;
-      background-position: center;
       transition: background 1.5s ease-in-out;
     }
 
-    /* Subtle Overlay for Readability */
+    /* Overlay for Contrast */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -47,7 +45,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -77,7 +75,7 @@
       font-size: 1.45rem;
       color: var(--gold);
       font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0,0,0,0.9);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
     }
 
     .quran-en {
@@ -175,7 +173,7 @@
       align-items: center;
       padding: 6px 20px;
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.35);
     }
 
     .solat-row.active {
@@ -301,7 +299,6 @@
   </div>
 
   <script>
-    // Baseline prayer times for SGR01 (Semenyih / Hulu Langat)
     var prayerTimesToday = {
       subuh: "05:59",
       syuruk: "07:05",
@@ -321,15 +318,17 @@
       return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
     }
 
-    var islamicPatternSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><path fill='%23ffffff' fill-opacity='0.05' d='M0 0h80v80H0z'/><path fill='%23ffffff' fill-opacity='0.08' d='M40 0l11.7 11.7L40 23.4 28.3 11.7zM0 40l11.7-11.7L23.4 40 11.7 51.7zM40 80l-11.7-11.7L40 56.6l11.7 11.7zM80 40l-11.7 11.7L56.6 40l11.7-11.7zM40 28.3l11.7 11.7L40 51.7 28.3 40z'/></svg>";
+    // Native CSS Geometric Grid Backgrounds (Cross-browser / Safari Safe)
+    var gridOverlay = "radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)";
+    var gridStyle = gridOverlay + ", linear-gradient(135deg, ";
 
     var prayerBackgroundStyles = {
-      subuh: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)',
-      syuruk: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)',
-      zohor: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)',
-      asar: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)',
-      maghrib: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)',
-      isyak: 'url("' + islamicPatternSVG + '"), linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)'
+      subuh: gridOverlay + ", linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #3a506b 100%)",
+      syuruk: gridOverlay + ", linear-gradient(135deg, #2b1e3a 0%, #76527b 50%, #d4a373 100%)",
+      zohor: gridOverlay + ", linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%)",
+      asar: gridOverlay + ", linear-gradient(135deg, #2a9d8f 0%, #e9c46a 50%, #f4a261 100%)",
+      maghrib: gridOverlay + ", linear-gradient(135deg, #370617 0%, #6a040f 50%, #dc2f02 100%)",
+      isyak: gridOverlay + ", linear-gradient(135deg, #03071e 0%, #0f172a 50%, #1e1b4b 100%)"
     };
 
     var currentPrayerSlot = '';
@@ -338,7 +337,10 @@
       if (currentPrayerSlot !== activeSlot && prayerBackgroundStyles[activeSlot]) {
         currentPrayerSlot = activeSlot;
         var bgElem = document.getElementById('bg-carousel');
-        if (bgElem) bgElem.style.background = prayerBackgroundStyles[activeSlot];
+        if (bgElem) {
+          bgElem.style.background = prayerBackgroundStyles[activeSlot];
+          bgElem.style.backgroundSize = "20px 20px, 100% 100%";
+        }
       }
     }
 
@@ -359,7 +361,7 @@
           gregElem.innerText = now.toLocaleDateString('en-US', options);
         }
 
-        // Hijri Date Display (Safari iPad Compatible)
+        // Hijri Date Display
         var hijriElem = document.getElementById('hijri-date');
         if (hijriElem) {
           try {
@@ -503,11 +505,11 @@
       } catch (err) {}
     }
 
-    // Initialize Timer Immediately
+    // Initialize Timer
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Fetch dynamic content asynchronously
+    // Fetch dynamic content
     fetchJakimPrayerTimes();
     fetchDailyQuran();
     fetchDailyHadith();
