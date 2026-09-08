@@ -24,47 +24,25 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #09121e;
+      background: #0b132b;
       color: #ffffff;
     }
 
-    /* Reliable fallback background color and gradient */
-    .bg-layer {
+    /* Native Scalable Vector Graphic Background - Guaranteed to never fail on iOS */
+    .bg-svg-container {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       z-index: 1;
-      background-color: #0b192c;
-      background-image: 
-        linear-gradient(rgba(11, 25, 44, 0.4), rgba(11, 25, 44, 0.65)),
-        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1920&q=80');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    /* Fallback image element that explicitly loads over the DOM */
-    .bg-img-tag {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    .bg-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 2;
-      background: rgba(0, 0, 0, 0.3);
       pointer-events: none;
+    }
+
+    .bg-svg-container svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .dashboard-container {
@@ -79,13 +57,13 @@
     }
 
     .transparent-card {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(11, 19, 43, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-radius: 12px;
       padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
     }
 
     .quran-box {
@@ -184,7 +162,7 @@
       align-items: center;
       padding: 4px 16px;
       border-radius: 6px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.3);
     }
 
     .solat-row.active {
@@ -243,9 +221,56 @@
 </head>
 <body>
 
-  <!-- Physical image tag guarantee to bypass Safari CSS background quirks -->
-  <img class="bg-img-tag" src="https://images.unsplash.com/photo-1564769625405-afcde465b8c0?auto=format&fit=crop&w=1920&q=80" alt="Background">
-  <div class="bg-overlay"></div>
+  <!-- Embedded Vector Mosque Artwork Background -->
+  <div class="bg-svg-container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#030712" />
+          <stop offset="50%" stop-color="#0f172a" />
+          <stop offset="100%" stop-color="#1e1b4b" />
+        </linearGradient>
+        <radialGradient id="moonGlow" cx="80%" cy="20%" r="40%">
+          <stop offset="0%" stop-color="rgba(255, 209, 102, 0.25)" />
+          <stop offset="100%" stop-color="transparent" />
+        </radialGradient>
+      </defs>
+      
+      <!-- Sky Background -->
+      <rect width="1920" height="1080" fill="url(#skyGrad)" />
+      <rect width="1920" height="1080" fill="url(#moonGlow)" />
+      
+      <!-- Stars -->
+      <g fill="#ffffff" opacity="0.6">
+        <circle cx="200" cy="150" r="2" />
+        <circle cx="450" cy="100" r="1.5" />
+        <circle cx="800" cy="180" r="2" />
+        <circle cx="1100" cy="90" r="2.5" />
+        <circle cx="1500" cy="140" r="1.5" />
+        <circle cx="1750" cy="200" r="2" />
+        <circle cx="300" cy="280" r="1" />
+        <circle cx="950" cy="250" r="1.5" />
+        <circle cx="1350" cy="220" r="2" />
+      </g>
+
+      <!-- Crescent Moon -->
+      <path d="M1500,180 a40,40 0 1,0 40,40 a32,32 0 1,1 -40,-40 z" fill="#ffd166" opacity="0.9"/>
+
+      <!-- Distant Horizon / Mosque Silhouette Layers -->
+      <g fill="#070a14" opacity="0.95">
+        <!-- Rolling Hills / City Silhouette -->
+        <path d="M0,950 L0,1080 L1920,1080 L1920,900 Q1600,850 1200,920 Q800,880 400,930 Q200,910 0,950 Z" />
+        
+        <!-- Detailed Mosque Silhouette (Domes & Minarets) -->
+        <path d="
+          M750,1080 L750,750 Q750,700 780,700 Q810,700 810,750 L810,1080
+          M1150,1080 L1150,700 Q1150,650 1180,650 Q1210,650 1210,700 L1210,1080
+          M850,1080 L850,820 Q920,720 980,820 Q1040,720 1110,820 L1110,1080
+          Q980,680 850,820 Z
+        " />
+      </g>
+    </svg>
+  </div>
 
   <div class="dashboard-container">
     
