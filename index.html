@@ -20,7 +20,11 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
+    /* Fixed full screen lockdown to completely prevent iPad Safari bar shifting */
     html, body {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
@@ -28,13 +32,13 @@
       color: #ffffff;
     }
 
-    /* High-contrast vibrant SVG Background designed to look amazing on iPad */
+    /* Vibrant iPad Background Artwork */
     .bg-svg-container {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       z-index: 1;
       pointer-events: none;
     }
@@ -46,23 +50,25 @@
     }
 
     .dashboard-container {
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 3;
-      width: 100vw;
-      height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 14px 24px;
-      gap: 10px;
+      padding: 12px 20px;
+      gap: 8px;
     }
 
-    /* Crisp solid background panels to eliminate reflections and make text razor-sharp */
+    /* Solid high-contrast panels for absolute clarity on iPad screens */
     .transparent-card {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.92);
       border-radius: 12px;
-      padding: 8px 10px;
-      border: 1px solid rgba(72, 202, 228, 0.35);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      padding: 8px 12px;
+      border: 1px solid rgba(72, 202, 228, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
     }
 
     .quran-box {
@@ -70,21 +76,21 @@
     }
 
     .quran-ar {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       color: var(--gold);
       font-weight: 700;
     }
 
     .quran-en {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       color: #ffffff;
       font-style: italic;
     }
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr 1.3fr 1fr;
-      gap: 20px;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 16px;
       height: 100%;
       min-height: 0;
     }
@@ -98,52 +104,54 @@
     }
 
     .time-title {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       letter-spacing: 2px;
       color: var(--cyan);
       font-weight: 800;
     }
 
     .clock-display {
-      font-size: 3.8rem;
+      font-size: 3.4rem;
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      margin: 8px 0;
+      margin: 6px 0;
+      line-height: 1.1;
     }
 
     .gregorian-date {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
     }
 
     .hijri-date {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--gold);
-      margin-top: 4px;
+      margin-top: 3px;
       font-weight: 700;
     }
 
     .center-column {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       height: 100%;
+      min-height: 0;
     }
 
     .address-box {
       text-align: center;
-      padding: 5px;
+      padding: 4px;
     }
 
     .address-box strong {
       color: var(--cyan);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       display: block;
     }
 
     .address-box span {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: #ffffff;
     }
 
@@ -152,50 +160,50 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 6px 10px;
+      padding: 6px 12px;
     }
 
     .solat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 16px;
+      padding: 4px 14px;
       border-radius: 6px;
-      background: rgba(30, 41, 59, 0.6);
+      background: rgba(30, 41, 59, 0.7);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.6) 0%, rgba(72, 202, 228, 0.45) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.65) 0%, rgba(72, 202, 228, 0.5) 100%);
       border: 1px solid var(--teal);
     }
 
     .solat-name {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 800;
     }
 
     .solat-time {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 900;
       color: var(--gold);
     }
 
     .next-label {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       letter-spacing: 1.5px;
       color: #ffffff;
       text-transform: uppercase;
     }
 
     .next-prayer {
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       font-weight: 900;
       color: var(--teal);
-      margin: 6px 0;
+      margin: 4px 0;
     }
 
     .countdown-box {
-      font-size: 3.1rem;
+      font-size: 2.8rem;
       font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
@@ -206,13 +214,13 @@
     }
 
     .hadith-ar {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--gold);
       font-weight: 700;
     }
 
     .hadith-en {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #ffffff;
       font-style: italic;
     }
@@ -220,7 +228,7 @@
 </head>
 <body>
 
-  <!-- Stunning Rich SVG Night Sky & Mosque Artwork -->
+  <!-- Rich SVG Night Sky & Mosque Artwork -->
   <div class="bg-svg-container">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
       <defs>
@@ -235,11 +243,9 @@
         </radialGradient>
       </defs>
       
-      <!-- Sky Background -->
       <rect width="1920" height="1080" fill="url(#skyGrad)" />
       <rect width="1920" height="1080" fill="url(#moonGlow)" />
       
-      <!-- Stars -->
       <g fill="#ffffff" opacity="0.95">
         <circle cx="150" cy="120" r="3" />
         <circle cx="420" cy="80" r="2" />
@@ -252,10 +258,8 @@
         <circle cx="1300" cy="190" r="3" />
       </g>
 
-      <!-- Large Moon -->
       <path d="M1500,130 a55,55 0 1,0 55,55 a44,44 0 1,1 -55,-55 z" fill="#ffd166" opacity="0.98"/>
 
-      <!-- Mosque Silhouette Artwork -->
       <g fill="#0b1329" opacity="0.9">
         <path d="M0,900 L0,1080 L1920,1080 L1920,850 Q1600,790 1200,870 Q800,820 400,880 Q200,860 0,900 Z" />
         <path d="
@@ -355,13 +359,11 @@
       try {
         var now = new Date();
         
-        // 1. Clock Update
         var clockElem = document.getElementById('clock');
         if (clockElem) {
           clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
         }
 
-        // 2. Date Update
         var gregElem = document.getElementById('gregorian-date');
         if (gregElem) {
           gregElem.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
@@ -372,7 +374,6 @@
           hijriElem.innerText = getMalaysianHijriDate(now);
         }
 
-        // 3. Countdown & Active Row Logic
         var times = [
           { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
           { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
@@ -438,7 +439,6 @@
       }
     }
 
-    // Run immediately and set safe tick interval
     updateEngine();
     setInterval(updateEngine, 1000);
   </script>
