@@ -356,13 +356,46 @@
       }
     }
 
-    // Standard Malaysian Transliterated Hijri Months
+    // Standard Malaysian (JAKIM/MAIS) Transliterated Hijri Months
     var jakimMonths = [
       "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
       "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
+    // Converts Raw/API Hijri Strings to Malaysian Standard Format
+    function formatMalaysianHijriString(rawString) {
+      if (!rawString) return "";
+      
+      // Clean up accidental duplicate 'AH' or trailing symbols
+      var cleaned = rawString.replace(/(AH\s*)+$/gi, '').trim();
+
+      // Replace Arabic/English month variants with Malaysian JAKIM transliterations
+      var monthReplacements = {
+        "Rabiʻ I": "Rabiulawal", "Rabi' I": "Rabiulawal", "Rabi` I": "Rabiulawal", "Rabi al-Awwal": "Rabiulawal", "Rabi'ul Awal": "Rabiulawal",
+        "Rabiʻ II": "Rabiulakhir", "Rabi' II": "Rabiulakhir", "Rabi` II": "Rabiulakhir", "Rabi al-Thani": "Rabiulakhir", "Rabi'ul Akhir": "Rabiulakhir",
+        "Jumada I": "Jamadilawal", "Jumada al-Ula": "Jamadilawal", "Jamadil Awal": "Jamadilawal",
+        "Jumada II": "Jamadilakhir", "Jumada al-Thani": "Jamadilakhir", "Jamadil Akhir": "Jamadilakhir",
+        "Rajab": "Rejab", "Sha'ban": "Syaaban", "Shaʻban": "Syaaban",
+        "Dhul-Qi'dah": "Zulkaedah", "Dhu al-Qi'dah": "Zulkaedah",
+        "Dhul-Hijjah": "Zulhijjah", "Dhu al-Hijjah": "Zulhijjah"
+      };
+
+      for (var key in monthReplacements) {
+        if (cleaned.indexOf(key) !== -1) {
+          cleaned = cleaned.replace(key, monthReplacements[key]);
+        }
+      }
+
+      // Ensure suffix is standard Malaysian 'H'
+      if (!cleaned.endsWith('H') && !cleaned.endsWith('Hijri')) {
+        cleaned += ' H';
+      }
+
+      return cleaned;
+    }
+
+    // Offline Fallback Converter (Uses Browser Intl Engine mapped to JAKIM Format)
     function getMalaysianHijriDate(date) {
       try {
         var formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura', {
@@ -489,13 +522,12 @@
               isyak: todayData.isha
             };
 
-            // Format Hijri directly from JAKIM API output if available
+            // Process and format Hijri string according to JAKIM standard
             if (todayData.hijri) {
-              var cleanHijri = todayData.hijri.replace(/(AH\s*)+$/i, '').trim();
-              if (!cleanHijri.endsWith('H')) cleanHijri += ' H';
+              var formattedHijri = formatMalaysianHijriString(todayData.hijri);
               var hijriElem = document.getElementById('hijri-date');
               if (hijriElem) {
-                hijriElem.innerText = cleanHijri;
+                hijriElem.innerText = formattedHijri;
                 hijriElem.setAttribute('data-jakim', 'true');
               }
             }
