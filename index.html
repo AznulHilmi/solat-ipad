@@ -42,6 +42,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+      background-color: #1b263b; /* Fallback color so it's never purely black */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -56,7 +57,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%);
     }
 
     /* Main Dashboard Layout with Safe-Area Insets for Fullscreen */
@@ -324,21 +325,16 @@
       isyak: "20:27"
     };
 
-    // Calculate Dhuha based on JAKIM standard: Syuruk + 1/3 (Syuruk - Subuh)
     function calculateJakimDhuha(subuhStr, syurukStr) {
       try {
         var subParts = subuhStr.split(':');
         var syuParts = syurukStr.split(':');
-        
         var subMin = parseInt(subParts[0], 10) * 60 + parseInt(subParts[1], 10);
         var syuMin = parseInt(syuParts[0], 10) * 60 + parseInt(syuParts[1], 10);
-        
         var diffMin = syuMin - subMin;
         var dhuhaTotalMin = syuMin + Math.round(diffMin / 3);
-        
         var dH = Math.floor(dhuhaTotalMin / 60) % 24;
         var dM = dhuhaTotalMin % 60;
-        
         return (dH < 10 ? '0' + dH : dH) + ':' + (dM < 10 ? '0' + dM : dM);
       } catch(e) {
         return "07:31";
@@ -426,7 +422,7 @@
 
     function updatePrayerBackground(activeSlot) {
       var now = new Date();
-      var dayOfWeek = now.getDay(); // 0 is Sunday, 6 is Saturday
+      var dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
       
       if (prayerPhotosWeekly[activeSlot]) {
         var imagesForSlot = prayerPhotosWeekly[activeSlot];
@@ -442,24 +438,23 @@
             img.onload = function() {
               bgElem.style.backgroundImage = 'url("' + targetImage + '")';
             };
+            img.onerror = function() {
+              console.warn("Failed to load image, keeping fallback background.");
+            };
           }
         }
       }
     }
 
-    // Standard Malaysian (JAKIM/MAIS) Transliterated Hijri Months
     var jakimMonths = [
       "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
       "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
-    // Converts incoming string to DD Month YYYY format
     function formatMalaysianHijriString(rawString) {
       if (!rawString) return "";
-
       var cleaned = rawString.replace(/\s*(AH|H)\s*$/gi, '').trim();
-
       var isoMatch = cleaned.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
       if (isoMatch) {
         var year = isoMatch[1];
@@ -468,7 +463,6 @@
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       }
-
       var revMatch = cleaned.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
       if (revMatch) {
         var dayRev = parseInt(revMatch[1], 10);
@@ -477,27 +471,9 @@
         var monthWordRev = (monthNumRev >= 1 && monthNumRev <= 12) ? jakimMonths[monthNumRev - 1] : monthNumRev;
         return dayRev + " " + monthWordRev + " " + yearRev + " H";
       }
-
-      var monthReplacements = {
-        "Rabiʻ I": "Rabiulawal", "Rabi' I": "Rabiulawal", "Rabi` I": "Rabiulawal", "Rabi al-Awwal": "Rabiulawal", "Rabi'ul Awal": "Rabiulawal",
-        "Rabiʻ II": "Rabiulakhir", "Rabi' II": "Rabiulakhir", "Rabi` II": "Rabiulakhir", "Rabi al-Thani": "Rabiulakhir", "Rabi'ul Akhir": "Rabiulakhir",
-        "Jumada I": "Jamadilawal", "Jumada al-Ula": "Jamadilawal", "Jamadil Awal": "Jamadilawal",
-        "Jumada II": "Jamadilakhir", "Jumada al-Thani": "Jamadilakhir", "Jamadil Akhir": "Jamadilakhir",
-        "Rajab": "Rejab", "Sha'ban": "Syaaban", "Shaʻban": "Syaaban",
-        "Dhul-Qi'dah": "Zulkaedah", "Dhu al-Qi'dah": "Zulkaedah",
-        "Dhul-Hijjah": "Zulhijjah", "Dhu al-Hijjah": "Zulhijjah"
-      };
-
-      for (var key in monthReplacements) {
-        if (cleaned.indexOf(key) !== -1) {
-          cleaned = cleaned.replace(key, monthReplacements[key]);
-        }
-      }
-
       return cleaned + ' H';
     }
 
-    // Browser Engine Fallback Converter (Formats explicitly as DD Month YYYY)
     function getMalaysianHijriDate(date) {
       try {
         var formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura', {
@@ -510,7 +486,6 @@
           if (parts[i].type === 'month') monthNum = parseInt(parts[i].value, 10);
           if (parts[i].type === 'year') year = parts[i].value;
         }
-
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
@@ -521,7 +496,6 @@
     function updateClock() {
       try {
         var now = new Date();
-        
         var clockElem = document.getElementById('clock');
         if (clockElem) {
           clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
@@ -618,7 +592,6 @@
           const data = await res.json();
           if (data && data.prayers && data.prayers.length > 0) {
             const todayData = data.prayers[0];
-            
             var subuhVal = todayData.fajr;
             var syurukVal = todayData.syuruk;
             var dhuhaVal = calculateJakimDhuha(subuhVal, syurukVal);
@@ -654,6 +627,9 @@
       document.getElementById('time-asar').innerText = format12Hour(prayerTimesToday.asar);
       document.getElementById('time-maghrib').innerText = format12Hour(prayerTimesToday.maghrib);
       document.getElementById('time-isyak').innerText = format12Hour(prayerTimesToday.isyak);
+      
+      // Trigger background check immediately after prayer times load
+      updateClock();
     }
 
     async function fetchDailyQuran() {
