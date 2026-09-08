@@ -9,8 +9,8 @@
       --gold: #ffd166;
       --teal: #06d6a0;
       --cyan: #48cae4;
-      --glass-bg: rgba(15, 23, 42, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-bg: rgba(15, 23, 42, 0.35); /* Translucent so background shows clearly */
+      --glass-border: rgba(255, 255, 255, 0.25);
     }
 
     * {
@@ -20,7 +20,6 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Force 100vh Landscape View without vertical scrollbars */
     html, body {
       width: 100vw;
       height: 100vh;
@@ -42,7 +41,7 @@
       transition: background-image 1.5s ease-in-out;
     }
 
-    /* Dark Overlay for visual contrast */
+    /* Subtle Overlay for Contrast */
     .bg-overlay {
       position: fixed;
       top: 0;
@@ -50,7 +49,7 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
     }
 
     /* Main Dashboard Layout */
@@ -61,81 +60,51 @@
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 12px 18px;
-      gap: 10px;
+      padding: 14px 20px;
+      gap: 12px;
     }
 
-    /* Glassmorphism Panel style */
+    /* Glassmorphism Panel */
     .glass-card {
       background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--glass-border);
       border-radius: 14px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 
-    /* TOP HEADER: Separate Address Box + Daily Quran */
-    .header-bar {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .address-box {
-      padding: 10px 14px;
-      background: rgba(72, 202, 228, 0.15);
-      border: 1px solid var(--cyan);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .address-icon {
-      font-size: 1.5rem;
-    }
-
-    .address-text strong {
-      color: var(--cyan);
-      font-size: 0.95rem;
-      display: block;
-    }
-
-    .address-text span {
-      font-size: 0.8rem;
-      color: #e2e8f0;
-    }
-
+    /* TOP HEADER: Quran Banner */
     .quran-box {
       padding: 8px 16px;
       text-align: center;
     }
 
     .quran-ar {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       color: var(--gold);
-      font-weight: 600;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
     .quran-en {
-      font-size: 0.85rem;
-      color: #cbd5e1;
+      font-size: 0.9rem;
+      color: #f1f5f9;
       font-style: italic;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     /* MIDDLE CONTENT: 3 Columns */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 1.3fr 1fr;
-      gap: 12px;
+      gap: 14px;
       height: 100%;
-      min-height: 0; /* Prevents overflow grid expands */
+      min-height: 0;
     }
 
     .col-card {
-      padding: 14px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -145,112 +114,152 @@
 
     /* LEFT COL: Clock & Date */
     .time-title {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       letter-spacing: 2px;
       color: var(--cyan);
       font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .clock-display {
-      font-size: 3.2rem;
+      font-size: 3.6rem;
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      text-shadow: 0 0 12px rgba(72, 202, 228, 0.6);
-      margin: 6px 0;
+      text-shadow: 0 0 16px rgba(72, 202, 228, 0.8), 0 2px 4px rgba(0,0,0,0.9);
+      margin: 8px 0;
     }
 
     .gregorian-date {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .hijri-date {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       color: var(--gold);
       margin-top: 4px;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    /* CENTER COL: Waktu Solat Table */
-    .solat-table {
-      width: 100%;
-      height: 100%;
+    /* CENTER COL: Address + Waktu Solat Table */
+    .center-column {
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      gap: 8px;
+      height: 100%;
+    }
+
+    /* Dedicated Address Box directly on top of Solat Box */
+    .address-box {
+      padding: 8px 14px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--cyan);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .address-box strong {
+      color: var(--cyan);
+      font-size: 1rem;
+      display: block;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .address-box span {
+      font-size: 0.8rem;
+      color: #e2e8f0;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* Solat Box - Tight layout & Big Fonts */
+    .solat-container {
+      flex-grow: 1;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .solat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 16px;
+      padding: 4px 18px;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.3) 0%, rgba(72, 202, 228, 0.2) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.45) 0%, rgba(72, 202, 228, 0.3) 100%);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 10px rgba(6, 214, 160, 0.3);
+      box-shadow: 0 0 12px rgba(6, 214, 160, 0.4);
     }
 
     .solat-name {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.35rem; /* Larger font */
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
 
     .solat-time {
-      font-size: 1.25rem;
-      font-weight: 800;
+      font-size: 1.5rem; /* Larger font */
+      font-weight: 900;
       color: var(--gold);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
 
     /* RIGHT COL: Countdown */
     .next-label {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       letter-spacing: 1.5px;
-      color: #e2e8f0;
+      color: #f1f5f9;
       text-transform: uppercase;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .next-prayer {
-      font-size: 2.2rem;
+      font-size: 2.6rem;
       font-weight: 900;
       color: var(--teal);
-      margin: 4px 0;
-      text-shadow: 0 0 10px rgba(6, 214, 160, 0.5);
+      margin: 6px 0;
+      text-shadow: 0 0 12px rgba(6, 214, 160, 0.7), 0 2px 4px rgba(0,0,0,0.9);
     }
 
     .countdown-box {
-      font-size: 2.8rem;
-      font-weight: 800;
+      font-size: 3rem;
+      font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 209, 102, 0.4);
+      border: 1px solid rgba(255, 209, 102, 0.5);
       box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
 
     /* BOTTOM FOOTER: Hadith */
     .footer-bar {
-      padding: 10px 16px;
+      padding: 8px 16px;
       text-align: center;
     }
 
     .hadith-ar {
-      font-size: 1.05rem;
+      font-size: 1.15rem;
       color: var(--gold);
-      font-weight: 600;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
     .hadith-en {
-      font-size: 0.8rem;
-      color: #e2e8f0;
+      font-size: 0.85rem;
+      color: #f1f5f9;
       font-style: italic;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
   </style>
 </head>
@@ -262,26 +271,15 @@
 
   <div class="dashboard-container">
     
-    <!-- TOP SECTION -->
-    <div class="header-bar">
-      <!-- Dedicated Address Box -->
-      <div class="address-box glass-card">
-        <span class="address-icon">📍</span>
-        <div class="address-text">
-          <strong>No 8, Jalan Serene 3/4, Serene Heights</strong>
-          <span>43500 Semenyih, Selangor (JAKIM: SGR01)</span>
-        </div>
-      </div>
-
-      <!-- Daily Quran Verse Box -->
-      <div class="quran-box glass-card">
-        <div class="quran-ar" id="quran-ar">Loading...</div>
-        <div class="quran-en" id="quran-en">Loading...</div>
-      </div>
+    <!-- TOP SECTION: Quran Verse -->
+    <div class="quran-box glass-card">
+      <div class="quran-ar" id="quran-ar">Loading...</div>
+      <div class="quran-en" id="quran-en">Loading...</div>
     </div>
 
     <!-- MAIN DISPLAY (3 COLUMNS) -->
     <div class="main-grid">
+      
       <!-- LEFT: Date & Time -->
       <div class="col-card glass-card">
         <div class="time-title">CURRENT TIME</div>
@@ -290,9 +288,16 @@
         <div class="hijri-date" id="hijri-date">Loading...</div>
       </div>
 
-      <!-- CENTER: Waktu Solat -->
-      <div class="col-card glass-card">
-        <div class="solat-table">
+      <!-- CENTER: Address Box ON TOP of Solat Box -->
+      <div class="center-column">
+        <!-- Address Box Header -->
+        <div class="address-box glass-card">
+          <strong>📍 No 8, Jalan Serene 3/4, Serene Heights</strong>
+          <span>43500 Semenyih, Selangor (JAKIM: SGR01)</span>
+        </div>
+
+        <!-- Waktu Solat List -->
+        <div class="solat-container glass-card">
           <div class="solat-row" id="row-subuh"><span class="solat-name">Subuh</span><span class="solat-time" id="time-subuh">05:52 AM</span></div>
           <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:03 AM</span></div>
           <div class="solat-row" id="row-zohor"><span class="solat-name">Zohor</span><span class="solat-time" id="time-zohor">01:15 PM</span></div>
@@ -322,24 +327,24 @@
     // Time-based Malaysian Sceneries (Unsplash HD)
     const malaysianScenes = {
       sunrise: [
-        'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1600&q=80', // Sunrise mosque
-        'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1600&q=80'  // KL Sky Sunrise
+        'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1600&q=80',
+        'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1600&q=80'
       ],
       daytime: [
-        'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1600&q=80', // Sultan Abdul Samad Day
-        'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80'  // Malaysian Landscape
+        'https://images.unsplash.com/photo-1541086095944-f4b5412d3666?auto=format&fit=crop&w=1600&q=80',
+        'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80'
       ],
       afternoon: [
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80', // Bright tropical sky
-        'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1600&q=80'  // Putra Mosque Day
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
+        'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=1600&q=80'
       ],
       evening: [
-        'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1600&q=80', // Sunset Mosque
-        'https://images.unsplash.com/photo-1510009228795-006f1eb7ebbe?auto=format&fit=crop&w=1600&q=80'  // Sunset KLCC
+        'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1600&q=80',
+        'https://images.unsplash.com/photo-1510009228795-006f1eb7ebbe?auto=format&fit=crop&w=1600&q=80'
       ],
       night: [
-        'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1600&q=80', // KLCC Night
-        'https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=1600&q=80'  // Iron Mosque Night
+        'https://images.unsplash.com/photo-1565689157206-0fddef7589a2?auto=format&fit=crop&w=1600&q=80',
+        'https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=1600&q=80'
       ]
     };
 
@@ -362,24 +367,44 @@
       bgIndex++;
     }
 
-    // Daily Quran & Hadith Arrays
-    const quranVerses = [
-      {
-        ar: "الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
-        en: "\"Those who believe and whose hearts find rest in the remembrance of Allah. Unquestionably, by the remembrance of Allah do hearts find rest.\" — Surah Ar-Ra'd 13:28"
-      },
-      {
-        ar: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ",
-        en: "\"And establish prayer and give zakah and bow with those who bow [in worship].\" — Surah Al-Baqarah 2:43"
-      }
-    ];
+    // Fetch Daily Quranic Verse
+    async function fetchDailyQuran() {
+      try {
+        const now = new Date();
+        const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+        const verseNumber = (dayOfYear * 17) % 6236 + 1; 
 
-    const sahihHadiths = [
-      {
-        ar: "مَنْ طَهَّرَ فِي بَيْتِهِ ثُمَّ مَشَى إِلَى بَيْتٍ مِنْ بُيُوتِ اللَّهِ لِيَقْضِيَ فَرِيضَةً كَانَتْ خُطُوَاتُهُ إِحْدَاهُمَا تَحُطُّ خَطِيئَةً وَالأُخْرَى تَرْفَعُ دَرَجَةً",
-        en: "\"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status.\" — Sahih Muslim 666"
+        const arRes = await fetch(`https://api.alquran.cloud/v1/ayah/${verseNumber}/ar.alafasy`);
+        const arData = await arRes.json();
+
+        const enRes = await fetch(`https://api.alquran.cloud/v1/ayah/${verseNumber}/en.sahih`);
+        const enData = await enRes.json();
+
+        if (arData.code === 200 && enData.code === 200) {
+          document.getElementById('quran-ar').innerText = arData.data.text;
+          document.getElementById('quran-en').innerText = `"${enData.data.text}" — Surah ${enData.data.surah.englishName} (${enData.data.surah.number}:${enData.data.numberInSurah})`;
+        }
+      } catch (err) {
+        document.getElementById('quran-ar').innerText = "الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ";
+        document.getElementById('quran-en').innerText = "\"Those who believe and whose hearts find rest in the remembrance of Allah.\" — Surah Ar-Ra'd 13:28";
       }
-    ];
+    }
+
+    // Fetch Daily Sahih Hadith
+    async function fetchDailyHadith() {
+      try {
+        const res = await fetch(`https://random-hadith-generator.vercel.app/bukhari/`);
+        const data = await res.json();
+
+        if (data && data.data) {
+          document.getElementById('hadith-ar').innerText = data.data.hadithArabic || "قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...";
+          document.getElementById('hadith-en').innerText = `"${data.data.hadithEnglish}" — ${data.data.refno || 'Sahih Bukhari'}`;
+        }
+      } catch (err) {
+        document.getElementById('hadith-ar').innerText = "مَنْ طَهَّرَ فِي بَيْتِهِ ثُمَّ مَشَى إِلَى بَيْتٍ مِنْ بُيُوتِ اللَّهِ لِيَقْضِيَ فَرِيضَةً كَانَتْ خُطُوَاتُهُ إِحْدَاهُمَا تَحُطُّ خَطِيئَةً وَالأُخْرَى تَرْفَعُ دَرَجَةً";
+        document.getElementById('hadith-en').innerText = "\"He who purifies himself in his house and then walks to a house of Allah to perform an obligatory prayer, one step wipes away a sin and the other raises his status.\" — Sahih Muslim 666";
+      }
+    }
 
     const prayerTimesToday = {
       subuh: "05:52",
@@ -389,20 +414,6 @@
       maghrib: "19:20",
       isyak: "20:29"
     };
-
-    function updateDailyContent() {
-      const now = new Date();
-      const startOfYear = new Date(now.getFullYear(), 0, 0);
-      const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-
-      const q = quranVerses[dayOfYear % quranVerses.length];
-      const h = sahihHadiths[dayOfYear % sahihHadiths.length];
-
-      document.getElementById('quran-ar').innerText = q.ar;
-      document.getElementById('quran-en').innerText = q.en;
-      document.getElementById('hadith-ar').innerText = h.ar;
-      document.getElementById('hadith-en').innerText = h.en;
-    }
 
     function updateClock() {
       const now = new Date();
@@ -470,13 +481,14 @@
         `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // Init
-    updateDailyContent();
+    // Initialize
+    fetchDailyQuran();
+    fetchDailyHadith();
     updateBackground();
     updateClock();
-    
+
     setInterval(updateClock, 1000);
-    setInterval(updateBackground, 20000); // Background changes every 20s
+    setInterval(updateBackground, 20000); // 20s Slideshow
   </script>
 </body>
 </html>
