@@ -2,7 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- WebApp & Fullscreen Meta Tags for iPad/iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Waktu Solat">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- Lock scaling and fit display into iPad screen boundaries -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
   <title>Landscape Waktu Solat Display - Serene Heights</title>
   <style>
     :root {
@@ -48,10 +57,10 @@
       width: 100vw;
       height: 100vh;
       z-index: 2;
-      background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);
     }
 
-    /* Main Dashboard Layout */
+    /* Main Dashboard Layout with Safe-Area Insets for Fullscreen */
     .dashboard-container {
       position: relative;
       z-index: 3;
@@ -59,7 +68,7 @@
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 14px 24px;
+      padding: env(safe-area-inset-top, 14px) env(safe-area-inset-right, 24px) env(safe-area-inset-bottom, 14px) env(safe-area-inset-left, 24px);
       gap: 12px;
     }
 
@@ -323,14 +332,13 @@
       return (hours < 10 ? '0' + hours : hours) + ':' + minutes + ' ' + ampm;
     }
 
-    // Dynamic High Resolution Nature Photography matched to Prayer & Time of Day
     var prayerPhotos = {
-      subuh: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80", // Pre-dawn mist & coastal blue hour
-      syuruk: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80", // Sunrise over misty hills & mountain peaks
-      zohor: "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80", // Bright rainforest river & lush canopy
-      asar: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80", // Warm afternoon sun in forest stream
-      maghrib: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1920&q=80", // Crimson & golden sunset over ocean waves
-      isyak: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80"   // Starlit night sky, full moon & calm waters
+      subuh: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
+      syuruk: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",
+      zohor: "https://images.unsplash.com/photo-1511497584788-876761c119ee?auto=format&fit=crop&w=1920&q=80",
+      asar: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80",
+      maghrib: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1920&q=80",
+      isyak: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1920&q=80"
     };
 
     var currentPrayerSlot = '';
@@ -340,7 +348,6 @@
         currentPrayerSlot = activeSlot;
         var bgElem = document.getElementById('bg-carousel');
         if (bgElem) {
-          // Preload Image to avoid flashing on iPad Safari
           var img = new Image();
           img.src = prayerPhotos[activeSlot];
           img.onload = function() {
@@ -354,20 +361,17 @@
       try {
         var now = new Date();
         
-        // Clock Display
         var clockElem = document.getElementById('clock');
         if (clockElem) {
           clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
         }
 
-        // Gregorian Date Display
         var gregElem = document.getElementById('gregorian-date');
         if (gregElem) {
           var options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
           gregElem.innerText = now.toLocaleDateString('en-US', options);
         }
 
-        // Hijri Date Display
         var hijriElem = document.getElementById('hijri-date');
         if (hijriElem) {
           try {
@@ -511,11 +515,9 @@
       } catch (err) {}
     }
 
-    // Initialize Timer
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Fetch dynamic content
     fetchJakimPrayerTimes();
     fetchDailyQuran();
     fetchDailyHadith();
