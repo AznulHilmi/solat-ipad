@@ -20,7 +20,6 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Fixed full screen lockdown to completely prevent iPad Safari bar shifting */
     html, body {
       position: fixed;
       top: 0;
@@ -28,11 +27,10 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #020617;
+      background: #050b14;
       color: #ffffff;
     }
 
-    /* Vibrant iPad Background Artwork */
     .bg-svg-container {
       position: absolute;
       top: 0;
@@ -58,17 +56,19 @@
       z-index: 3;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 12px 20px;
-      gap: 8px;
+      padding: 10px 16px;
+      gap: 6px;
     }
 
-    /* Solid high-contrast panels for absolute clarity on iPad screens */
+    /* True translucent frosted glass so the background art shines through clearly */
     .transparent-card {
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(10, 18, 35, 0.48);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 12px;
-      padding: 8px 12px;
-      border: 1px solid rgba(72, 202, 228, 0.4);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      padding: 6px 10px;
+      border: 1px solid rgba(72, 202, 228, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .quran-box {
@@ -76,21 +76,22 @@
     }
 
     .quran-ar {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       color: var(--gold);
       font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
 
     .quran-en {
-      font-size: 0.82rem;
-      color: #ffffff;
+      font-size: 0.8rem;
+      color: #e2e8f0;
       font-style: italic;
     }
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr 1.35fr 1fr;
-      gap: 16px;
+      grid-template-columns: 1.05fr 1.35fr 1.05fr;
+      gap: 14px;
       height: 100%;
       min-height: 0;
     }
@@ -111,23 +112,25 @@
     }
 
     .clock-display {
-      font-size: 3.4rem;
+      font-size: 2.7rem;
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
-      margin: 6px 0;
+      margin: 4px 0;
+      white-space: nowrap;
       line-height: 1.1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
 
     .gregorian-date {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
     }
 
     .hijri-date {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--gold);
-      margin-top: 3px;
+      margin-top: 2px;
       font-weight: 700;
     }
 
@@ -146,13 +149,13 @@
 
     .address-box strong {
       color: var(--cyan);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       display: block;
     }
 
     .address-box span {
-      font-size: 0.75rem;
-      color: #ffffff;
+      font-size: 0.73rem;
+      color: #e2e8f0;
     }
 
     .solat-container {
@@ -160,53 +163,56 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 6px 12px;
+      padding: 4px 10px;
     }
 
     .solat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 14px;
+      padding: 3px 12px;
       border-radius: 6px;
-      background: rgba(30, 41, 59, 0.7);
+      background: rgba(15, 23, 42, 0.35);
     }
 
     .solat-row.active {
-      background: linear-gradient(90deg, rgba(6, 214, 160, 0.65) 0%, rgba(72, 202, 228, 0.5) 100%);
+      background: linear-gradient(90deg, rgba(6, 214, 160, 0.55) 0%, rgba(72, 202, 228, 0.4) 100%);
       border: 1px solid var(--teal);
     }
 
     .solat-name {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 800;
     }
 
     .solat-time {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 900;
       color: var(--gold);
     }
 
     .next-label {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       letter-spacing: 1.5px;
       color: #ffffff;
       text-transform: uppercase;
     }
 
     .next-prayer {
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: var(--teal);
       margin: 4px 0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
 
     .countdown-box {
-      font-size: 2.8rem;
+      font-size: 2.6rem;
       font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
+      white-space: nowrap;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
 
     .footer-bar {
@@ -214,59 +220,67 @@
     }
 
     .hadith-ar {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--gold);
       font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
 
     .hadith-en {
-      font-size: 0.8rem;
-      color: #ffffff;
+      font-size: 0.78rem;
+      color: #e2e8f0;
       font-style: italic;
     }
   </style>
 </head>
 <body>
 
-  <!-- Rich SVG Night Sky & Mosque Artwork -->
+  <!-- Rich Vibrant Night Sky & Mosque Artwork -->
   <div class="bg-svg-container">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
       <defs>
         <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#050b14" />
-          <stop offset="40%" stop-color="#0f172a" />
-          <stop offset="100%" stop-color="#1e1b4b" />
+          <stop offset="0%" stop-color="#020617" />
+          <stop offset="35%" stop-color="#0f172a" />
+          <stop offset="70%" stop-color="#1e1b4b" />
+          <stop offset="100%" stop-color="#312e81" />
         </linearGradient>
-        <radialGradient id="moonGlow" cx="80%" cy="20%" r="55%">
-          <stop offset="0%" stop-color="rgba(255, 209, 102, 0.5)" />
+        <radialGradient id="moonGlow" cx="82%" cy="18%" r="60%">
+          <stop offset="0%" stop-color="rgba(255, 209, 102, 0.6)" />
+          <stop offset="50%" stop-color="rgba(72, 202, 228, 0.2)" />
           <stop offset="100%" stop-color="transparent" />
         </radialGradient>
       </defs>
       
+      <!-- Sky Background -->
       <rect width="1920" height="1080" fill="url(#skyGrad)" />
       <rect width="1920" height="1080" fill="url(#moonGlow)" />
       
+      <!-- Bright Stars -->
       <g fill="#ffffff" opacity="0.95">
         <circle cx="150" cy="120" r="3" />
-        <circle cx="420" cy="80" r="2" />
-        <circle cx="750" cy="150" r="2.5" />
-        <circle cx="1050" cy="70" r="3" />
-        <circle cx="1450" cy="110" r="2" />
-        <circle cx="1780" cy="170" r="2.5" />
-        <circle cx="280" cy="250" r="1.5" />
-        <circle cx="900" cy="220" r="2.5" />
-        <circle cx="1300" cy="190" r="3" />
+        <circle cx="420" cy="80" r="2.5" />
+        <circle cx="750" cy="150" r="3" />
+        <circle cx="1050" cy="70" r="3.5" />
+        <circle cx="1450" cy="110" r="2.5" />
+        <circle cx="1780" cy="170" r="3" />
+        <circle cx="280" cy="250" r="2" />
+        <circle cx="900" cy="220" r="3" />
+        <circle cx="1300" cy="190" r="3.5" />
+        <circle cx="1650" cy="280" r="2" />
       </g>
 
-      <path d="M1500,130 a55,55 0 1,0 55,55 a44,44 0 1,1 -55,-55 z" fill="#ffd166" opacity="0.98"/>
+      <!-- Crescent Moon -->
+      <path d="M1520,110 a60,60 0 1,0 60,60 a48,48 0 1,1 -60,-60 z" fill="#ffd166" opacity="0.98"/>
 
-      <g fill="#0b1329" opacity="0.9">
-        <path d="M0,900 L0,1080 L1920,1080 L1920,850 Q1600,790 1200,870 Q800,820 400,880 Q200,860 0,900 Z" />
+      <!-- Mosque Silhouette Artwork -->
+      <g fill="#060913" opacity="0.8">
+        <path d="M0,910 L0,1080 L1920,1080 L1920,860 Q1600,800 1200,880 Q800,830 400,890 Q200,870 0,910 Z" />
         <path d="
-          M750,1080 L750,700 Q750,650 780,650 Q810,650 810,700 L810,1080
-          M1150,1080 L1150,650 Q1150,600 1180,600 Q1210,600 1210,650 L1210,1080
-          M850,1080 L850,780 Q920,670 980,780 Q1040,670 1110,780 L1110,1080
-          Q980,630 850,780 Z
+          M750,1080 L750,710 Q750,660 780,660 Q810,660 810,710 L810,1080
+          M1150,1080 L1150,660 Q1150,610 1180,610 Q1210,610 1210,660 L1210,1080
+          M850,1080 L850,790 Q920,680 980,790 Q1040,680 1110,790 L1110,1080
+          Q980,640 850,790 Z
         " />
       </g>
     </svg>
