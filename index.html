@@ -137,7 +137,7 @@
       gap: 4px;
       height: 100%;
       min-height: 0;
-      align-items: center; /* Center everything horizontally in middle column */
+      align-items: center;
     }
 
     .address-box {
@@ -162,22 +162,23 @@
     .solat-container {
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Group rows together tighter instead of spreading out */
-      gap: 5px; /* Tighter gap between rows */
+      justify-content: space-between; /* Spreads the boxes evenly filling the height */
+      flex-grow: 1;
       padding: 2px 0;
-      width: 95%; /* Wider boxes */
+      width: 98%; /* Wider boxes */
       background: transparent;
       border: none;
       box-shadow: none;
+      min-height: 0;
     }
 
-    /* Individual visible box for each prayer time line */
+    /* Individual taller, larger-font visible box for each prayer time line */
     .solat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 16px; /* Slightly more horizontal padding inside wider boxes */
-      border-radius: 8px;
+      padding: 8px 18px; /* Taller boxes */
+      border-radius: 10px;
       background: rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.35);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -192,13 +193,13 @@
     }
 
     .solat-name {
-      font-size: 1.05rem;
+      font-size: 1.45rem; /* Significantly larger for distance viewing */
       font-weight: 800;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
     }
 
     .solat-time {
-      font-size: 1.1rem;
+      font-size: 1.55rem; /* Significantly larger for distance viewing */
       font-weight: 900;
       color: var(--gold);
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
