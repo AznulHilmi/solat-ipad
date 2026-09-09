@@ -55,7 +55,7 @@
       gap: 6px;
     }
 
-    /* Completely invisible background container style (removed all box tint and borders) */
+    /* Completely invisible outer cards */
     .transparent-card {
       background: transparent;
       border: none;
@@ -163,22 +163,28 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 2px 4px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
     }
 
+    /* Individual visible box for each prayer time line */
     .solat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 3px 12px;
-      border-radius: 6px;
-      background: transparent;
-      border: none;
+      padding: 4px 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
+    /* Active prayer row box style */
     .solat-row.active {
-      background: rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.55);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.8);
     }
 
     .solat-name {
@@ -269,7 +275,7 @@
           <span>JAKIM Zone: SGR01 (Hulu Langat, Gombak, Petaling)</span>
         </div>
 
-        <div class="solat-container transparent-card">
+        <div class="solat-container">
           <div class="solat-row" id="row-subuh"><span class="solat-name">Subuh</span><span class="solat-time" id="time-subuh">05:59 AM</span></div>
           <div class="solat-row" id="row-syuruk"><span class="solat-name">Syuruk</span><span class="solat-time" id="time-syuruk">07:05 AM</span></div>
           <div class="solat-row" id="row-dhuha"><span class="solat-name">Dhuha</span><span class="solat-time" id="time-dhuha">07:31 AM</span></div>
