@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Waktu Solat - Serene Heights</title>
   <style>
     :root {
@@ -21,14 +21,12 @@
     }
 
     html, body {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       background: #000000;
       color: #ffffff;
+      position: fixed;
     }
 
     /* Dynamic Background Image Container */
@@ -51,7 +49,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
       z-index: 2;
     }
 
@@ -64,7 +62,7 @@
       z-index: 3;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      padding: 10px 16px;
+      padding: env(safe-area-inset-top, 10px) 16px env(safe-area-inset-bottom, 10px) 16px;
       gap: 6px;
     }
 
@@ -84,14 +82,15 @@
     }
 
     .quran-ar {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       color: var(--gold);
       font-weight: 700;
       text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+      line-height: 1.3;
     }
 
     .quran-en {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: #f8fafc;
       font-style: italic;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
@@ -236,20 +235,24 @@
 
     .footer-bar {
       text-align: center;
+      padding: 8px 10px;
     }
 
     .hadith-ar {
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--gold);
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      line-height: 1.35;
+      margin-bottom: 2px;
     }
 
     .hadith-en {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #f8fafc;
       font-style: italic;
       text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      line-height: 1.25;
     }
   </style>
 </head>
@@ -300,8 +303,8 @@
     </div>
 
     <div class="footer-bar transparent-card">
-      <div class="hadith-ar" id="hadith-ar">قَالَ رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ...</div>
-      <div class="hadith-en" id="hadith-en">"He who purifies himself in his house and then walks to a house of Allah..." — Sahih Muslim</div>
+      <div class="hadith-ar" id="hadith-ar">Loading Hadith...</div>
+      <div class="hadith-en" id="hadith-en"></div>
     </div>
 
   </div>
@@ -323,26 +326,66 @@
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
 
-    // Diverse scenery collection featuring rivers, creeks, lakes, snowy winter, autumn foliage, and summer landscapes
     var sceneryImages = {
-      subuh: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=1920&auto=format&fit=crop", // Misty dawn over a quiet mountain creek/river
-      syuruk: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop", // Golden morning sunlight reflecting on a pristine lake
-      dhuha: "https://images.unsplash.com/photo-1491557345352-5929e343eb89?q=80&w=1920&auto=format&fit=crop", // Bright summer alpine scenery with lush green valleys and snow peaks
-      zohor: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop", // Crystal-clear blue lake and summer forest landscape
-      asar: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=1920&auto=format&fit=crop", // Vibrant autumn / fall foliage along a winding river
-      maghrib: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop", // Breathtaking winter snowy mountain range under a glowing sunset sky
-      isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop"  // Serene night landscape with a star-filled sky over a glassy lake
+      subuh: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=1920&auto=format&fit=crop&v=99",
+      syuruk: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop&v=99",
+      dhuha: "https://images.unsplash.com/photo-1491557345352-5929e343eb89?q=80&w=1920&auto=format&fit=crop&v=99",
+      zohor: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop&v=99",
+      asar: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=1920&auto=format&fit=crop&v=99",
+      maghrib: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop&v=99",
+      isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop&v=99"
+    };
+
+    // Complete collection of authentic Hadiths assigned to prayer periods
+    var hadithCollection = {
+      subuh: {
+        ar: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ",
+        en: "\"He who performs the two cool prayers (Subuh and Asar) will enter Paradise.\" — Sahih Bukhari"
+      },
+      syuruk: {
+        ar: "مَنْ صَلَّى الْغَدَاةَ فِي جَمَاعَةٍ ثُمَّ قَعَدَ يَذْكُرُ اللَّهَ حَتَّى تَطْلُعَ الشَّمْسُ... كَانَتْ لَهُ كَأَجْرِ حَجَّةٍ وَعُمْرَةٍ",
+        en: "\"Whoever prays Fajr in congregation then sits remembering Allah until the sun rises... has the reward of Hajj and Umrah.\" — Tirmidhi"
+      },
+      dhuha: "لِمَنْ صَلَّى الضُّحَى: يُصْبِحُ عَلَى كُلِّ سُلَامَى مِنْ أَحَدِكُمْ صَدَقَةٌ...",
+        en: "\"In the morning, charity is due from every bone of the person... and two rak'ahs of Dhuha sufficeth for all that.\" — Sahih Muslim"
+      },
+      zohor: {
+        ar: "إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ",
+        en: "\"A servant may utter a word pleasing to Allah without giving it much thought, and because of it Allah raises him in ranks.\" — Sahih Bukhari"
+      },
+      asar: {
+        ar: "مَنْ تَرَكَ صَلَةَ الْعَصْرِ فَقَدْ حَبِطَ عَمَلُهُ",
+        en: "\"He who misses the Asr prayer, all his good deeds are rendered vain.\" — Sahih Bukhari"
+      },
+      maghrib: {
+        ar: "لَا تَزَالُ أُمَّتِي بِخَيْرٍ مَا لَمْ يُعَجِّلُوا الْمَغْرِبَ",
+        en: "\"My ummah will continue to be upon goodness as long as they do not delay the Maghrib prayer.\" — Abu Dawood"
+      },
+      isyak: {
+        ar: "مَنْ صَلَّى الْعِشَاءَ فِي جَمَاعَةٍ فَكَأَنَّمَا قَامَ نِصْفَ اللَّيْلِ",
+        en: "\"Whoever prays Isyak in congregation, it is as if he stood in prayer for half of the night.\" — Sahih Muslim"
+      }
     };
 
     var currentActiveSceneryKey = "";
 
-    function updateBackgroundScenery(currentPrayerKey) {
+    function updateBackgroundAndHadith(currentPrayerKey) {
+      // Update Background
       if (currentPrayerKey !== currentActiveSceneryKey) {
         currentActiveSceneryKey = currentPrayerKey;
         var imageUrl = sceneryImages[currentPrayerKey] || sceneryImages.zohor;
         var bgDiv = document.getElementById('bg-scenery');
         if (bgDiv) {
           bgDiv.style.backgroundImage = "url('" + imageUrl + "')";
+        }
+
+        // Update Hadith based on current prayer block
+        var hadithData = hadithCollection[currentPrayerKey] || hadithCollection.zohor;
+        var arElem = document.getElementById('hadith-ar');
+        var enElem = document.getElementById('hadith-en');
+        if (arElem && enElem) {
+          arElem.innerText = hadithData.ar;
+          enElem.innerText = hadithData.en;
         }
       }
     }
@@ -434,7 +477,7 @@
           activePrayerKey = "isyak";
         }
 
-        updateBackgroundScenery(activePrayerKey);
+        updateBackgroundAndHadith(activePrayerKey);
 
         var nextLabel = document.getElementById('next-prayer-name');
         if (nextLabel) nextLabel.innerText = nextPrayer;
