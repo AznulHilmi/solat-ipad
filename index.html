@@ -84,10 +84,11 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1.05fr 1.35fr 1.05fr;
+      grid-template-columns: 1fr 1.6fr 1fr;
       gap: 14px;
       height: 100%;
       min-height: 0;
+      align-items: center;
     }
 
     .col-card {
@@ -107,7 +108,7 @@
     }
 
     .clock-display {
-      font-size: 3.3rem; /* Increased by ~5pt equivalents (+0.6rem) */
+      font-size: 3.3rem;
       font-weight: 800;
       color: #ffffff;
       font-family: 'Courier New', Courier, monospace;
@@ -118,13 +119,13 @@
     }
 
     .gregorian-date {
-      font-size: 1.45rem; /* Increased by ~5pt equivalents (+0.35rem) */
+      font-size: 1.45rem;
       font-weight: 700;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
     }
 
     .hijri-date {
-      font-size: 1.35rem; /* Increased by ~5pt equivalents (+0.35rem) */
+      font-size: 1.35rem;
       color: var(--gold);
       margin-top: 2px;
       font-weight: 700;
@@ -138,6 +139,7 @@
       height: 100%;
       min-height: 0;
       align-items: center;
+      justify-content: center;
     }
 
     .address-box {
@@ -162,8 +164,8 @@
     .solat-container {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      flex-grow: 1;
+      justify-content: center;
+      gap: 5px;
       padding: 2px 0;
       width: 98%;
       background: transparent;
@@ -177,7 +179,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 18px;
+      padding: 7px 18px;
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.35);
@@ -193,13 +195,13 @@
     }
 
     .solat-name {
-      font-size: 1.85rem; /* Increased by 2 more points (+0.2rem) */
+      font-size: 1.95rem; /* Increased by 1 more point (+0.1rem) */
       font-weight: 800;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
     }
 
     .solat-time {
-      font-size: 1.95rem; /* Increased by 2 more points (+0.2rem) */
+      font-size: 2.05rem; /* Increased by 1 more point (+0.1rem) */
       font-weight: 900;
       color: var(--gold);
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
@@ -214,7 +216,7 @@
     }
 
     .next-prayer {
-      font-size: 2.7rem; /* Increased by ~5pt equivalents (+0.5rem) */
+      font-size: 2.7rem;
       font-weight: 900;
       color: var(--teal);
       margin: 4px 0;
@@ -222,7 +224,7 @@
     }
 
     .countdown-box {
-      font-size: 3.2rem; /* Increased by ~5pt equivalents (+0.6rem) */
+      font-size: 3.2rem;
       font-weight: 900;
       color: var(--gold);
       font-family: 'Courier New', Courier, monospace;
