@@ -275,7 +275,7 @@
         <div class="time-title">CURRENT TIME</div>
         <div class="clock-display" id="clock">--:--:--</div>
         <div class="gregorian-date" id="gregorian-date">---</div>
-        <div class="hijri-date" id="hijri-date">---</div>
+        <div class="hijri-date" id="hijri-date">Loading Hijri...</div>
       </div>
 
       <div class="center-column">
@@ -325,6 +325,51 @@
       "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
       "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
     ];
+
+    var cachedHijriString = "";
+
+    // Automatically fetch live Hijri date from Malaysia's e-Solat API
+    async function fetchMalaysianHijriDate() {
+      try {
+        var todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        var response = await fetch('https://www.e-solat.gov.my/index.php?r=esolatApi%2Ftarikhtakwim&period=today&datetype=miladi&date=' + todayStr);
+        var data = await response.json();
+        
+        if (data && data.takwim && data.takwim[todayStr]) {
+          var parts = data.takwim[todayStr].split('-'); // Returns [YYYY, MM, DD] format from API
+          if (parts.length === 3) {
+            var hYear = parts[0];
+            var hMonthNum = parseInt(parts[1], 10);
+            var hDay = parseInt(parts[2], 10);
+            
+            var monthWord = (hMonthNum >= 1 && hMonthNum <= 12) ? jakimMonths[hMonthNum - 1] : hMonthNum;
+            cachedHijriString = hDay + " " + monthWord + " " + hYear + " H";
+          }
+        }
+      } catch (err) {
+        console.warn("API fetch failed, utilizing fallback calculation:", err);
+      }
+
+      // Fallback method if network/API blocks or fails
+      if (!cachedHijriString) {
+        var date = new Date();
+        var jd = Math.floor((date.getTime() / 86400000) + 2440587.5) + 2;
+        var l = jd - 1948440 + 10632;
+        var n = Math.floor((l - 1) / 10631);
+        l = l - n * 10631 + 354;
+        var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+        l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+        var hMonth = Math.floor((24 * l) / 709);
+        var hDay = l - Math.floor((709 * hMonth) / 24);
+        var hYear = Math.floor(30 * n + j - 30);
+        var monthWord = (hMonth >= 1 && hMonth <= 12) ? jakimMonths[hMonth - 1] : "Muharram";
+        cachedHijriString = hDay + " " + monthWord + " " + hYear + " H";
+      }
+    }
+
+    // Fetch on load, and refresh once every hour
+    fetchMalaysianHijriDate();
+    setInterval(fetchMalaysianHijriDate, 3600000);
 
     var sceneryImages = {
       subuh: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=1920&auto=format&fit=crop&v=99",
@@ -428,38 +473,6 @@
       }
     }
 
-    function getMalaysianHijriDate(date) {
-      try {
-        var formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
-          day: 'numeric', month: 'numeric', year: 'numeric'
-        });
-        var parts = formatter.formatToParts(date);
-        var day, monthNum, year;
-        for (var i = 0; i < parts.length; i++) {
-          if (parts[i].type === 'day') day = parts[i].value;
-          if (parts[i].type === 'month') monthNum = parseInt(parts[i].value, 10);
-          if (parts[i].type === 'year') year = parts[i].value;
-        }
-        if (!day || !monthNum || !year) throw new Error("Incomplete parts");
-        var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
-        return day + " " + monthWord + " " + year + " H";
-      } catch (e) {
-        // Algorithmic fallback with +2 day offset for Malaysia/JAKIM alignment
-        var jd = Math.floor((date.getTime() / 86400000) + 2440587.5) + 2;
-        var l = jd - 1948440 + 10632;
-        var n = Math.floor((l - 1) / 10631);
-        l = l - n * 10631 + 354;
-        var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-        l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
-        var hMonth = Math.floor((24 * l) / 709);
-        var hDay = l - Math.floor((709 * hMonth) / 24);
-        var hYear = Math.floor(30 * n + j - 30);
-        
-        var monthWord = (hMonth >= 1 && hMonth <= 12) ? jakimMonths[hMonth - 1] : "Muharram";
-        return hDay + " " + monthWord + " " + hYear + " H";
-      }
-    }
-
     function updateEngine() {
       try {
         var now = new Date();
@@ -476,7 +489,7 @@
 
         var hijriElem = document.getElementById('hijri-date');
         if (hijriElem) {
-          hijriElem.innerText = getMalaysianHijriDate(now);
+          hijriElem.innerText = cachedHijriString || "Loading Hijri...";
         }
 
         var times = [
