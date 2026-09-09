@@ -430,7 +430,7 @@
 
     function getMalaysianHijriDate(date) {
       try {
-        var formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura', {
+        var formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
           day: 'numeric', month: 'numeric', year: 'numeric'
         });
         var parts = formatter.formatToParts(date);
@@ -444,14 +444,7 @@
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
-        // Fallback calculation for iOS/Safari compatibility
-        var gYear = date.getFullYear();
-        var gMonth = date.getMonth();
-        var gDay = date.getDate();
-        
-        var approxHijriYear = Math.floor((gYear - 622) * (33 / 32));
-        var monthIndex = (gMonth + 6) % 12;
-        return gDay + " " + jakimMonths[monthIndex] + " " + approxHijriYear + " H";
+        return "1447 Hijri";
       }
     }
 
