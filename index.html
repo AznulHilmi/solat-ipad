@@ -430,7 +430,6 @@
 
     function getMalaysianHijriDate(date) {
       try {
-        // Try native Intl API first (works on Chrome/Desktop)
         var formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
           day: 'numeric', month: 'numeric', year: 'numeric'
         });
@@ -445,8 +444,8 @@
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
-        // Accurate algorithmic fallback for Safari/iOS
-        var jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
+        // Algorithmic fallback with +2 day offset for Malaysia/JAKIM alignment
+        var jd = Math.floor((date.getTime() / 86400000) + 2440587.5) + 2;
         var l = jd - 1948440 + 10632;
         var n = Math.floor((l - 1) / 10631);
         l = l - n * 10631 + 354;
