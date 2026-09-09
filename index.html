@@ -42,16 +42,7 @@
       transition: background-image 1.5s ease-in-out;
     }
 
-    /* Light vignette overlay to let photos shine */
-    .bg-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.25);
-      z-index: 2;
-    }
+    /* Completely removed background overlay for 100% visible, vibrant sceneries */
 
     .dashboard-container {
       position: absolute;
@@ -66,15 +57,15 @@
       gap: 6px;
     }
 
-    /* Feather-light crystal glass cards */
+    /* Feather-light crystal glass cards with strong text contrast */
     .transparent-card {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: 12px;
       padding: 6px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
     }
 
     .quran-box {
@@ -185,14 +176,14 @@
       align-items: center;
       padding: 3px 12px;
       border-radius: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .solat-row.active {
-      background: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.45);
       border: 1px solid var(--teal);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     }
 
     .solat-name {
@@ -260,7 +251,6 @@
 
   <!-- Background Scenery Container -->
   <div class="bg-image-container" id="bg-scenery"></div>
-  <div class="bg-overlay"></div>
 
   <div class="dashboard-container">
     
@@ -303,8 +293,8 @@
     </div>
 
     <div class="footer-bar transparent-card">
-      <div class="hadith-ar" id="hadith-ar">Loading Hadith...</div>
-      <div class="hadith-en" id="hadith-en"></div>
+      <div class="hadith-ar" id="hadith-ar">إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ</div>
+      <div class="hadith-en" id="hadith-en">"A servant may utter a word pleasing to Allah without giving it much thought, and because of it Allah raises him in ranks." — Sahih Bukhari</div>
     </div>
 
   </div>
@@ -336,7 +326,6 @@
       isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop&v=99"
     };
 
-    // Complete collection of authentic Hadiths assigned to prayer periods
     var hadithCollection = {
       subuh: {
         ar: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ",
@@ -346,8 +335,9 @@
         ar: "مَنْ صَلَّى الْغَدَاةَ فِي جَمَاعَةٍ ثُمَّ قَعَدَ يَذْكُرُ اللَّهَ حَتَّى تَطْلُعَ الشَّمْسُ... كَانَتْ لَهُ كَأَجْرِ حَجَّةٍ وَعُمْرَةٍ",
         en: "\"Whoever prays Fajr in congregation then sits remembering Allah until the sun rises... has the reward of Hajj and Umrah.\" — Tirmidhi"
       },
-      dhuha: "لِمَنْ صَلَّى الضُّحَى: يُصْبِحُ عَلَى كُلِّ سُلَامَى مِنْ أَحَدِكُمْ صَدَقَةٌ...",
-        en: "\"In the morning, charity is due from every bone of the person... and two rak'ahs of Dhuha sufficeth for all that.\" — Sahih Muslim"
+      dhuha: {
+        ar: "يُصْبِحُ عَلَى كُلِّ سُلَامَى مِنْ أَحَدِكُمْ صَدَقَةٌ... وَيُجْزِئُ مِنْ ذَلِكَ رَكْعَتَانِ يَرْكَعُهُمَا مِنَ الضُّحَى",
+        en: "\"In the morning, charity is due from every bone... and two rak'ahs of Dhuha sufficeth for all that.\" — Sahih Muslim"
       },
       zohor: {
         ar: "إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ",
@@ -370,7 +360,6 @@
     var currentActiveSceneryKey = "";
 
     function updateBackgroundAndHadith(currentPrayerKey) {
-      // Update Background
       if (currentPrayerKey !== currentActiveSceneryKey) {
         currentActiveSceneryKey = currentPrayerKey;
         var imageUrl = sceneryImages[currentPrayerKey] || sceneryImages.zohor;
@@ -379,7 +368,6 @@
           bgDiv.style.backgroundImage = "url('" + imageUrl + "')";
         }
 
-        // Update Hadith based on current prayer block
         var hadithData = hadithCollection[currentPrayerKey] || hadithCollection.zohor;
         var arElem = document.getElementById('hadith-ar');
         var enElem = document.getElementById('hadith-en');
