@@ -68,18 +68,20 @@
     }
 
     .quran-ar {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--gold);
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
-      line-height: 1.3;
+      line-height: 1.35;
+      margin-bottom: 2px;
     }
 
     .quran-en {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: #ffffff;
       font-style: italic;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
+      line-height: 1.25;
     }
 
     .main-grid {
@@ -165,7 +167,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 24px; /* Increased gap to roughly double line spacing between rows */
+      gap: 24px; /* 2 lines space above and below each box */
       padding: 4px 0;
       width: 98%;
       background: transparent;
@@ -264,7 +266,7 @@
     
     <div class="quran-box transparent-card">
       <div class="quran-ar" id="quran-ar">الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ</div>
-      <div class="quran-en" id="quran-en">"Those who believe and whose hearts find rest in the remembrance of Allah." — Surah Ar-Ra'd 13:28</div>
+      <div class="quran-en" id="quran-en">"Iaitu orang-orang yang beriman dan tenang tenteram hati mereka dengan zikrullah (mengingati Allah)." — Surah Ar-Ra'd 13:28</div>
     </div>
 
     <div class="main-grid">
@@ -302,7 +304,7 @@
 
     <div class="footer-bar transparent-card">
       <div class="hadith-ar" id="hadith-ar">إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ</div>
-      <div class="hadith-en" id="hadith-en">"A servant may utter a word pleasing to Allah without giving it much thought, and because of it Allah raises him in ranks." — Sahih Bukhari</div>
+      <div class="hadith-en" id="hadith-en">"Sesungguhnya seorang hamba yang mengucapkan kalimah yang mendapat redha Allah Taala tanpa dihiraukan kesannya, Allah mengangkat darjatnya kerananya." — Sahih Bukhari</div>
     </div>
 
   </div>
@@ -334,54 +336,99 @@
       isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop&v=99"
     };
 
+    // Sahih Hadiths translated in Bahasa Malaysia, mapped by prayer period
     var hadithCollection = {
       subuh: {
         ar: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ",
-        en: "\"He who performs the two cool prayers (Subuh and Asar) will enter Paradise.\" — Sahih Bukhari"
+        en: "\"Barangsiapa yang solat dua waktu yang sejuk (Subuh dan Asar), dia akan masuk syurga.\" — Sahih Bukhari"
       },
       syuruk: {
         ar: "مَنْ صَلَّى الْغَدَاةَ فِي جَمَاعَةٍ ثُمَّ قَعَدَ يَذْكُرُ اللَّهَ حَتَّى تَطْلُعَ الشَّمْسُ... كَانَتْ لَهُ كَأَجْرِ حَجَّةٍ وَعُمْرَةٍ",
-        en: "\"Whoever prays Fajr in congregation then sits remembering Allah until the sun rises... has the reward of Hajj and Umrah.\" — Tirmidhi"
+        en: "\"Barangsiapa solat Subuh berjemaah, kemudian duduk berzikir mengingati Allah hingga terbit matahari... dia mendapat pahala seperti haji dan umrah.\" — Tirmidzi (Sahih)"
       },
       dhuha: {
         ar: "يُصْبِحُ عَلَى كُلِّ سُلَامَى مِنْ أَحَدِكُمْ صَدَقَةٌ... وَيُجْزِئُ مِنْ ذَلِكَ رَكْعَتَانِ يَرْكَعُهُمَا مِنَ الضُّحَى",
-        en: "\"In the morning, charity is due from every bone... and two rak'ahs of Dhuha sufficeth for all that.\" — Sahih Muslim"
+        en: "\"Setiap sendi badan manusia diwajibkan bersedekah setiap pagi... dan memadai untuk semua itu dengan mengerjakan dua rakaat solat Dhuha.\" — Sahih Muslim"
       },
       zohor: {
         ar: "إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ",
-        en: "\"A servant may utter a word pleasing to Allah without giving it much thought, and because of it Allah raises him in ranks.\" — Sahih Bukhari"
+        en: "\"Sesungguhnya seorang hamba yang mengucapkan kalimah yang mendapat redha Allah Taala tanpa dihiraukan kesannya, Allah mengangkat darjatnya kerananya.\" — Sahih Bukhari"
       },
       asar: {
         ar: "مَنْ تَرَكَ صَلَةَ الْعَصْرِ فَقَدْ حَبِطَ عَمَلُهُ",
-        en: "\"He who misses the Asr prayer, all his good deeds are rendered vain.\" — Sahih Bukhari"
+        en: "\"Sesiapa yang meninggalkan solat Asar, maka sesungguhnya telah gugur amalannya.\" — Sahih Bukhari"
       },
       maghrib: {
         ar: "لَا تَزَالُ أُمَّتِي بِخَيْرٍ مَا لَمْ يُعَجِّلُوا الْمَغْرِبَ",
-        en: "\"My ummah will continue to be upon goodness as long as they do not delay the Maghrib prayer.\" — Abu Dawood"
+        en: "\"Umatku sentiasa berada dalam kebaikan selagi mana mereka tidak melewatkan solat Maghrib.\" — Abu Dawood (Sahih)"
       },
       isyak: {
         ar: "مَنْ صَلَّى الْعِشَاءَ فِي جَمَاعَةٍ فَكَأَنَّمَا قَامَ نِصْفَ اللَّيْلِ",
-        en: "\"Whoever prays Isyak in congregation, it is as if he stood in prayer for half of the night.\" — Sahih Muslim"
+        en: "\"Barangsiapa yang solat Isyak berjemaah, maka seolah-olah dia telah solat separuh malam.\" — Sahih Muslim"
+      }
+    };
+
+    // Quranic Verses translated in Bahasa Malaysia, mapped by prayer period
+    var quranCollection = {
+      subuh: {
+        ar: "وَقُرْآنَ الْفَجْرِ ۖ إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا",
+        en: "\"Dan (dirikanlah pula) solat subuh. Sesungguhnya solat subuh itu adalah disaksikan (oleh malaikat).\" — Surah Al-Isra' 17:78"
+      },
+      syuruk: {
+        ar: "وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوعِ الشَّمْسِ وَقَبْلَ غُرُوبِهَا",
+        en: "\"Dan bertasbihlah dengan memuji Tuhanmu sebelum terbit matahari dan sebelum terbenamnya.\" — Surah Taha 20:130"
+      },
+      dhuha: {
+        ar: "وَالضُّحَىٰ * وَاللَّيْلِ إِذَا سَجَىٰ",
+        en: "\"Demi waktu dhuha. Dan malam apabila ia sunyi sepi.\" — Surah Ad-Duha 93:1-2"
+      },
+      zohor: {
+        ar: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ",
+        en: "\"Peliharalah kamu (mengerjakan) segala solat (terutama) solat Wusta (Asar), dan berdirilah kerana Allah (dalam solat) dengan taat dan khusyuk.\" — Surah Al-Baqarah 2:238"
+      },
+      asar: {
+        ar: "وَالْعَصْرِ * إِنَّ الْإِنسَانَ لَفِي خُسْرٍ",
+        en: "\"Demi Masa! Sesungguhnya manusia itu dalam kerugian.\" — Surah Al-Asr 103:1-2"
+      },
+      maghrib: {
+        ar: "وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوعِ الشَّمْسِ وَقَبْلَ الْغُرُوبِ",
+        en: "\"Dan bertasbihlah dengan memuji Tuhanmu sebelum terbit matahari dan sebelum terbenamnya.\" — Surah Qaf 50:39"
+      },
+      isyak: {
+        ar: "تَتَجَافَىٰ جُنُوبُهُمْ عَنِ الْمَضَاجِعِ يَدْعُونَ رَبَّهُمْ خَوْفًا وَطَمَعًا",
+        en: "\"Lambung mereka jauh dari tempat tidur, mereka berdoa kepada Tuhan mereka dengan rasa takut dan penuh harap.\" — Surah As-Sajdah 32:16"
       }
     };
 
     var currentActiveSceneryKey = "";
 
-    function updateBackgroundAndHadith(currentPrayerKey) {
+    function updateContent(currentPrayerKey) {
       if (currentPrayerKey !== currentActiveSceneryKey) {
         currentActiveSceneryKey = currentPrayerKey;
+        
+        // Update background image
         var imageUrl = sceneryImages[currentPrayerKey] || sceneryImages.zohor;
         var bgDiv = document.getElementById('bg-scenery');
         if (bgDiv) {
           bgDiv.style.backgroundImage = "url('" + imageUrl + "')";
         }
 
+        // Update Hadith
         var hadithData = hadithCollection[currentPrayerKey] || hadithCollection.zohor;
-        var arElem = document.getElementById('hadith-ar');
-        var enElem = document.getElementById('hadith-en');
-        if (arElem && enElem) {
-          arElem.innerText = hadithData.ar;
-          enElem.innerText = hadithData.en;
+        var hadithAr = document.getElementById('hadith-ar');
+        var hadithEn = document.getElementById('hadith-en');
+        if (hadithAr && hadithEn) {
+          hadithAr.innerText = hadithData.ar;
+          hadithEn.innerText = hadithData.en;
+        }
+
+        // Update Quranic Verse
+        var quranData = quranCollection[currentPrayerKey] || quranCollection.zohor;
+        var quranAr = document.getElementById('quran-ar');
+        var quranEn = document.getElementById('quran-en');
+        if (quranAr && quranEn) {
+          quranAr.innerText = quranData.ar;
+          quranEn.innerText = quranData.en;
         }
       }
     }
@@ -473,7 +520,7 @@
           activePrayerKey = "isyak";
         }
 
-        updateBackgroundAndHadith(activePrayerKey);
+        updateContent(activePrayerKey);
 
         var nextLabel = document.getElementById('next-prayer-name');
         if (nextLabel) nextLabel.innerText = nextPrayer;
