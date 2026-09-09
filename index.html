@@ -68,7 +68,7 @@
     }
 
     .quran-ar {
-      font-size: 1.55rem;
+      font-size: 1.45rem;
       color: var(--gold);
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
@@ -77,7 +77,7 @@
     }
 
     .quran-en {
-      font-size: 1.1rem;
+      font-size: 1.0rem;
       color: #ffffff;
       font-style: italic;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
@@ -240,7 +240,7 @@
     }
 
     .hadith-ar {
-      font-size: 1.55rem;
+      font-size: 1.45rem;
       color: var(--gold);
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
@@ -249,7 +249,7 @@
     }
 
     .hadith-en {
-      font-size: 1.1rem;
+      font-size: 1.0rem;
       color: #ffffff;
       font-style: italic;
       text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8);
@@ -304,7 +304,7 @@
 
     <div class="footer-bar transparent-card">
       <div class="hadith-ar" id="hadith-ar">إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ</div>
-      <div class="hadith-en" id="hadith-en">"Sesungguhnya seorang hamba yang mengucapkan kalimah yang mendapat redha Allah Taala tanpa dihiraukan kesannya, Allah mengangkat darjatnya kerانanya." — Sahih Bukhari</div>
+      <div class="hadith-en" id="hadith-en">"Sesungguhnya seorang hamba yang mengucapkan kalimah yang mendapat redha Allah Taala tanpa dihiraukan kesannya, Allah mengangkat darjatnya kerananya." — Sahih Bukhari</div>
     </div>
 
   </div>
@@ -440,10 +440,18 @@
           if (parts[i].type === 'month') monthNum = parseInt(parts[i].value, 10);
           if (parts[i].type === 'year') year = parts[i].value;
         }
+        if (!day || !monthNum || !year) throw new Error("Incomplete parts");
         var monthWord = (monthNum >= 1 && monthNum <= 12) ? jakimMonths[monthNum - 1] : monthNum;
         return day + " " + monthWord + " " + year + " H";
       } catch (e) {
-        return "1447 Hijri";
+        // Fallback calculation for iOS/Safari compatibility
+        var gYear = date.getFullYear();
+        var gMonth = date.getMonth();
+        var gDay = date.getDate();
+        
+        var approxHijriYear = Math.floor((gYear - 622) * (33 / 32));
+        var monthIndex = (gMonth + 6) % 12;
+        return gDay + " " + jakimMonths[monthIndex] + " " + approxHijriYear + " H";
       }
     }
 
