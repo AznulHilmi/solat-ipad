@@ -242,7 +242,8 @@
       var hijriText = "";
 
       function pad2(n) {
-        n = parseInt(n, 10) || 0;
+        n = parseInt(n, 10);
+        if (isNaN(n)) n = 0;
         return (n < 10 ? "0" : "") + n;
       }
 
@@ -258,15 +259,7 @@
           if (!MOSQUE_IMAGES || MOSQUE_IMAGES.length === 0) return;
           backgroundIndex = (backgroundIndex + 1) % MOSQUE_IMAGES.length;
           var nextUrl = MOSQUE_IMAGES[backgroundIndex];
-
-          var img = new Image();
-          img.onload = function () {
-            document.body.style.backgroundImage = 'url("' + nextUrl + '")';
-          };
-          img.onerror = function () {
-            document.body.style.backgroundImage = 'url("' + nextUrl + '")';
-          };
-          img.src = nextUrl;
+          document.body.style.backgroundImage = 'url("' + nextUrl + '")';
         } catch (e) {}
       }
 
@@ -324,4 +317,209 @@
       }
 
       function epochToHHMM(sec) {
-        if (!sec)
+        if (!sec) return null;
+        var dt = new Date(parseInt(sec, 10) * 1000);
+        if (isNaN(dt.getTime())) return null;
+        return pad2(dt.getHours()) + ":" + pad2(dt.getMinutes());
+      }
+
+      function format12Hour(hhmm) {
+        var parts = String(hhmm || "05:50").split(":");
+        var h24 = parseInt(parts[0], 10);
+        if (isNaN(h24)) h24 = 5;
+        var mm = pad2(parts[1] || 0);
+        var ampm = h24 >= 12 ? "PM" : "AM";
+        var h12 = h24 % 12;
+        if (h12 === 0) h12 = 12;
+        return pad2(h12) + ":" + mm + " " + ampm;
+      }
+
+      function parseHijriString(raw) {
+        if (!raw) return null;
+        var s = String(raw).trim();
+        var iso = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+        if (iso) {
+          return formatHijriDDMonthYYYY(iso[3], iso[2], iso[1]);
+        }
+        var dmy = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+        if (dmy) {
+          return formatHijriDDMonthYYYY(dmy[1], dmy[2], dmy[3]);
+        }
+        return null;
+      }
+
+      function syncSchedule() {
+        var now = new Date();
+        computeHijriFallback(now);
+
+        try {
+          if (typeof XMLHttpRequest === "undefined") {
+            setStatus("Using Semenyih (SGR01) schedule");
+            return;
+          }
+          var year = now.getFullYear();
+          var month = now.getMonth() + 1;
+          var day = now.getDate();
+          var url = "https://api.waktusolat.app/v2/solat/" + ZONE + "?year=" + year + "&month=" + month;
+
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", url, true);
+          xhr.timeout = 6000;
+
+          xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                var data = JSON.parse(xhr.responseText);
+                if (data && data.prayers && data.prayers.length) {
+                  var todayRow = null;
+                  for (var i = 0; i < data.prayers.length; i++) {
+                    if (parseInt(data.prayers[i].day, 10) === day) {
+                      todayRow = data.prayers[i];
+                      break;
+                    }
+                  }
+                  if (todayRow) {
+                    var subuh = epochToHHMM(todayRow.fajr);
+                    var zohor = epochToHHMM(todayRow.dhuhr);
+                    var asar = epochToHHMM(todayRow.asr);
+                    var maghrib = epochToHHMM(todayRow.maghrib);
+                    var isyak = epochToHHMM(todayRow.isha);
+
+                    if (subuh && zohor && asar && maghrib && isyak) {
+                      dailyPrayers.Subuh = subuh;
+                      dailyPrayers.Zohor = zohor;
+                      dailyPrayers.Asar = asar;
+                      dailyPrayers.Maghrib = maghrib;
+                      dailyPrayers.Isyak = isyak;
+                    }
+
+                    var parsedHijri = parseHijriString(todayRow.hijri);
+                    if (parsedHijri) {
+                      hijriText = parsedHijri;
+                    }
+                    setStatus("Live Semenyih (SGR01) schedule synced");
+                    return;
+                  }
+                }
+              } catch (parseErr) {}
+            }
+            setStatus("Using Semenyih (SGR01) schedule");
+          };
+
+          xhr.onerror = function () {
+            setStatus("Using Semenyih (SGR01) schedule");
+          };
+
+          xhr.ontimeout = function () {
+            setStatus("Using Semenyih (SGR01) schedule");
+          };
+
+          xhr.send();
+        } catch (err) {
+          setStatus("Using Semenyih (SGR01) schedule");
+        }
+      }
+
+      function tick() {
+        var now = new Date();
+
+        try {
+          var h24 = now.getHours();
+          var mins = now.getMinutes();
+          var secs = now.getSeconds();
+          var ampm = h24 >= 12 ? "PM" : "AM";
+          var h12 = h24 % 12;
+          if (h12 === 0) h12 = 12;
+
+          var clockEl = document.getElementById("clock");
+          if (clockEl) {
+            clockEl.textContent = pad2(h12) + ":" + pad2(mins) + ":" + pad2(secs) + " " + ampm;
+          }
+        } catch (e1) {}
+
+        try {
+          var gregEl = document.getElementById("gregorian-date");
+          if (gregEl) {
+            gregEl.textContent = formatGregorianDDMonthYYYY(now);
+          }
+        } catch (e2) {}
+
+        try {
+          if (!hijriText) {
+            computeHijriFallback(now);
+          }
+          var hijriEl = document.getElementById("hijri-date");
+          if (hijriEl && hijriText) {
+            hijriEl.textContent = hijriText;
+          }
+        } catch (e3) {}
+
+        try {
+          var order = ["Subuh", "Zohor", "Asar", "Maghrib", "Isyak"];
+          var targetName = "Subuh";
+          var targetTimeStr = dailyPrayers.Subuh;
+          var targetDate = null;
+
+          for (var i = 0; i < order.length; i++) {
+            var pName = order[i];
+            var hhmm = dailyPrayers[pName];
+            if (!hhmm) continue;
+            var parts = hhmm.split(":");
+            var pHour = parseInt(parts[0], 10);
+            var pMin = parseInt(parts[1], 10);
+            if (isNaN(pHour) || isNaN(pMin)) continue;
+            var candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), pHour, pMin, 0, 0);
+            if (candidate.getTime() > now.getTime()) {
+              targetName = pName;
+              targetTimeStr = hhmm;
+              targetDate = candidate;
+              break;
+            }
+          }
+
+          if (!targetDate) {
+            var subParts = dailyPrayers.Subuh.split(":");
+            targetDate = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate() + 1,
+              parseInt(subParts[0], 10) || 5,
+              parseInt(subParts[1], 10) || 50,
+              0,
+              0
+            );
+          }
+
+          var diffSec = Math.max(0, Math.floor((targetDate.getTime() - now.getTime()) / 1000));
+          var remHrs = Math.floor(diffSec / 3600);
+          var remMins = Math.floor((diffSec % 3600) / 60);
+          var remSecs = diffSec % 60;
+
+          var nameEl = document.getElementById("next-name");
+          var timeEl = document.getElementById("next-time");
+          var countEl = document.getElementById("countdown");
+
+          if (nameEl) nameEl.textContent = targetName;
+          if (timeEl) timeEl.textContent = format12Hour(targetTimeStr);
+          if (countEl) {
+            countEl.textContent = pad2(remHrs) + ":" + pad2(remMins) + ":" + pad2(remSecs);
+          }
+        } catch (e4) {}
+      }
+
+      rotateMosqueBackground();
+      setInterval(rotateMosqueBackground, 3600000);
+      tick();
+      setInterval(tick, 1000);
+      syncSchedule();
+      setInterval(syncSchedule, 3600000);
+
+      setInterval(function () {
+        try {
+          window.location.reload();
+        } catch (e) {}
+      }, 900000);
+    });
+  </script>
+</body>
+</html>
