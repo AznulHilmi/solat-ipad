@@ -222,4 +222,106 @@
 
       var GREGORIAN_MONTHS_BM = [
         "Januari", "Februari", "Mac", "April", "Mei", "Jun",
-        "Julai", "O
+        "Julai", "Ogos", "September", "Oktober", "November", "Disember"
+      ];
+
+      var HIJRI_MONTHS_BM = [
+        "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
+        "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
+        "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
+      ];
+
+      var dailyPrayers = {
+        Subuh: "05:50",
+        Zohor: "13:03",
+        Asar: "16:25",
+        Maghrib: "19:00",
+        Isyak: "20:14"
+      };
+
+      var hijriText = "";
+
+      function pad2(n) {
+        n = parseInt(n, 10) || 0;
+        return (n < 10 ? "0" : "") + n;
+      }
+
+      function setStatus(msg) {
+        try {
+          var el = document.getElementById("status-text");
+          if (el) el.textContent = msg;
+        } catch (e) {}
+      }
+
+      function rotateMosqueBackground() {
+        try {
+          if (!MOSQUE_IMAGES || MOSQUE_IMAGES.length === 0) return;
+          backgroundIndex = (backgroundIndex + 1) % MOSQUE_IMAGES.length;
+          var nextUrl = MOSQUE_IMAGES[backgroundIndex];
+
+          var img = new Image();
+          img.onload = function () {
+            document.body.style.backgroundImage = 'url("' + nextUrl + '")';
+          };
+          img.onerror = function () {
+            document.body.style.backgroundImage = 'url("' + nextUrl + '")';
+          };
+          img.src = nextUrl;
+        } catch (e) {}
+      }
+
+      function formatGregorianDDMonthYYYY(d) {
+        var dd = pad2(d.getDate());
+        var monthName = GREGORIAN_MONTHS_BM[d.getMonth()] || "";
+        var yyyy = d.getFullYear();
+        return dd + " " + monthName + " " + yyyy;
+      }
+
+      function formatHijriDDMonthYYYY(dayNum, monthNum, yearVal) {
+        var mIdx = (parseInt(monthNum, 10) || 1) - 1;
+        var monthName = (mIdx >= 0 && mIdx < 12) ? HIJRI_MONTHS_BM[mIdx] : String(monthNum);
+        return pad2(dayNum) + " " + monthName + " " + String(yearVal).trim() + " H";
+      }
+
+      function computeHijriFallback(d) {
+        try {
+          if (typeof Intl !== "undefined" && Intl.DateTimeFormat) {
+            var fmt = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", {
+              day: "numeric",
+              month: "numeric",
+              year: "numeric"
+            });
+            if (typeof fmt.formatToParts === "function") {
+              var parts = fmt.formatToParts(d);
+              var dayVal = 1;
+              var monthVal = 1;
+              var yearVal = "";
+              for (var i = 0; i < parts.length; i++) {
+                if (parts[i].type === "day") dayVal = parseInt(parts[i].value, 10) || 1;
+                if (parts[i].type === "month") monthVal = parseInt(parts[i].value, 10) || 1;
+                if (parts[i].type === "year") yearVal = parts[i].value.replace(/\s*AH/i, "").trim();
+              }
+              if (yearVal) {
+                hijriText = formatHijriDDMonthYYYY(dayVal, monthVal, yearVal);
+                return;
+              }
+            }
+          }
+        } catch (e) {}
+
+        var jd = Math.floor(d.getTime() / 86400000) + 2440587;
+        var l = jd - 1948440 + 10632;
+        var n = Math.floor((l - 1) / 10631);
+        l = l - n * 10631 + 354;
+        var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) +
+                (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+        l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) -
+            (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+        var hMonth = Math.floor((24 * l) / 709);
+        var hDay = l - Math.floor((709 * hMonth) / 24);
+        var hYear = Math.floor(30 * n + j - 30);
+        hijriText = formatHijriDDMonthYYYY(hDay, hMonth, hYear);
+      }
+
+      function epochToHHMM(sec) {
+        if (!sec)
