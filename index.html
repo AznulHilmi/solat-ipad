@@ -1,354 +1,273 @@
-<script>
-  var prayerTimesToday = {
-    subuh: "05:59",
-    syuruk: "07:05",
-    dhuha: "07:33",
-    zohor: "13:14",
-    asar: "16:18",
-    maghrib: "19:18",
-    isyak: "20:27"
-  };
-
-  var jakimMonths = [
-    "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
-    "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
-    "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
-  ];
-
-  var cachedHijriString = "";
-
-  // Helper: "HH:MM:SS" or "HH:MM" -> "HH:MM" (24h)
-  function normalizeHHMM(timeStr) {
-    if (!timeStr) return null;
-    var parts = timeStr.trim().split(':');
-    if (parts.length < 2) return null;
-    var hh = parts[0].padStart(2, '0');
-    var mm = parts[1].padStart(2, '0');
-    return hh + ':' + mm;
-  }
-
-  // Helper: "HH:MM" (24h) -> minutes since midnight
-  function toMinutes(hhmm) {
-    var parts = hhmm.split(':');
-    return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-  }
-
-  // Helper: minutes since midnight -> "HH:MM" (24h)
-  function fromMinutes(totalMins) {
-    var wrapped = ((totalMins % 1440) + 1440) % 1440;
-    var hh = Math.floor(wrapped / 60);
-    var mm = wrapped % 60;
-    return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
-  }
-
-  // Helper: "HH:MM" (24h) -> "hh:mm AM/PM"
-  function formatTo12Hour(hhmm) {
-    var parts = hhmm.split(':');
-    var hour24 = parseInt(parts[0], 10);
-    var minute = parts[1];
-    var period = hour24 >= 12 ? 'PM' : 'AM';
-    var hour12 = hour24 % 12;
-    if (hour12 === 0) hour12 = 12;
-    return String(hour12).padStart(2, '0') + ':' + minute + ' ' + period;
-  }
-
-  // Update the visible prayer time labels on screen
-  function renderPrayerTimeTable() {
-    var keys = ["subuh", "syuruk", "dhuha", "zohor", "asar", "maghrib", "isyak"];
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      var el = document.getElementById('time-' + k);
-      if (el && prayerTimesToday[k]) {
-        el.innerText = formatTo12Hour(prayerTimesToday[k]);
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Next Solat - SGR01</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-  }
 
-  // Fetch today's solat times for JAKIM Zone SGR01
-  async function fetchMalaysianPrayerTimes() {
-    try {
-      var now = new Date();
-      var yyyy = now.getFullYear();
-      var mm = String(now.getMonth() + 1).padStart(2, '0');
-      var dd = String(now.getDate()).padStart(2, '0');
-      var todayStr = yyyy + '-' + mm + '-' + dd;
+    body {
+      min-height: 100vh;
+      background: #0b1120;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
 
-      var url = 'https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01';
-      var response = await fetch(url);
-      var data = await response.json();
+    .panel {
+      width: 100%;
+      max-width: 540px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
 
-      if (data && data.prayerTime && data.prayerTime.length > 0) {
-        var pt = data.prayerTime[0];
-        var subuh = normalizeHHMM(pt.fajr);
-        var syuruk = normalizeHHMM(pt.syuruk);
-        var zohor = normalizeHHMM(pt.dhuhr);
-        var asar = normalizeHHMM(pt.asr);
-        var maghrib = normalizeHHMM(pt.maghrib);
-        var isyak = normalizeHHMM(pt.isha);
+    .label {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
 
-        if (subuh) prayerTimesToday.subuh = subuh;
-        if (syuruk) {
-          prayerTimesToday.syuruk = syuruk;
-          // Dhuha ~28 minutes after Syuruk
-          prayerTimesToday.dhuha = fromMinutes(toMinutes(syuruk) + 28);
+    .clock {
+      font-size: 3rem;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #ffffff;
+    }
+
+    .date-line {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 4px;
+    }
+
+    .hijri-line {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fbbf24;
+      margin-top: 2px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #1f2937;
+    }
+
+    .next-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #34d399;
+    }
+
+    .next-time {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fbbf24;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      margin-top: 2px;
+    }
+
+    .countdown {
+      font-size: 2.4rem;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #38bdf8;
+      margin-top: 8px;
+    }
+
+    .status {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div>
+      <div class="label">Current Time & Date</div>
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="date-line" id="gregorian-date">---</div>
+      <div class="hijri-line" id="hijri-date">---</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="label">Next Solat (SGR01)</div>
+      <div class="next-name" id="next-name">--</div>
+      <div class="next-time" id="next-time">--:--</div>
+      <div class="countdown" id="countdown">00:00:00</div>
+    </div>
+
+    <div class="status" id="status-text">Syncing SGR01 schedule...</div>
+  </main>
+
+  <script>
+    const ZONE = "SGR01";
+
+    // Main 5 daily solat times in 24-hour HH:MM format (fallback if offline)
+    let dailyPrayers = {
+      Subuh: "05:59",
+      Zohor: "13:14",
+      Asar: "16:18",
+      Maghrib: "19:18",
+      Isyak: "20:27"
+    };
+
+    let hijriText = "";
+
+    function toHHMM(rawTime) {
+      if (!rawTime) return null;
+      const match = String(rawTime).match(/(\d{1,2}):(\d{2})/);
+      if (!match) return null;
+      return match[1].padStart(2, "0") + ":" + match[2].padStart(2, "0");
+    }
+
+    function format12Hour(hhmm) {
+      const [hStr, mStr] = hhmm.split(":");
+      let hour = parseInt(hStr, 10);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12;
+      if (hour === 0) hour = 12;
+      return String(hour).padStart(2, "0") + ":" + mStr + " " + ampm;
+    }
+
+    function updateHijriFallback(now) {
+      const formatter = new Intl.DateTimeFormat("en-GB-u-ca-islamic-umalqura", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+      hijriText = formatter.format(now) + " H";
+    }
+
+    async function loadPrayerSchedule() {
+      const now = new Date();
+      updateHijriFallback(now);
+
+      try {
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+
+        const res = await fetch(`https://api.waktusolat.app/v2/solat/${ZONE}?year=${year}&month=${month}`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        if (data && Array.isArray(data.prayers)) {
+          const todayEntry = data.prayers.find(item => Number(item.day) === day);
+          if (todayEntry) {
+            // API returns Unix epoch seconds in v2/solat
+            const fromEpoch = (sec) => {
+              if (!sec) return null;
+              const d = new Date(sec * 1000);
+              return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+            };
+
+            const subuh = fromEpoch(todayEntry.fajr) || toHHMM(todayEntry.fajr);
+            const zohor = fromEpoch(todayEntry.dhuhr) || toHHMM(todayEntry.dhuhr);
+            const asar = fromEpoch(todayEntry.asr) || toHHMM(todayEntry.asr);
+            const maghrib = fromEpoch(todayEntry.maghrib) || toHHMM(todayEntry.maghrib);
+            const isyak = fromEpoch(todayEntry.isha) || toHHMM(todayEntry.isha);
+
+            if (subuh && zohor && asar && maghrib && isyak) {
+              dailyPrayers = {
+                Subuh: subuh,
+                Zohor: zohor,
+                Asar: asar,
+                Maghrib: maghrib,
+                Isyak: isyak
+              };
+            }
+
+            if (todayEntry.hijri) {
+              hijriText = todayEntry.hijri + " H";
+            }
+          }
         }
-        if (zohor) prayerTimesToday.zohor = zohor;
-        if (asar) prayerTimesToday.asar = asar;
-        if (maghrib) prayerTimesToday.maghrib = maghrib;
-        if (isyak) prayerTimesToday.isyak = isyak;
 
-        renderPrayerTimeTable();
-      }
-    } catch (err) {
-      console.warn("Failed to fetch JAKIM SGR01 prayer times:", err);
-    }
-  }
-
-  // Automatically fetch live Hijri date from Malaysia's e-Solat API
-  async function fetchMalaysianHijriDate() {
-    try {
-      var now = new Date();
-      var yyyy = now.getFullYear();
-      var mm = String(now.getMonth() + 1).padStart(2, '0');
-      var dd = String(now.getDate()).padStart(2, '0');
-      var todayStr = yyyy + '-' + mm + '-' + dd;
-
-      var response = await fetch('https://www.e-solat.gov.my/index.php?r=esolatApi%2Ftarikhtakwim&period=today&datetype=miladi&date=' + todayStr);
-      var data = await response.json();
-
-      if (data && data.takwim && data.takwim[todayStr]) {
-        var parts = data.takwim[todayStr].split('-');
-        if (parts.length === 3) {
-          var hYear = parts[0];
-          var hMonthNum = parseInt(parts[1], 10);
-          var hDay = parseInt(parts[2], 10);
-
-          var monthWord = (hMonthNum >= 1 && hMonthNum <= 12) ? jakimMonths[hMonthNum - 1] : hMonthNum;
-          cachedHijriString = hDay + " " + monthWord + " " + hYear + " H";
-        }
-      }
-    } catch (err) {
-      console.warn("API fetch failed, utilizing fallback calculation:", err);
-    }
-
-    if (!cachedHijriString) {
-      var date = new Date();
-      var jd = Math.floor((date.getTime() / 86400000) + 2440587.5) + 2;
-      var l = jd - 1948440 + 10632;
-      var n = Math.floor((l - 1) / 10631);
-      l = l - n * 10631 + 354;
-      var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
-      var hMonth = Math.floor((24 * l) / 709);
-      var hDay = l - Math.floor((709 * hMonth) / 24);
-      var hYear = Math.floor(30 * n + j - 30);
-      var monthWord = (hMonth >= 1 && hMonth <= 12) ? jakimMonths[hMonth - 1] : "Muharram";
-      cachedHijriString = hDay + " " + monthWord + " " + hYear + " H";
-    }
-  }
-
-  var sceneryImages = {
-    subuh: "https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?q=80&w=1920&auto=format&fit=crop&v=99",
-    syuruk: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop&v=99",
-    dhuha: "https://images.unsplash.com/photo-1491557345352-5929e343eb89?q=80&w=1920&auto=format&fit=crop&v=99",
-    zohor: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop&v=99",
-    asar: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=1920&auto=format&fit=crop&v=99",
-    maghrib: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920&auto=format&fit=crop&v=99",
-    isyak: "https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=1920&auto=format&fit=crop&v=99"
-  };
-
-  var hadithCollection = {
-    subuh: {
-      ar: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ",
-      en: "\"Barangsiapa yang solat dua waktu yang sejuk (Subuh dan Asar), dia akan masuk syurga.\" — Sahih Bukhari"
-    },
-    syuruk: {
-      ar: "مَنْ صَلَّى الْغَدَاةَ فِي جَمَاعَةٍ ثُمَّ قَعَدَ يَذْكُرُ اللَّهَ حَتَّى تَطْلُعَ الشَّمْسُ... كَانَتْ لَهُ كَأَجْرِ حَجَّةٍ وَعُمْرَةٍ",
-      en: "\"Barangsiapa solat Subuh berjemaah, kemudian duduk berzikir mengingati Allah hingga terbit matahari... dia mendapat pahala seperti haji dan umrah.\" — Tirmidzi (Sahih)"
-    },
-    dhuha: {
-      ar: "يُصْبِحُ عَلَى كُلِّ سُلَامَى مِنْ أَحَدِكُمْ صَدَقَةٌ... وَيُجْزِئُ مِنْ ذَلِكَ رَكْعَتَانِ يَرْكَعُهُمَا مِنَ الضُّحَى",
-      en: "\"Setiap sendi badan manusia diwajibkan bersedekah setiap pagi... dan memadai untuk semua itu dengan mengerjakan dua rakaat solat Dhuha.\" — Sahih Muslim"
-    },
-    zohor: {
-      ar: "إِنَّ الْعَبْدَ لَيَتَكَلَّمُ بِالْكَلِمَةِ مِنْ رِضْوَانِ اللَّهِ تَعَالَى مَا يُبَالِي بِهَا يَرْفَعُ اللَّهُ بِهَا دَرَجَاتٍ",
-      en: "\"Sesungguhnya seorang hamba yang mengucapkan kalimah yang mendapat redha Allah Taala tanpa dihiraukan kesannya, Allah mengangkat darjatnya kerananya.\" — Sahih Bukhari"
-    },
-    asar: {
-      ar: "مَنْ تَرَكَ صَلَةَ الْعَصْرِ فَقَدْ حَبِطَ عَمَلُهُ",
-      en: "\"Sesiapa yang meninggalkan solat Asar, maka sesungguhnya telah gugur amalannya.\" — Sahih Bukhari"
-    },
-    maghrib: {
-      ar: "لَا تَزَالُ أُمَّتِي بِخَيْرٍ مَا لَمْ يُعَجِّلُوا الْمَغْرِبَ",
-      en: "\"Umatku sentiasa berada dalam kebaikan selagi mana mereka tidak melewatkan solat Maghrib.\" — Abu Dawood (Sahih)"
-    },
-    isyak: {
-      ar: "مَنْ صَلَّى الْعِشَاءَ فِي جَمَاعَةٍ فَكَأَنَّمَا قَامَ نِصْفَ اللَّيْلِ",
-      en: "\"Barangsiapa yang solat Isyak berjemaah, maka seolah-olah dia telah solat separuh malam.\" — Sahih Muslim"
-    }
-  };
-
-  var quranCollection = {
-    subuh: {
-      ar: "وَقُرْآنَ الْفَجْرِ ۖ إِنَّ قُرْآنَ الْفَجْرِ كَانَ مَشْهُودًا",
-      en: "\"Dan (dirikanlah pula) solat subuh. Sesungguhnya solat subuh itu adalah disaksikan (oleh malaikat).\" — Surah Al-Isra' 17:78"
-    },
-    syuruk: {
-      ar: "وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوعِ الشَّمْسِ وَقَبْلَ غُرُوبِهَا",
-      en: "\"Dan bertasbihlah dengan memuji Tuhanmu sebelum terbit matahari dan sebelum terbenamnya.\" — Surah Taha 20:130"
-    },
-    dhuha: {
-      ar: "وَالضُّحَىٰ * وَاللَّيْلِ إِذَا سَجَىٰ",
-      en: "\"Demi waktu dhuha. Dan malam apabila ia sunyi sepi.\" — Surah Ad-Duha 93:1-2"
-    },
-    zohor: {
-      ar: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ",
-      en: "\"Peliharalah kamu (mengerjakan) segala solat (terutama) solat Wusta (Asar), dan berdirilah kerana Allah (dalam solat) dengan taat dan khusyuk.\" — Surah Al-Baqarah 2:238"
-    },
-    asar: {
-      ar: "وَالْعَصْرِ * إِنَّ الْإِنسَانَ لَفِي خُسْرٍ",
-      en: "\"Demi Masa! Sesungguhnya manusia itu dalam kerugian.\" — Surah Al-Asr 103:1-2"
-    },
-    maghrib: {
-      ar: "وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوعِ الشَّمْسِ وَقَبْلَ غُرُوبِهَا",
-      en: "\"Dan bertasbihlah dengan memuji Tuhanmu sebelum terbit matahari dan sebelum terbenamnya.\" — Surah Qaf 50:39"
-    },
-    isyak: {
-      ar: "تَتَجَافَىٰ جُنُوبُهُمْ عَنِ الْمَضَاجِعِ يَدْعُونَ رَبَّهُمْ خَوْفًا وَطَمَعًا",
-      en: "\"Lambung mereka jauh dari tempat tidur, mereka berdoa kepada Tuhan mereka dengan rasa takut dan penuh harap.\" — Surah As-Sajdah 32:16"
-    }
-  };
-
-  var currentActiveSceneryKey = "";
-
-  function updateContent(currentPrayerKey) {
-    if (currentPrayerKey !== currentActiveSceneryKey) {
-      currentActiveSceneryKey = currentPrayerKey;
-
-      var imageUrl = sceneryImages[currentPrayerKey] || sceneryImages.zohor;
-      var bgDiv = document.getElementById('bg-scenery');
-      if (bgDiv) {
-        bgDiv.style.backgroundImage = "url('" + imageUrl + "')";
-      }
-
-      var hadithData = hadithCollection[currentPrayerKey] || hadithCollection.zohor;
-      var hadithAr = document.getElementById('hadith-ar');
-      var hadithEn = document.getElementById('hadith-en');
-      if (hadithAr && hadithEn) {
-        hadithAr.innerText = hadithData.ar;
-        hadithEn.innerText = hadithData.en;
-      }
-
-      var quranData = quranCollection[currentPrayerKey] || quranCollection.zohor;
-      var quranAr = document.getElementById('quran-ar');
-      var quranEn = document.getElementById('quran-en');
-      if (quranAr && quranEn) {
-        quranAr.innerText = quranData.ar;
-        quranEn.innerText = quranData.en;
+        document.getElementById("status-text").textContent = "Live SGR01 schedule synced";
+      } catch (err) {
+        console.warn("Schedule fetch fallback:", err);
+        document.getElementById("status-text").textContent = "Using fallback SGR01 times";
       }
     }
-  }
 
-  function updateEngine() {
-    try {
-      var now = new Date();
+    function tick() {
+      const now = new Date();
 
-      var clockElem = document.getElementById('clock');
-      if (clockElem) {
-        clockElem.innerText = now.toLocaleTimeString('en-US', { hour12: true });
-      }
+      document.getElementById("clock").textContent = now.toLocaleTimeString("en-MY", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      });
 
-      var gregElem = document.getElementById('gregorian-date');
-      if (gregElem) {
-        gregElem.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      }
+      document.getElementById("gregorian-date").textContent = now.toLocaleDateString("en-MY", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
 
-      var hijriElem = document.getElementById('hijri-date');
-      if (hijriElem) {
-        hijriElem.innerText = cachedHijriString || "Loading Hijri...";
-      }
+      document.getElementById("hijri-date").textContent = hijriText || "---";
 
-      var times = [
-        { key: "subuh", name: "Subuh", time: prayerTimesToday.subuh, rowId: "row-subuh" },
-        { key: "syuruk", name: "Syuruk", time: prayerTimesToday.syuruk, rowId: "row-syuruk" },
-        { key: "dhuha", name: "Dhuha", time: prayerTimesToday.dhuha, rowId: "row-dhuha" },
-        { key: "zohor", name: "Zohor", time: prayerTimesToday.zohor, rowId: "row-zohor" },
-        { key: "asar", name: "Asar", time: prayerTimesToday.asar, rowId: "row-asar" },
-        { key: "maghrib", name: "Maghrib", time: prayerTimesToday.maghrib, rowId: "row-maghrib" },
-        { key: "isyak", name: "Isyak", time: prayerTimesToday.isyak, rowId: "row-isyak" }
-      ];
+      const order = ["Subuh", "Zohor", "Asar", "Maghrib", "Isyak"];
+      let targetName = "Subuh";
+      let targetTimeStr = dailyPrayers.Subuh;
+      let targetDate = null;
 
-      for (var i = 0; i < times.length; i++) {
-        var el = document.getElementById(times[i].rowId);
-        if (el) el.classList.remove('active');
-      }
-
-      var nextPrayer = null;
-      var nextPrayerTime = null;
-      var activePrayerKey = "isyak";
-
-      for (var j = 0; j < times.length; j++) {
-        var p = times[j];
-        if (!p.time) continue;
-        var parts = p.time.split(':');
-        var pDate = new Date(now.getTime());
-        pDate.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
-
-        if (pDate > now) {
-          nextPrayer = p.name;
-          nextPrayerTime = pDate;
-          var activeEl = document.getElementById(p.rowId);
-          if (activeEl) activeEl.classList.add('active');
-
-          var prevIdx = (j - 1 + times.length) % times.length;
-          activePrayerKey = times[prevIdx].key;
+      for (const name of order) {
+        const hhmm = dailyPrayers[name];
+        if (!hhmm) continue;
+        const [hh, mm] = hhmm.split(":").map(Number);
+        const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+        if (candidate > now) {
+          targetName = name;
+          targetTimeStr = hhmm;
+          targetDate = candidate;
           break;
         }
       }
 
-      if (!nextPrayer) {
-        nextPrayer = "Subuh";
-        var subParts = prayerTimesToday.subuh.split(':');
-        nextPrayerTime = new Date(now.getTime());
-        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
-        nextPrayerTime.setHours(parseInt(subParts[0], 10), parseInt(subParts[1], 10), 0, 0);
-        var subEl = document.getElementById("row-subuh");
-        if (subEl) subEl.classList.add('active');
-        activePrayerKey = "isyak";
+      if (!targetDate) {
+        const [hh, mm] = dailyPrayers.Subuh.split(":").map(Number);
+        targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, hh, mm, 0, 0);
       }
 
-      updateContent(activePrayerKey);
+      const diffSec = Math.max(0, Math.floor((targetDate - now) / 1000));
+      const hrs = Math.floor(diffSec / 3600);
+      const mins = Math.floor((diffSec % 3600) / 60);
+      const secs = diffSec % 60;
 
-      var nextLabel = document.getElementById('next-prayer-name');
-      if (nextLabel) nextLabel.innerText = nextPrayer;
-
-      var diffMs = Math.max(0, nextPrayerTime - now);
-      var hrs = Math.floor(diffMs / (1000 * 60 * 60));
-      var mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      var secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-      var countElem = document.getElementById('countdown');
-      if (countElem) {
-        countElem.innerText =
-          (hrs < 10 ? '0' + hrs : hrs) + ':' +
-          (mins < 10 ? '0' + mins : mins) + ':' +
-          (secs < 10 ? '0' + secs : secs);
-      }
-
-    } catch (err) {
-      console.error("Main loop error caught:", err);
+      document.getElementById("next-name").textContent = targetName;
+      document.getElementById("next-time").textContent = format12Hour(targetTimeStr);
+      document.getElementById("countdown").textContent =
+        String(hrs).padStart(2, "0") + ":" +
+        String(mins).padStart(2, "0") + ":" +
+        String(secs).padStart(2, "0");
     }
-  }
 
-  // Initial render & API fetches
-  renderPrayerTimeTable();
-  fetchMalaysianPrayerTimes();
-  fetchMalaysianHijriDate();
-
-  // Refresh every hour
-  setInterval(fetchMalaysianPrayerTimes, 3600000);
-  setInterval(fetchMalaysianHijriDate, 3600000);
-
-  updateEngine();
-  setInterval(updateEngine, 1000);
-</script>
+    loadPrayerSchedule();
+    setInterval(loadPrayerSchedule, 3600000);
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
