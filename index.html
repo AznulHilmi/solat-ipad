@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next Solat - SGR01</title>
+  <title>Next Solat - Semenyih (SGR01)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -109,25 +109,25 @@
     <div class="divider"></div>
 
     <div>
-      <div class="label">Next Solat (SGR01)</div>
+      <div class="label">Next Solat • Semenyih (SGR01)</div>
       <div class="next-name" id="next-name">--</div>
       <div class="next-time" id="next-time">--:--</div>
       <div class="countdown" id="countdown">00:00:00</div>
     </div>
 
-    <div class="status" id="status-text">Syncing SGR01 schedule...</div>
+    <div class="status" id="status-text">Syncing Semenyih (SGR01) schedule...</div>
   </main>
 
   <script>
     const ZONE = "SGR01";
 
-    // Main 5 daily solat times in 24-hour HH:MM format (fallback if offline)
+    // Semenyih (JAKIM Zone SGR01) 24-hour HH:MM fallback times
     let dailyPrayers = {
-      Subuh: "05:59",
-      Zohor: "13:14",
-      Asar: "16:18",
-      Maghrib: "19:18",
-      Isyak: "20:27"
+      Subuh: "05:50",
+      Zohor: "13:03",
+      Asar: "16:25",
+      Maghrib: "19:00",
+      Isyak: "20:14"
     };
 
     let hijriText = "";
@@ -173,7 +173,6 @@
         if (data && Array.isArray(data.prayers)) {
           const todayEntry = data.prayers.find(item => Number(item.day) === day);
           if (todayEntry) {
-            // API returns Unix epoch seconds in v2/solat
             const fromEpoch = (sec) => {
               if (!sec) return null;
               const d = new Date(sec * 1000);
@@ -202,10 +201,10 @@
           }
         }
 
-        document.getElementById("status-text").textContent = "Live SGR01 schedule synced";
+        document.getElementById("status-text").textContent = "Live Semenyih (SGR01) schedule synced";
       } catch (err) {
         console.warn("Schedule fetch fallback:", err);
-        document.getElementById("status-text").textContent = "Using fallback SGR01 times";
+        document.getElementById("status-text").textContent = "Using fallback Semenyih (SGR01) times";
       }
     }
 
