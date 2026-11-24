@@ -14,86 +14,131 @@
 
     body {
       min-height: 100vh;
-      background: #0b1120;
+      background: #090d16;
       color: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Dark overlay over mosque photo for high text contrast */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(7, 11, 20, 0.72) 0%,
+        rgba(7, 11, 20, 0.82) 100%
+      );
+      z-index: 0;
+      pointer-events: none;
     }
 
     .panel {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 540px;
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 16px;
-      padding: 28px;
+      max-width: 600px;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 32px 28px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
     }
 
     .label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #94a3b8;
+      color: #cbd5e1;
       margin-bottom: 6px;
     }
 
     .clock {
-      font-size: 3rem;
+      font-size: 2.6rem;
       font-weight: 800;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
 
     .date-line {
       font-size: 1.15rem;
-      font-weight: 600;
-      color: #e2e8f0;
-      margin-top: 4px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-top: 6px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
     }
 
     .hijri-line {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fbbf24;
-      margin-top: 2px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fcd34d;
+      margin-top: 4px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
     }
 
     .divider {
       height: 1px;
-      background: #1f2937;
+      background: rgba(255, 255, 255, 0.14);
     }
 
+    /* Bigger solat wording and solat time */
     .next-name {
-      font-size: 2.2rem;
-      font-weight: 800;
+      font-size: 3.4rem;
+      font-weight: 900;
+      line-height: 1.1;
       color: #34d399;
+      text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
     }
 
     .next-time {
-      font-size: 1.8rem;
-      font-weight: 700;
+      font-size: 3.1rem;
+      font-weight: 900;
+      line-height: 1.15;
       color: #fbbf24;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      margin-top: 2px;
+      margin-top: 6px;
+      text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Smaller countdown */
+    .countdown-wrap {
+      margin-top: 12px;
+    }
+
+    .countdown-label {
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 2px;
     }
 
     .countdown {
-      font-size: 2.4rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 700;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      color: #38bdf8;
-      margin-top: 8px;
+      color: #7dd3fc;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
     }
 
     .status {
-      font-size: 0.8rem;
-      color: #64748b;
+      font-size: 0.78rem;
+      color: #94a3b8;
     }
   </style>
 </head>
@@ -112,7 +157,11 @@
       <div class="label">Next Solat • Semenyih (SGR01)</div>
       <div class="next-name" id="next-name">--</div>
       <div class="next-time" id="next-time">--:--</div>
-      <div class="countdown" id="countdown">00:00:00</div>
+
+      <div class="countdown-wrap">
+        <div class="countdown-label">Countdown</div>
+        <div class="countdown" id="countdown">00:00:00</div>
+      </div>
     </div>
 
     <div class="status" id="status-text">Syncing Semenyih (SGR01) schedule...</div>
@@ -120,6 +169,26 @@
 
   <script>
     const ZONE = "SGR01";
+
+    // Add local repo image paths (e.g. "mosque1.jpg") or external URLs here
+    const MOSQUE_IMAGES = [
+      "https://images.pexels.com/photos/29903471/pexels-photo-29903471.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/19414000/pexels-photo-19414000.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/31609068/pexels-photo-31609068.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://source.unsplash.com/1600x900/?malaysia,mosque",
+      "https://source.unsplash.com/1600x900/?putra-mosque,malaysia"
+    ];
+
+    const GREGORIAN_MONTHS_BM = [
+      "Januari", "Februari", "Mac", "April", "Mei", "Jun",
+      "Julai", "Ogos", "September", "Oktober", "November", "Disember"
+    ];
+
+    const HIJRI_MONTHS_BM = [
+      "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
+      "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
+      "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
+    ];
 
     // Semenyih (JAKIM Zone SGR01) 24-hour HH:MM fallback times
     let dailyPrayers = {
@@ -131,6 +200,32 @@
     };
 
     let hijriText = "";
+
+    function applyRandomMosqueBackground() {
+      if (!MOSQUE_IMAGES.length) return;
+      const idx = Math.floor(Math.random() * MOSQUE_IMAGES.length);
+      document.body.style.backgroundImage = `url("${MOSQUE_IMAGES[idx]}")`;
+    }
+
+    // Formats day, month name, year as DD Month YYYY (e.g. "24 November 2026")
+    function formatDDMonthYYYY(day, monthName, year) {
+      const dd = String(day).padStart(2, "0");
+      return `${dd} ${monthName} ${year}`;
+    }
+
+    function formatGregorianDDMonthYYYY(now) {
+      const dd = String(now.getDate()).padStart(2, "0");
+      const monthName = GREGORIAN_MONTHS_BM[now.getMonth()];
+      const yyyy = now.getFullYear();
+      return `${dd} ${monthName} ${yyyy}`;
+    }
+
+    function formatHijriFromParts(dayNum, monthNum, yearStr) {
+      const monthName = (monthNum >= 1 && monthNum <= 12)
+        ? HIJRI_MONTHS_BM[monthNum - 1]
+        : String(monthNum);
+      return `${formatDDMonthYYYY(dayNum, monthName, yearStr)} H`;
+    }
 
     function toHHMM(rawTime) {
       if (!rawTime) return null;
@@ -149,12 +244,37 @@
     }
 
     function updateHijriFallback(now) {
-      const formatter = new Intl.DateTimeFormat("en-GB-u-ca-islamic-umalqura", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
-      hijriText = formatter.format(now) + " H";
+      try {
+        const parts = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric"
+        }).formatToParts(now);
+
+        const dayVal = Number(parts.find(p => p.type === "day")?.value || 1);
+        const monthVal = Number(parts.find(p => p.type === "month")?.value || 1);
+        const yearVal = parts.find(p => p.type === "year")?.value || "";
+        const cleanYear = yearVal.replace(/\s*AH/i, "").trim();
+
+        hijriText = formatHijriFromParts(dayVal, monthVal, cleanYear);
+      } catch (e) {
+        hijriText = "---";
+      }
+    }
+
+    function parseApiHijriToDDMonthYYYY(rawHijri) {
+      if (!rawHijri) return null;
+      // Matches formats like "1448-06-14" or "1448-6-14"
+      const isoMatch = String(rawHijri).trim().match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+      if (isoMatch) {
+        return formatHijriFromParts(Number(isoMatch[3]), Number(isoMatch[2]), isoMatch[1]);
+      }
+      // Matches formats like "14-06-1448" or "14/06/1448"
+      const dmyMatch = String(rawHijri).trim().match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+      if (dmyMatch) {
+        return formatHijriFromParts(Number(dmyMatch[1]), Number(dmyMatch[2]), dmyMatch[3]);
+      }
+      return null;
     }
 
     async function loadPrayerSchedule() {
@@ -195,8 +315,9 @@
               };
             }
 
-            if (todayEntry.hijri) {
-              hijriText = todayEntry.hijri + " H";
+            const formattedApiHijri = parseApiHijriToDDMonthYYYY(todayEntry.hijri);
+            if (formattedApiHijri) {
+              hijriText = formattedApiHijri;
             }
           }
         }
@@ -218,13 +339,7 @@
         hour12: true
       });
 
-      document.getElementById("gregorian-date").textContent = now.toLocaleDateString("en-MY", {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      });
-
+      document.getElementById("gregorian-date").textContent = formatGregorianDDMonthYYYY(now);
       document.getElementById("hijri-date").textContent = hijriText || "---";
 
       const order = ["Subuh", "Zohor", "Asar", "Maghrib", "Isyak"];
@@ -263,6 +378,7 @@
         String(secs).padStart(2, "0");
     }
 
+    applyRandomMosqueBackground();
     loadPrayerSchedule();
     setInterval(loadPrayerSchedule, 3600000);
     tick();
