@@ -9,13 +9,13 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
       min-height: 100vh;
       min-height: 100dvh;
-      background: #090d16;
+      background-color: #090d16;
       color: #f8fafc;
       display: flex;
       align-items: center;
@@ -35,7 +35,7 @@
       background: linear-gradient(
         180deg,
         rgba(7, 11, 20, 0.72) 0%,
-        rgba(7, 11, 20, 0.84) 100%
+        rgba(7, 11, 20, 0.85) 100%
       );
       z-index: 0;
       pointer-events: none;
@@ -46,10 +46,10 @@
       z-index: 1;
       width: 100%;
       max-width: 960px;
-      background: rgba(15, 23, 42, 0.78);
+      background: rgba(15, 23, 42, 0.80);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 24px;
       padding: 28px 34px;
       text-align: center;
@@ -80,7 +80,7 @@
     .clock {
       font-size: 2.7rem;
       font-weight: 800;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       color: #ffffff;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
@@ -104,7 +104,7 @@
     .divider {
       width: 1px;
       height: 82%;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.16);
       justify-self: center;
     }
 
@@ -121,7 +121,7 @@
       font-weight: 900;
       line-height: 1.12;
       color: #fbbf24;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       margin-top: 6px;
       text-shadow: 0 3px 14px rgba(0, 0, 0, 0.8);
     }
@@ -141,7 +141,7 @@
     .countdown {
       font-size: 1.25rem;
       font-weight: 700;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       color: #7dd3fc;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
     }
@@ -150,14 +150,15 @@
       grid-column: 1 / -1;
       font-size: 0.78rem;
       color: #94a3b8;
-      padding-top: 4px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     @media (max-width: 699px) {
       body {
         overflow-y: auto;
       }
+
       .panel {
         max-width: 540px;
         grid-template-columns: 1fr;
@@ -165,13 +166,16 @@
         gap: 18px;
         padding: 24px 20px;
       }
+
       .divider {
         width: 100%;
         height: 1px;
       }
+
       .next-name {
         font-size: 3rem;
       }
+
       .next-time {
         font-size: 2.7rem;
       }
@@ -181,7 +185,7 @@
 <body>
   <main class="panel">
     <section class="section-left">
-      <div class="label">Current Time & Date</div>
+      <div class="label">Current Time &amp; Date</div>
       <div class="clock" id="clock">--:--:--</div>
       <div class="date-line" id="gregorian-date">---</div>
       <div class="hijri-line" id="hijri-date">---</div>
@@ -190,7 +194,7 @@
     <div class="divider"></div>
 
     <section class="section-right">
-      <div class="label">Next Solat • Semenyih (SGR01)</div>
+      <div class="label">Next Solat &bull; Semenyih (SGR01)</div>
       <div class="next-name" id="next-name">--</div>
       <div class="next-time" id="next-time">--:--</div>
 
@@ -200,266 +204,103 @@
       </div>
     </section>
 
-    <div class="status" id="status-text">Initializing Semenyih (SGR01)...</div>
+    <div class="status" id="status-text">Ready • Semenyih (SGR01)</div>
   </main>
 
   <script>
-    const ZONE = "SGR01";
+    (function () {
+      var ZONE = "SGR01";
 
-    const MOSQUE_IMAGES = [
-      "https://images.pexels.com/photos/29903471/pexels-photo-29903471.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      "https://images.pexels.com/photos/19414000/pexels-photo-19414000.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      "https://images.pexels.com/photos/31609068/pexels-photo-31609068.jpeg?auto=compress&cs=tinysrgb&w=1600"
-    ];
+      var MOSQUE_IMAGES = [
+        "https://images.pexels.com/photos/29903471/pexels-photo-29903471.jpeg?auto=compress&cs=tinysrgb&w=1600",
+        "https://images.pexels.com/photos/19414000/pexels-photo-19414000.jpeg?auto=compress&cs=tinysrgb&w=1600",
+        "https://images.pexels.com/photos/31609068/pexels-photo-31609068.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      ];
 
-    const GREGORIAN_MONTHS_BM = [
-      "Januari", "Februari", "Mac", "April", "Mei", "Jun",
-      "Julai", "Ogos", "September", "Oktober", "November", "Disember"
-    ];
+      var GREGORIAN_MONTHS_BM = [
+        "Januari", "Februari", "Mac", "April", "Mei", "Jun",
+        "Julai", "Ogos", "September", "Oktober", "November", "Disember"
+      ];
 
-    const HIJRI_MONTHS_BM = [
-      "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
-      "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
-      "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
-    ];
+      var HIJRI_MONTHS_BM = [
+        "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
+        "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
+        "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
+      ];
 
-    let dailyPrayers = {
-      Subuh: "05:50",
-      Zohor: "13:03",
-      Asar: "16:25",
-      Maghrib: "19:00",
-      Isyak: "20:14"
-    };
+      // Semenyih (JAKIM Zone SGR01) 24-hour HH:MM fallback times
+      var dailyPrayers = {
+        Subuh: "05:50",
+        Zohor: "13:03",
+        Asar: "16:25",
+        Maghrib: "19:00",
+        Isyak: "20:14"
+      };
 
-    let hijriText = "";
+      var hijriText = "";
 
-    function setStatus(msg) {
-      const el = document.getElementById("status-text");
-      if (el) el.textContent = msg;
-    }
-
-    function applyRandomMosqueBackground() {
-      try {
-        if (!MOSQUE_IMAGES.length) return;
-        const idx = Math.floor(Math.random() * MOSQUE_IMAGES.length);
-        document.body.style.backgroundImage = 'url("' + MOSQUE_IMAGES[idx] + '")';
-      } catch (e) {}
-    }
-
-    function formatDDMonthYYYY(day, monthName, year) {
-      const dd = String(day).padStart(2, "0");
-      return dd + " " + monthName + " " + year;
-    }
-
-    function formatGregorianDDMonthYYYY(now) {
-      const dd = String(now.getDate()).padStart(2, "0");
-      const monthName = GREGORIAN_MONTHS_BM[now.getMonth()] || "";
-      const yyyy = now.getFullYear();
-      return dd + " " + monthName + " " + yyyy;
-    }
-
-    function formatHijriFromParts(dayNum, monthNum, yearStr) {
-      const monthName = (monthNum >= 1 && monthNum <= 12)
-        ? HIJRI_MONTHS_BM[monthNum - 1]
-        : String(monthNum);
-      return formatDDMonthYYYY(dayNum, monthName, yearStr) + " H";
-    }
-
-    function updateHijriFallback(now) {
-      try {
-        const parts = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", {
-          day: "numeric",
-          month: "numeric",
-          year: "numeric"
-        }).formatToParts(now);
-
-        const dayPart = parts.find(function(p) { return p.type === "day"; });
-        const monthPart = parts.find(function(p) { return p.type === "month"; });
-        const yearPart = parts.find(function(p) { return p.type === "year"; });
-
-        const dayVal = Number(dayPart ? dayPart.value : 1);
-        const monthVal = Number(monthPart ? monthPart.value : 1);
-        const cleanYear = String(yearPart ? yearPart.value : "").replace(/\s*AH/i, "").trim();
-
-        if (cleanYear) {
-          hijriText = formatHijriFromParts(dayVal, monthVal, cleanYear);
-        }
-      } catch (e) {
-        if (!hijriText) hijriText = "Kalendar Hijri";
+      function pad2(n) {
+        n = parseInt(n, 10);
+        return (n < 10 ? "0" : "") + n;
       }
-    }
 
-    function parseApiHijriToDDMonthYYYY(rawHijri) {
-      if (!rawHijri) return null;
-      const str = String(rawHijri).trim();
-      const isoMatch = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-      if (isoMatch) {
-        return formatHijriFromParts(Number(isoMatch[3]), Number(isoMatch[2]), isoMatch[1]);
+      function setStatus(msg) {
+        var el = document.getElementById("status-text");
+        if (el) el.textContent = msg;
       }
-      const dmyMatch = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
-      if (dmyMatch) {
-        return formatHijriFromParts(Number(dmyMatch[1]), Number(dmyMatch[2]), dmyMatch[3]);
+
+      function setRandomBackground() {
+        try {
+          if (!MOSQUE_IMAGES || MOSQUE_IMAGES.length === 0) return;
+          var idx = Math.floor(Math.random() * MOSQUE_IMAGES.length);
+          document.body.style.backgroundImage = 'url("' + MOSQUE_IMAGES[idx] + '")';
+        } catch (e) {}
       }
-      return null;
-    }
 
-    function toHHMM(rawTime) {
-      if (!rawTime) return null;
-      const match = String(rawTime).match(/(\d{1,2}):(\d{2})/);
-      if (!match) return null;
-      return match[1].padStart(2, "0") + ":" + match[2].padStart(2, "0");
-    }
+      function formatGregorianDDMonthYYYY(d) {
+        var dd = pad2(d.getDate());
+        var monthName = GREGORIAN_MONTHS_BM[d.getMonth()] || "";
+        var yyyy = d.getFullYear();
+        return dd + " " + monthName + " " + yyyy;
+      }
 
-    function format12Hour(hhmm) {
-      const parts = hhmm.split(":");
-      let hour = parseInt(parts[0], 10);
-      const minute = parts[1];
-      const ampm = hour >= 12 ? "PM" : "AM";
-      hour = hour % 12;
-      if (hour === 0) hour = 12;
-      return String(hour).padStart(2, "0") + ":" + minute + " " + ampm;
-    }
+      function formatHijriDDMonthYYYY(dayNum, monthNum, yearVal) {
+        var mIdx = parseInt(monthNum, 10) - 1;
+        var monthName = (mIdx >= 0 && mIdx < 12) ? HIJRI_MONTHS_BM[mIdx] : String(monthNum);
+        return pad2(dayNum) + " " + monthName + " " + String(yearVal).trim() + " H";
+      }
 
-    function fetchWithTimeout(url, ms) {
-      return new Promise(function(resolve, reject) {
-        const timer = setTimeout(function() {
-          reject(new Error("Request timeout"));
-        }, ms);
-
-        fetch(url)
-          .then(function(res) {
-            clearTimeout(timer);
-            resolve(res);
-          })
-          .catch(function(err) {
-            clearTimeout(timer);
-            reject(err);
-          });
-      });
-    }
-
-    async function loadPrayerSchedule() {
-      const now = new Date();
-      updateHijriFallback(now);
-      setStatus("Syncing Semenyih (SGR01) schedule...");
-
-      try {
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
-        const day = now.getDate();
-
-        const url = "https://api.waktusolat.app/v2/solat/" + ZONE + "?year=" + year + "&month=" + month;
-        const res = await fetchWithTimeout(url, 7000);
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-
-        if (data && Array.isArray(data.prayers)) {
-          const todayEntry = data.prayers.find(function(item) {
-            return Number(item.day) === day;
-          });
-
-          if (todayEntry) {
-            const fromEpoch = function(sec) {
-              if (!sec) return null;
-              const d = new Date(sec * 1000);
-              return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
-            };
-
-            const subuh = fromEpoch(todayEntry.fajr) || toHHMM(todayEntry.fajr);
-            const zohor = fromEpoch(todayEntry.dhuhr) || toHHMM(todayEntry.dhuhr);
-            const asar = fromEpoch(todayEntry.asr) || toHHMM(todayEntry.asr);
-            const maghrib = fromEpoch(todayEntry.maghrib) || toHHMM(todayEntry.maghrib);
-            const isyak = fromEpoch(todayEntry.isha) || toHHMM(todayEntry.isha);
-
-            if (subuh && zohor && asar && maghrib && isyak) {
-              dailyPrayers = {
-                Subuh: subuh,
-                Zohor: zohor,
-                Asar: asar,
-                Maghrib: maghrib,
-                Isyak: isyak
-              };
-            }
-
-            const formattedApiHijri = parseApiHijriToDDMonthYYYY(todayEntry.hijri);
-            if (formattedApiHijri) {
-              hijriText = formattedApiHijri;
+      function computeHijriFallback(d) {
+        try {
+          if (typeof Intl !== "undefined" && Intl.DateTimeFormat) {
+            var fmt = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", {
+              day: "numeric",
+              month: "numeric",
+              year: "numeric"
+            });
+            if (typeof fmt.formatToParts === "function") {
+              var parts = fmt.formatToParts(d);
+              var dayVal = 1;
+              var monthVal = 1;
+              var yearVal = "";
+              for (var i = 0; i < parts.length; i++) {
+                if (parts[i].type === "day") dayVal = parseInt(parts[i].value, 10) || 1;
+                if (parts[i].type === "month") monthVal = parseInt(parts[i].value, 10) || 1;
+                if (parts[i].type === "year") yearVal = parts[i].value.replace(/\s*AH/i, "").trim();
+              }
+              if (yearVal) {
+                hijriText = formatHijriDDMonthYYYY(dayVal, monthVal, yearVal);
+                return;
+              }
             }
           }
-        }
+        } catch (e) {}
 
-        setStatus("Live Semenyih (SGR01) schedule synced");
-      } catch (err) {
-        console.warn("Using fallback Semenyih (SGR01) times:", err);
-        setStatus("Using Semenyih (SGR01) fallback schedule");
-      }
-    }
-
-    function tick() {
-      try {
-        const now = new Date();
-
-        const clockEl = document.getElementById("clock");
-        if (clockEl) {
-          clockEl.textContent = now.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true
-          });
-        }
-
-        const gregEl = document.getElementById("gregorian-date");
-        if (gregEl) {
-          gregEl.textContent = formatGregorianDDMonthYYYY(now);
-        }
-
-        const hijriEl = document.getElementById("hijri-date");
-        if (hijriEl) {
-          hijriEl.textContent = hijriText || "Kalendar Hijri";
-        }
-
-        const order = ["Subuh", "Zohor", "Asar", "Maghrib", "Isyak"];
-        let targetName = "Subuh";
-        let targetTimeStr = dailyPrayers.Subuh;
-        let targetDate = null;
-
-        for (let i = 0; i < order.length; i++) {
-          const name = order[i];
-          const hhmm = dailyPrayers[name];
-          if (!hhmm) continue;
-          const parts = hhmm.split(":");
-          const hh = parseInt(parts[0], 10);
-          const mm = parseInt(parts[1], 10);
-          const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
-          if (candidate > now) {
-            targetName = name;
-            targetTimeStr = hhmm;
-            targetDate = candidate;
-            break;
-          }
-        }
-
-        if (!targetDate) {
-          const subParts = dailyPrayers.Subuh.split(":");
-          targetDate = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() + 1,
-            parseInt(subParts[0], 10),
-            parseInt(subParts[1], 10),
-            0,
-            0
-          );
-        }
-
-        const diffSec = Math.max(0, Math.floor((targetDate - now) / 1000));
-        const hrs = Math.floor(diffSec / 3600);
-        const mins = Math.floor((diffSec % 3600) / 60);
-        const secs = diffSec % 60;
-
-        const nameEl = document.getElementById("next-name");
-        const timeEl = document.getElementById("next-time");
-        const countEl = document.getElementById("countdown");
-
-        if (nameEl) nameEl.textContent = target
+        // Arithmetic Islamic calendar fallback
+        var jd = Math.floor(d.getTime() / 86400000) + 2440587;
+        var l = jd - 1948440 + 10632;
+        var n = Math.floor((l - 1) / 10631);
+        l = l - n * 10631 + 354;
+        var j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) +
+                (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+        l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17
